@@ -4,11 +4,13 @@ import config from './config'
 
 function connectToDB(success: Function, failed: Function) {
   let tryTime: number = 0
-  const connect = () =>
+  const connect = () => {
+    console.log("开始链接数据库")
     mongoose.connect(config.databaseUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     })
+  }
 
   mongoose.connection.on('error', (...args) => {
     console.log('数据库连接失败', ...args)

@@ -9,6 +9,8 @@ coverage
 
 # production
 dist
+dll
+.env.*
 
 # misc
 .DS_Store

@@ -1,15 +1,14 @@
 {
-  "name": "server",
+  "name": "@pilot/server",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "npm run build && npm run serve",
-    "watch-server": "cross-env NODE_ENV=dev nodemon --exec ts-node app.ts",
+    "start": "cross-env NODE_ENV=development nodemon --exec ts-node app.ts",
     "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
     "build-ts": "tsc",
     "build": "rm -fr dist && npm run lint && npm run build-ts",
-    "serve": "cross-env NODE_ENV=prod pm2 start dist/app.js --no-daemon",
+    "test": "cross-env NODE_ENV=production pm2 start dist/app.js --no-daemon",
     "stop": "pm2 status && pm2 stop all"
   },
   "author": "huahao",
@@ -28,7 +27,7 @@
     "koa2-cors": "^2.0.6",
     "log4js": "^2.5.3",
     "moment": "^2.29.1",
-    "mongoose": "^5.12.10",
+    "mongoose": "^5.13.16",
     "nodemailer": "^6.6.1",
     "qiniu": "7.3.2",
     "redis": "^2.8.0",

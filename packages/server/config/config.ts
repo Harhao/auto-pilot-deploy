@@ -1,8 +1,13 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import path from "path";
+
+const nodeEnv = process.env.NODE_ENV;
 const options = {
-  path: process.env.NODE_ENV === 'dev' ? '.test.env' : '.env',
+  path: path.resolve(__dirname, `../.env.${nodeEnv}`),
+  encoding: 'utf8',
 }
-dotenv.config(options)
+
+dotenv.config(options);
 
 export interface Config {
   port: number;
@@ -36,5 +41,6 @@ const config: Config = {
   AppID: process.env.APPID,
   AppSecret: process.env.APPSECRET,
 }
+
 
 export default config;

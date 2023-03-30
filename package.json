@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm run start:server",
-    "start:client": "pnpm --filter client start",
-    "start:server": "pnpm --filter server start"
+    "start:client": "pnpm --filter @pilot/client start",
+    "start:server": "pnpm --filter @pilot/server start"
   },
   "keywords": [],
   "author": "",
