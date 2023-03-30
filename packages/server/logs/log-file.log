@@ -1,0 +1,5 @@
+[2023-03-29T22:17:28.831] [ERROR] default - ::1 - - "GET /users/login HTTP/1.1" 405 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+[2023-03-29T22:17:28.933] [ERROR] default - ::1 - - "GET /favicon.ico HTTP/1.1" 404 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+[2023-03-29T22:17:30.992] [ERROR] default - ::1 - - "GET /users/login HTTP/1.1" 405 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+[2023-03-30T09:38:03.406] [ERROR] default - ::1 - - "GET /users/login HTTP/1.1" 405 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+[2023-03-30T09:38:03.493] [ERROR] default - ::1 - - "GET /favicon.ico HTTP/1.1" 404 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"

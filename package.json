@@ -1,0 +1,17 @@
+{
+  "name": "auto-pilot-deploy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "pnpm run start:server",
+    "start:client": "pnpm --filter client start",
+    "start:server": "pnpm --filter server start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io": "^4.6.1"
+  }
+}
