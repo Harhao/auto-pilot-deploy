@@ -11,19 +11,6 @@
     "build:upload": "node ./scripts/upload.js",
     "test": "http-server ./dist"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.{ts,.tsx}": [
-      "prettier --trailing-comma es5 --single-quote --write",
-      "eslint --ignore-path .eslintignore",
-      "git add "
-    ]
-  },
   "author": "harhao",
   "license": "ISC",
   "dependencies": {
@@ -32,14 +19,10 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^8.3.5",
-    "@commitlint/config-conventional": "^8.3.4",
     "@sentry/cli": "1.74.3",
     "@sentry/react": "^7.43.0",
     "@sentry/tracing": "^7.43.0",
     "@sentry/webpack-plugin": "^1.20.0",
-    "@typescript-eslint/eslint-plugin": "^3.1.0",
-    "@typescript-eslint/parser": "^3.1.0",
     "add-asset-html-webpack-plugin": "^5.0.2",
     "address": "^1.2.2",
     "autoprefixer": "^9.7.4",
@@ -47,19 +30,10 @@
     "clean-webpack-plugin": "^3.0.0",
     "compression-webpack-plugin": "^3.1.0",
     "css-loader": "^3.4.2",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^18.1.0",
-    "eslint-import-resolver-typescript": "^2.0.0",
-    "eslint-plugin-import": "^2.21.1",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.20.0",
-    "eslint-plugin-react-hooks": "^2.5.1",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "git-rev-sync": "^3.0.2",
     "html-webpack-plugin": "^5.5.0",
     "http-server": "^0.12.1",
-    "husky": "^4.2.5",
-    "lint-staged": "^10.2.9",
     "log-symbols": "^3.0.0",
     "mini-css-extract-plugin": "^0.9.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",

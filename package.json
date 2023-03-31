@@ -10,22 +10,34 @@
     "build:server": "pnpm --filter @pilot/server build",
     "start:client": "pnpm --filter @pilot/client start",
     "start:server": "pnpm --filter @pilot/server start",
-    "lint": "echo hello"
+    "lint": "echo '执行lint'"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "socket.io": "^4.6.1"
   },
   "devDependencies": {
+    "@commitlint/cli": "8.3.5",
+    "@commitlint/config-conventional": "8.3.4",
+    "@commitlint/types": "^17.4.4",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
-    "husky": "^8.0.3"
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "./.husky/pre-commit"
+      "pre-commit": "./.husky/pre-commit",
+      "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS --config commitlint.config.ts"
     }
+  },
+  "lint-staged": {
+    "packages/**/*.{ts,.tsx,.js}": [
+      "prettier --trailing-comma es5 --single-quote --write",
+      "eslint --ignore-path .eslintignore",
+      "git add "
+    ]
   }
 }
