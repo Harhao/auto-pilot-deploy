@@ -7,6 +7,16 @@ importers:
       socket.io:
         specifier: ^4.6.1
         version: 4.6.1
+    devDependencies:
+      cross-env:
+        specifier: ^7.0.3
+        version: 7.0.3
+      dotenv:
+        specifier: ^16.0.3
+        version: 16.0.3
+      husky:
+        specifier: ^8.0.3
+        version: 8.0.3
 
   packages/client:
     dependencies:
@@ -62,15 +72,9 @@ importers:
       compression-webpack-plugin:
         specifier: ^3.1.0
         version: 3.1.0(webpack@5.76.2)
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
       css-loader:
         specifier: ^3.4.2
         version: 3.4.2(webpack@5.76.2)
-      dotenv:
-        specifier: ^16.0.3
-        version: 16.0.3
       eslint:
         specifier: ^6.8.0
         version: 6.8.0
@@ -175,9 +179,6 @@ importers:
 
   packages/server:
     dependencies:
-      dotenv:
-        specifier: ^9.0.2
-        version: 9.0.2
       joi:
         specifier: ^17.4.0
         version: 17.4.0
@@ -272,9 +273,6 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^4.24.0
         version: 4.24.0(eslint@7.26.0)(typescript@4.2.4)
-      cross-env:
-        specifier: ^7.0.3
-        version: 7.0.3
       eslint:
         specifier: ^7.26.0
         version: 7.26.0
@@ -3604,11 +3602,6 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /dotenv@9.0.2:
-    resolution: {integrity: sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==}
-    engines: {node: '>=10'}
-    dev: false
-
   /double-ended-queue@2.1.0-0:
     resolution: {integrity: sha512-+BNfZ+deCo8hMNpDqDnvT+c0XpJ5cUa6mqYq89bho2Ifze4URTqRkcwR399hWoTrTkbZ/XJYDgP6rc7pRgffEQ==}
     dev: false
@@ -5485,6 +5478,12 @@ packages:
       please-upgrade-node: 3.2.0
       slash: 3.0.0
       which-pm-runs: 1.1.0
+    dev: true
+
+  /husky@8.0.3:
+    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
+    engines: {node: '>=14'}
+    hasBin: true
     dev: true
 
   /iconv-lite@0.4.15:

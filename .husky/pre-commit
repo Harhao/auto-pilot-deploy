@@ -1,0 +1,7 @@
+#!/bin/sh
+if pnpm run lint --silent; then
+    exit 0
+else
+    echo "代码eslint校验失败，commit被中断"
+    exit 1
+fi

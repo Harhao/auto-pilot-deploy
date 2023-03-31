@@ -4,14 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pnpm run start:server",
+    "start": "pnpm run start:server && pnpm run start:client",
+    "build": "pnpm run build:server && pnpm run build:client",
+    "build:client": "pnpm --filter @pilot/client build",
+    "build:server": "pnpm --filter @pilot/server build",
     "start:client": "pnpm --filter @pilot/client start",
-    "start:server": "pnpm --filter @pilot/server start"
+    "start:server": "pnpm --filter @pilot/server start",
+    "lint": "echo hello"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
+    "husky": "^8.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "./.husky/pre-commit"
+    }
   }
 }

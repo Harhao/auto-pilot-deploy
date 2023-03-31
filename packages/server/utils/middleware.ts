@@ -1,7 +1,6 @@
 import koaLog4 from 'koa-log4'
 import body from 'koa-body'
 import cors from 'koa2-cors'
-import moment from 'moment'
 import log4js from 'log4js';
 import log4jsJson from "../log4js.json";
 
