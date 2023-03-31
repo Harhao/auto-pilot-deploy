@@ -1,0 +1,9 @@
+{
+  "syntax": "scss",
+  "plugins": ["stylelint-scss"],
+  "rules": {
+    "block-no-empty": true,
+    "color-no-invalid-hex": true,
+    "scss/at-rule-no-unknown": true
+  }
+}

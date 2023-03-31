@@ -10,7 +10,7 @@
     "build:server": "pnpm --filter @pilot/server build",
     "start:client": "pnpm --filter @pilot/client start",
     "start:server": "pnpm --filter @pilot/server start",
-    "lint": "echo '执行lint'"
+    "lint": "npx lint-staged"
   },
   "keywords": [],
   "author": "",
@@ -24,20 +24,25 @@
     "@commitlint/types": "^17.4.4",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
+    "eslint": "^8.37.0",
     "husky": "^8.0.3",
-    "lint-staged": "^13.2.0"
+    "lint-staged": "^13.2.0",
+    "prettier": "^2.0.5",
+    "stylelint": "^15.3.0",
+    "stylelint-scss": "^4.6.0"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "./.husky/pre-commit",
+      "pre-commit": "lint-staged",
       "commit-msg": "commitlint -e $HUSKY_GIT_PARAMS --config commitlint.config.ts"
     }
   },
   "lint-staged": {
     "packages/**/*.{ts,.tsx,.js}": [
-      "prettier --trailing-comma es5 --single-quote --write",
-      "eslint --ignore-path .eslintignore",
-      "git add "
+      "eslint --config .lint/config/.eslintrc.json --fix"
+    ],
+    "packages/**/*.scss": [
+      "stylelint --config .lint/config/.stylelintrc.json"
     ]
   }
 }
