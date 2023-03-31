@@ -3,6 +3,7 @@
 # dependencies
 /node_modules
 /**/*/node_modules
+logs/*
 
 # testing
 coverage
@@ -10,6 +11,7 @@ coverage
 # production
 dist
 dll
+
 .env.*
 
 # misc
