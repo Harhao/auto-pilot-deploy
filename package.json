@@ -10,7 +10,7 @@
     "build:server": "pnpm --filter @pilot/server build",
     "start:client": "pnpm --filter @pilot/client start",
     "start:server": "pnpm --filter @pilot/server start",
-    "lint": "npx lint-staged"
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -25,18 +25,15 @@
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "eslint": "^8.37.0",
-    "husky": "^8.0.3",
+    "husky": "^8.0.0",
     "lint-staged": "^13.2.0",
     "prettier": "^2.0.5",
     "stylelint": "^15.3.0",
     "stylelint-scss": "^4.6.0"
   },
-  "husky": {
-    "hooks": {
-    }
-  },
   "lint-staged": {
     "packages/**/*.{ts,.tsx,.js}": [
+      "prettier --trailing-comma es5 --single-quote --write",
       "eslint --config .lint/config/.eslintrc.json --fix"
     ],
     "packages/**/*.scss": [
