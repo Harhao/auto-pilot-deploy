@@ -32,7 +32,7 @@
     "stylelint-scss": "^4.6.0"
   },
   "lint-staged": {
-    "packages/**/*.{ts,tsx,js,json}": [
+    "packages/**/*.{ts,tsx,js}": [
       "eslint --config .lint/config/.eslintrc.json --fix"
     ],
     "*.{md,json,yml}": [
