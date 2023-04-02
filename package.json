@@ -34,7 +34,8 @@
   "lint-staged": {
     "packages/**/*.{ts,.tsx,.js}": [
       "prettier --trailing-comma es5 --single-quote --write",
-      "eslint --config .lint/config/.eslintrc.json --fix"
+      "eslint --config .lint/config/.eslintrc.json --fix",
+      "commitlint -e $HUSKY_GIT_PARAMS --config .lint/config/.commitlinrrc.json"
     ],
     "packages/**/*.scss": [
       "stylelint --config .lint/config/.stylelintrc.json"
