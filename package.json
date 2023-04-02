@@ -42,7 +42,7 @@
       "stylelint --config .lint/config/.stylelintrc.json"
     ],
     "*": [
-      "commitlint -env HUSKY_GIT_PARAMS --config .lint/config/.commitlinrrc.json"
+      "commitlint -env HUSKY_GIT_PARAMS --config .lint/config/commitlint.config.json"
     ]
   }
 }
