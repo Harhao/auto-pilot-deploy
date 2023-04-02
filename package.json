@@ -10,7 +10,8 @@
     "build:server": "pnpm --filter @pilot/server build",
     "start:client": "pnpm --filter @pilot/client start",
     "start:server": "pnpm --filter @pilot/server start",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "commitlint": "commitlint -env HUSKY_GIT_PARAMS --config .lint/config/commitlint.config.json"
   },
   "keywords": [],
   "author": "",
@@ -40,9 +41,6 @@
     ],
     "packages/**/*.scss": [
       "stylelint --config .lint/config/.stylelintrc.json"
-    ],
-    "*": [
-      "commitlint -env HUSKY_GIT_PARAMS --config .lint/config/commitlint.config.json"
     ]
   }
 }
