@@ -33,12 +33,16 @@
   },
   "lint-staged": {
     "packages/**/*.{ts,tsx,js,json}": [
-      "prettier --trailing-comma es5 --single-quote --write",
-      "eslint --config .lint/config/.eslintrc.json --fix",
-      "commitlint -e $HUSKY_GIT_PARAMS --config .lint/config/.commitlinrrc.json"
+      "eslint --config .lint/config/.eslintrc.json --fix"
+    ],
+    "*.{md,json,yml}": [
+      "prettier --trailing-comma es5 --single-quote --write"
     ],
     "packages/**/*.scss": [
       "stylelint --config .lint/config/.stylelintrc.json"
+    ],
+    "*": [
+      "commitlint -env HUSKY_GIT_PARAMS --config .lint/config/.commitlinrrc.json"
     ]
   }
 }
