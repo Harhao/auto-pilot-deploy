@@ -32,7 +32,7 @@
     "stylelint-scss": "^4.6.0"
   },
   "lint-staged": {
-    "packages/**/*.{ts,.tsx,.js}": [
+    "packages/**/*.{ts,tsx,js,json}": [
       "prettier --trailing-comma es5 --single-quote --write",
       "eslint --config .lint/config/.eslintrc.json --fix",
       "commitlint -e $HUSKY_GIT_PARAMS --config .lint/config/.commitlinrrc.json"
