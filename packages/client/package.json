@@ -23,6 +23,8 @@
     "@sentry/react": "^7.43.0",
     "@sentry/tracing": "^7.43.0",
     "@sentry/webpack-plugin": "^1.20.0",
+    "@types/react": "^18.0.32",
+    "@types/react-dom": "^18.0.11",
     "add-asset-html-webpack-plugin": "^5.0.2",
     "address": "^1.2.2",
     "autoprefixer": "^9.7.4",

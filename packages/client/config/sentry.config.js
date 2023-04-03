@@ -3,7 +3,7 @@ const git = require("git-rev-sync");
 
 module.exports = {
   org: "fee",
-  project: "client-push",
+  project: "client",
   release: git.short(),
   include: path.resolve(__dirname, "../dist"),
   ignore: ["node_modules"],

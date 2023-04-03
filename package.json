@@ -22,6 +22,8 @@
     "@commitlint/cli": "8.3.5",
     "@commitlint/config-conventional": "8.3.4",
     "@commitlint/types": "^17.4.4",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
     "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "eslint": "^8.37.0",
@@ -33,10 +35,10 @@
   },
   "lint-staged": {
     "packages/**/*.{ts,tsx,js}": [
-      "eslint --config .lint/config/.eslintrc.json --fix"
+      "eslint --ignore-path .lint/ignore/.eslintignore --config .lint/config/.eslintrc.json --fix"
     ],
     "*.{md,json,yml}": [
-      "prettier --trailing-comma es5 --single-quote --write"
+      "prettier --trailing-comma es5 --single-quote --write --ignore-path .lint/ignore/.prettierignore"
     ],
     "packages/**/*.scss": [
       "stylelint --config .lint/config/.stylelintrc.json"

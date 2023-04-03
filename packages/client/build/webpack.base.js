@@ -12,7 +12,7 @@ const workerCount = require("os").cpus().length - 1;
 const webpack = require("webpack");
 
 const webpackBaseConfig = {
-  entry: path.resolve(__dirname, "../main.ts"),
+  entry: path.resolve(__dirname, "../main.tsx"),
   devtool: "source-map",
   output: {
     publicPath: process.env.PUBLIC_PATH,
@@ -67,7 +67,7 @@ const webpackBaseConfig = {
     }),
     new progressBarPlugin(),
     new htmlWebpackPlugin({
-      title: "网易邮箱",
+      title: "自动发布平台",
       template: path.resolve(__dirname, "../public/index.html"),
       inject: "body",
       minify: {
