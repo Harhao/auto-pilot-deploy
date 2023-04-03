@@ -3,7 +3,7 @@
     "jsx": "react",
     "target": "ES5",
     "module": "commonjs",
-    "lib": ["es2018"],
+    "lib": ["es2018", "dom"],
     "declaration": true,
     "declarationDir": "./dist/types",
     "outDir": "./dist",

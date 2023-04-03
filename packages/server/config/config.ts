@@ -26,7 +26,7 @@ export interface Config {
   AppSecret: string;
 }
 const config: Config = {
-  port: +(process.env.PORT || 3000),
+  port: +(process.env.PORT || 8080),
   jwtSecret: process.env.JWT_SECRET,
   databaseUrl: process.env.DATABASE_URL,
   SecretKey: process.env.SECRET_KEY,

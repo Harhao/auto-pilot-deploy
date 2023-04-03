@@ -14,11 +14,15 @@ import { Server } from 'socket.io';
 import http from 'http';
 
 try {
-  connectToDB(
-    () => {
+  // connectToDB(
+  //   () => {
       const app = new Koa();
       const server = http.createServer(app.callback());
-      const io = new Server(server);
+      const io = new Server(server, {
+        cors: {
+          origin: '*',
+        }
+      });
 
       // 应用安全，防止xss， csrf
       app.use(helmet());
@@ -34,28 +38,31 @@ try {
       app.use(commentRouter.routes()).use(commentRouter.allowedMethods());
 
       io.on('connection', (socket) => {
-        console.log('实例链接');
+        let interval = null;
         socket.on('disconnect', () => {
           console.log('user disconnected');
         });
         socket.on('chatMessage', (msg) => {
-          console.log('message: ' + msg);
-          io.emit('chat message', msg);
+          console.log('doing');
+          interval = setInterval(() => {
+            io.emit('cmdLog', 'doing');
+          }, 1000);
         });
-      });      
+      });  
 
       server.listen(config.port, () => {
         console.log(`服务器启动成功，端口监听在 ${config.port}`);
       });
-
+      
+      app.context.socketio = io;   
       app.context.redisClient = connectToRedis();
 
       runTask(app.context.redisClient);
-    },
-    (error: Error) => {
-      throw error;
-    }
-  );
+  //   },
+  //   (error: Error) => {
+  //     throw error;
+  //   }
+  // );
 } catch (e) {
   console.error('数据库连接异常， 请检查数据库是否可访问');
 }
