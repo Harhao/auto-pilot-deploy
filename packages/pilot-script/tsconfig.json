@@ -6,7 +6,7 @@
     "declaration": true,
     "declarationDir": "./dist/types",
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -20,10 +20,10 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["scripts/*"]
     },
     "typeRoots": ["node_modules/@types"]
   },
-  "include": ["src/**/*"],
+  "include": ["scripts/**/*", "bin/index.ts"],
   "exclude": ["node_modules", "dist"]
 }

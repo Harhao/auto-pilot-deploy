@@ -2,10 +2,12 @@
   "name": "@pilot/script",
   "version": "0.0.1",
   "description": "",
-  "bin": "./dist/index.js",
-  "main": "index.js",
+  "bin": {
+    "pilot": "./dist/bin/index.js"
+  },
   "scripts": {
-    "build": "tsc index.ts "
+    "build": "tsc ./bin/index.ts",
+    "test": "node ./"
   },
   "keywords": [],
   "author": "",
