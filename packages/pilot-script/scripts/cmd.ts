@@ -1,8 +1,9 @@
 import os from 'os';
-import fs from 'fs';
 import path from 'path';
-import gitclone from 'git-clone';
+import fse from 'fs-extra';
 import Log from './utils/log';
+import loading from 'loading-cli';
+import simpleGit, { SimpleGit } from 'simple-git';
 import { ChildProcess, spawn } from 'child_process';
 
 export interface ICmdOptions {
@@ -10,9 +11,9 @@ export interface ICmdOptions {
 }
 
 export default class CmdScript {
-  private targetPath: string;
-  private generateFolderName: string;
-  private processMap: Map<number, number | string>;
+  public targetPath: string;
+  public generateFolderName: string;
+  public processMap: Map<number, number | string>;
 
   constructor(options: ICmdOptions) {
     this.processMap = new Map();
@@ -20,36 +21,40 @@ export default class CmdScript {
     this.targetPath = this.getUserHomePath(this.generateFolderName);
   }
 
-  async cloneRepo(gitUrl: string) {
+  async cloneRepo(repoUrl: string): Promise<string | null> {
     return new Promise((resolve, reject) => {
       try {
-        gitclone(gitUrl, this.targetPath, {}, function (e) {
+        const git: SimpleGit = simpleGit();
+        const folderName = this.getGitRepoName(repoUrl) as string;
+        const gitFolder = path.resolve(this.targetPath, folderName);
+        if (this.checkPathExists(gitFolder)) {
+          this.deleteDirectory(gitFolder);
+        }
+        const load = this.showLoading('下载git仓库中');
+        git.clone(repoUrl, gitFolder, ['--depth=1'], (e, result) => {
           if (e) {
-            Log.error(e.message);
-            reject(false);
+            Log.error(`Error cloning repository: ${e}`);
+            resolve(null);
             return;
           }
-          Log.success(`download git repo success ${gitUrl}`);
-          resolve(true);
+          load.succeed('下载成功');
+          resolve(gitFolder);
         });
       } catch (e) {
-        console.log('download git repo error', e);
-        reject(false);
+        Log.error(`download git repo error ${e}`);
+        reject(null);
       }
     });
   }
 
-  checkPathExists(targetPath: string): boolean {
-    try {
-      const stats = fs.statSync(targetPath);
-      if(stats.isFile() || stats.isDirectory()) {
-        return true;
-      }
-      return false;
-    } catch (err) {
-      Log.error('路径不存在');
-      return false;
+  deleteDirectory(directory: string) {
+    if(this.checkPathExists(directory)) {
+      fse.removeSync(directory); // 删除当前目录
     }
+  }
+
+  checkPathExists(targetPath: string): boolean {
+   return fse.pathExistsSync(targetPath);
   }
 
   async changeDirectory(targetPath: string) {
@@ -72,17 +77,17 @@ export default class CmdScript {
       );
       const isExist = this.checkPathExists(folderPath);
       if (!isExist) {
-        fs.mkdirSync(folderPath, { recursive: true });
+        fse.mkdirsSync(folderPath);
         return folderPath;
       }
       return folderPath;
-    } catch(e) {
+    } catch (e) {
       Log.error(`${e}`);
       return '';
     }
   }
 
-  public runCmd(command: string, args: string[]  = []): ChildProcess | null {
+  public runCmd(command: string, args: string[] = []): ChildProcess | null {
     const cmdProcess: any = this.getChildProcess(command, args);
     if (cmdProcess) {
       if (!this.processMap.has(cmdProcess.pid)) {
@@ -104,7 +109,9 @@ export default class CmdScript {
 
   private getChildProcess(command: string, args: string[]): ChildProcess {
     const child = spawn(command, args, { stdio: 'inherit' });
-    child.on('error', (e) => {  console.log(e); });
+    child.on('error', (e) => {
+      console.log(e);
+    });
     child.on('exit', (code) => {
       if (!code) {
         process.exit(0);
@@ -117,5 +124,40 @@ export default class CmdScript {
   public rollBack(commitHash: string) {
     const cmd = `git checkout ${commitHash}`;
     this.runCmd(cmd, []);
+  }
+
+  private showLoading(loadingText: string) {
+    const load = loading({
+      text: loadingText,
+      color: 'green',
+      interval: 100,
+      stream: process.stdout,
+      frames: [
+        '🕐',
+        '🕑',
+        '🕒',
+        '🕓',
+        '🕔',
+        '🕕',
+        '🕖',
+        '🕗',
+        '🕘',
+        '🕙',
+        '🕚',
+      ],
+    }).start();
+    return load;
+  }
+
+  getGitRepoName(repoUrl: string): string | null {
+    const pattern = /^.*?\/\/.*?\/([\w-]+)\/([\w-]+?)(\.git)?$/;
+    const match = repoUrl.match(pattern);
+    if (match) {
+      const [_, username, repository] = match;
+      return repository;
+    } else {
+      Log.error('Invalid Git repository URL');
+      return null;
+    }
   }
 }
