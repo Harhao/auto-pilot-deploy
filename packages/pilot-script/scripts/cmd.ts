@@ -3,23 +3,21 @@ import fs from 'fs';
 import path from 'path';
 import gitclone from 'git-clone';
 import Log from './utils/log';
-import process from 'process';
-import { execSync } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 
 export interface ICmdOptions {
-  targetPath: string;
-  generateFolderName: string;
+  generateFolderName?: string;
 }
 
 export default class CmdScript {
   private targetPath: string;
   private generateFolderName: string;
-  private processList: number[];
+  private processMap: Map<number, number | string>;
 
   constructor(options: ICmdOptions) {
-    this.processList = [];
+    this.processMap = new Map();
     this.generateFolderName = options.generateFolderName ?? 'pilot';
-    this.targetPath = this.getUserHomePath(options.generateFolderName);
+    this.targetPath = this.getUserHomePath(this.generateFolderName);
   }
 
   async cloneRepo(gitUrl: string) {
@@ -41,52 +39,83 @@ export default class CmdScript {
     });
   }
 
-  isPathExist(targetPath: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      fs.stat(targetPath, (err, stats) => {
-        if (err) {
-          console.error('Folder does not exist');
-          reject(false);
-        } else {
-          if (stats.isDirectory()) {
-            console.log('Folder exists');
-            resolve(true);
-          } else {
-            console.error('Path is not a folder');
-            reject(false);
-          }
-        }
-      });
-    });
+  checkPathExists(targetPath: string): boolean {
+    try {
+      const stats = fs.statSync(targetPath);
+      if(stats.isFile() || stats.isDirectory()) {
+        return true;
+      }
+      return false;
+    } catch (err) {
+      Log.error('路径不存在');
+      return false;
+    }
   }
 
   async changeDirectory(targetPath: string) {
     try {
-      const isPathExist = await this.isPathExist(targetPath);
-      if(isPathExist) {
+      const checkPathExists = this.checkPathExists(targetPath);
+      if (checkPathExists) {
         process.chdir(targetPath);
       }
     } catch (e) {
-      console.log(e);
+      Log.error(`${e}`);
     }
   }
 
-  getUserHomePath(targetPath: string) {
-    const homeDir = os.homedir();
-    const folderPath = path.resolve(
-      homeDir,
-      this.generateFolderName || targetPath
-    );
-    if (!this.isPathExist(folderPath)) {
-      fs.mkdirSync(folderPath, { recursive: true });
+  getUserHomePath(targetPath: string): string {
+    try {
+      const homeDir = os.homedir();
+      const folderPath = path.resolve(
+        homeDir,
+        this.generateFolderName || targetPath
+      );
+      const isExist = this.checkPathExists(folderPath);
+      if (!isExist) {
+        fs.mkdirSync(folderPath, { recursive: true });
+        return folderPath;
+      }
       return folderPath;
+    } catch(e) {
+      Log.error(`${e}`);
+      return '';
     }
-    return folderPath;
   }
 
-  private runCmd(command: string) {
-    if(command) {
-      execSync(command, );
+  public runCmd(command: string, args: string[]  = []): ChildProcess | null {
+    const cmdProcess: any = this.getChildProcess(command, args);
+    if (cmdProcess) {
+      if (!this.processMap.has(cmdProcess.pid)) {
+        this.processMap.set(cmdProcess.pid, cmdProcess.pid);
+      }
+      return cmdProcess;
     }
+    return null;
+  }
+
+  public stopCmdRun(pid: number) {
+    if (pid) {
+      if (this.processMap.has(pid)) {
+        this.processMap.delete(pid);
+        process.kill(pid, 'SIGTERM');
+      }
+    }
+  }
+
+  private getChildProcess(command: string, args: string[]): ChildProcess {
+    const child = spawn(command, args, { stdio: 'inherit' });
+    child.on('error', (e) => {  console.log(e); });
+    child.on('exit', (code) => {
+      if (!code) {
+        process.exit(0);
+      }
+      process.exit(1);
+    });
+    return child;
+  }
+
+  public rollBack(commitHash: string) {
+    const cmd = `git checkout ${commitHash}`;
+    this.runCmd(cmd, []);
   }
 }

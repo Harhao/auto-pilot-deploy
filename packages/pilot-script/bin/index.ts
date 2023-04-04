@@ -1,3 +1,1 @@
-// import Cac from "cac";
-export default class PilotScript {
-}
+console.log('hello world');

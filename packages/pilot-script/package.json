@@ -2,13 +2,14 @@
   "name": "@pilot/script",
   "version": "0.0.1",
   "description": "",
+  "type": "module",
   "bin": {
     "pilot": "./dist/bin/index.js"
   },
   "main": "./dist/scripts/cmd.js",
   "scripts": {
-    "build": "tsc ./bin/index.ts",
-    "test": "node ./"
+    "build": "tsc ",
+    "test": "ts-node ./bin/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +18,14 @@
     "cac": "^6.7.14",
     "chalk": "^3.0.0",
     "git-clone": "^0.2.0",
+    "inquirer": "^9.1.5",
     "log-symbols": "^3.0.0"
   },
   "devDependencies": {
     "@types/git-clone": "^0.2.0",
-    "@types/node": "^18.15.11"
+    "@types/inquirer": "^9.0.3",
+    "@types/node": "^18.15.11",
+    "ts-node": "^9.1.1",
+    "typescript": "^5.0.3"
   }
 }
