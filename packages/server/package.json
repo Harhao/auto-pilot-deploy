@@ -29,7 +29,8 @@
     "qiniu": "7.3.2",
     "redis": "^2.8.0",
     "request": "^2.88.2",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "@pilot/script": "0.0.1"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.1",
