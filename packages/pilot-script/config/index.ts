@@ -9,11 +9,19 @@ const deployConfig: any[] = [
     },
     {
         type: 'text',
+        name: 'account',
+        message: '✨登录服务器的账号✨~',
+        onRender(kleur: any) {
+            this.msg = kleur.yellow("✨登录服务器的账号✨");
+        }
+    },
+    {
+        type: 'text',
         name: 'serverPass',
         style: "password",
         message: '✨需要部署服务器密码✨',
         onRender(kleur: any) {
-            this.msg = kleur.green("需要部署服务器密码✨");
+            this.msg = kleur.yellow("需要部署服务器密码✨");
         }
     },
     {
@@ -73,9 +81,9 @@ const projectConfig: any[] = [
     {
         type: "text",
         name: "dest",
-        message: "输入需要构建脚本文件夹",
+        message: "输入需要发布的文件",
         onRender(kleur: any) {
-            this.msg = kleur.green("输入需要构建脚本文件夹");
+            this.msg = kleur.green("输入需要发布的文件");
         }
     },
 ];
