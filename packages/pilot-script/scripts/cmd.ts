@@ -5,6 +5,7 @@ import Log from './utils/log';
 import loading from 'loading-cli';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { SpawnSyncReturns, spawnSync } from 'child_process';
+import { CREATEFOLDER } from '../consts/index';
 
 export interface ICmdOptions {
   generateFolderName?: string;
@@ -18,7 +19,7 @@ export default class CmdScript {
 
   constructor(options: ICmdOptions) {
     this.processMap = new Map();
-    this.generateFolderName = options.generateFolderName ?? 'pilot';
+    this.generateFolderName = options.generateFolderName ?? CREATEFOLDER;
     this.targetPath = this.getUserHomePath(this.generateFolderName);
   }
 
@@ -31,7 +32,7 @@ export default class CmdScript {
           this.deleteDirectory(gitFolder);
         }
         const load = this.showLoading('下载git仓库中');
-        this.git.clone(repoUrl, gitFolder, ['--depth=1'], (e, result) => {
+        this.git.clone(repoUrl, gitFolder, ['--progress'],(e, result) => {
           if (e) {
             Log.error(`Error cloning repository: ${e}`);
             resolve(null);
@@ -164,7 +165,23 @@ export default class CmdScript {
     }
   }
 
-  // async updateGitConfigure(config: { auth: string, url: string }): Promise<boolean> {
-
-  // }
+  async updateGitConfigure(config: { auth: string, url: string, user: string }): Promise<boolean> {
+    return new Promise((resolve) => {
+      try {
+        const { auth, user } = config;
+        this.git = this.git.env({
+          'GIT_SSH_COMMAND': 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no', // 可选：禁用 SSH 主机密钥检查
+          'GIT_ASKPASS': 'echo', // 禁用默认身份验证
+          'GIT_TERMINAL_PROMPT': '0', // 禁用终端提示
+          'GIT_HTTP_USER_AGENT': 'pilot-script', // 可选：设置自定义 User-Agent 标头
+          'GITHUB_TOKEN': auth // 设置个人访问令牌
+        }).addConfig('credential.helper', 'store') // 可选：存储凭据
+          .addConfig('user.name', `${user}`);
+        resolve(true);
+      } catch (e) {
+        Log.error(`${e}`);
+        resolve(false);
+      }
+    });
+  }
 }
