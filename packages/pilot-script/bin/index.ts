@@ -1,9 +1,9 @@
-import prompts  from 'prompts';
+import prompts from 'prompts';
 import CmdScript from '../scripts/cmd';
 import { projectConfig, deployConfig } from '../config/index';
 import Log from '../scripts/utils/log';
 import path from 'path';
-import fs from 'fs';
+import fse from 'fs-extra';
 
 const envConfigName = 'env.json';
 class Pilot {
@@ -23,23 +23,41 @@ class Pilot {
             const answers = await prompts(deployConfig);
             this.createGitEnv(answers);
         }
-        this.initDeployProject();
+        this.startDeployJob();
     }
 
-    public async initDeployProject() {
+    public async downloadRepo(gitUrl: string) {
+        const data = fse.readJsonSync(this.configPath);
+        if (data?.gitPass) {
+            // const isConfig = await this.cmd.updateGitConfigure({
+            //     auth: data.gitPass,
+            //     url: gitUrl
+            // });
+            // if (isConfig) {
+                return await this.cmd.cloneRepo(gitUrl);
+            // }
+        }
+        return null;
+    }
+
+    public async startDeployJob() {
         try {
-            const { gitUrl, } = await prompts(projectConfig);
-            const localPath = await this.cmd.cloneRepo(gitUrl);
+            const { gitUrl, branch, command, tool } = await prompts(projectConfig);
+            const localPath = await this.downloadRepo(gitUrl);
             Log.success(`运行命令脚本目录是${localPath}`);
             if(localPath) {
+                const commands = command.split(' ');
                 this.cmd.changeDirectory(localPath);
-                this.cmd.runCmd('npm', ['install']);
+                await this.cmd.switchToBranch(branch);
+                await this.cmd.runCmd(tool, ['install']);
+                await this.cmd.runCmd(tool, [...commands]);
+                Log.success('开始执行上传操作～');
             }
-        } catch(e) {
+        } catch (e) {
             Log.error(`${e}`);
         }
 
-    }   
+    }
 
     public getConfigPath(): string {
         const rootDir = this.cmd.targetPath;
@@ -49,7 +67,7 @@ class Pilot {
 
     public createGitEnv(answers: Record<string, string>) {
         const data = JSON.stringify(answers);
-        fs.writeFileSync(this.configPath, data, {
+        fse.writeFileSync(this.configPath, data, {
             encoding: 'utf8',
             mode: 0o644,
             flag: 'w+'

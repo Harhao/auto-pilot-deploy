@@ -4,7 +4,7 @@ import fse from 'fs-extra';
 import Log from './utils/log';
 import loading from 'loading-cli';
 import simpleGit, { SimpleGit } from 'simple-git';
-import { ChildProcess, spawn } from 'child_process';
+import { SpawnSyncReturns, spawnSync } from 'child_process';
 
 export interface ICmdOptions {
   generateFolderName?: string;
@@ -14,6 +14,7 @@ export default class CmdScript {
   public targetPath: string;
   public generateFolderName: string;
   public processMap: Map<number, number | string>;
+  private git: SimpleGit = simpleGit();
 
   constructor(options: ICmdOptions) {
     this.processMap = new Map();
@@ -24,14 +25,13 @@ export default class CmdScript {
   async cloneRepo(repoUrl: string): Promise<string | null> {
     return new Promise((resolve, reject) => {
       try {
-        const git: SimpleGit = simpleGit();
         const folderName = this.getGitRepoName(repoUrl) as string;
         const gitFolder = path.resolve(this.targetPath, folderName);
         if (this.checkPathExists(gitFolder)) {
           this.deleteDirectory(gitFolder);
         }
         const load = this.showLoading('下载git仓库中');
-        git.clone(repoUrl, gitFolder, ['--depth=1'], (e, result) => {
+        this.git.clone(repoUrl, gitFolder, ['--depth=1'], (e, result) => {
           if (e) {
             Log.error(`Error cloning repository: ${e}`);
             resolve(null);
@@ -48,13 +48,13 @@ export default class CmdScript {
   }
 
   deleteDirectory(directory: string) {
-    if(this.checkPathExists(directory)) {
+    if (this.checkPathExists(directory)) {
       fse.removeSync(directory); // 删除当前目录
     }
   }
 
   checkPathExists(targetPath: string): boolean {
-   return fse.pathExistsSync(targetPath);
+    return fse.pathExistsSync(targetPath);
   }
 
   async changeDirectory(targetPath: string) {
@@ -87,15 +87,18 @@ export default class CmdScript {
     }
   }
 
-  public runCmd(command: string, args: string[] = []): ChildProcess | null {
-    const cmdProcess: any = this.getChildProcess(command, args);
-    if (cmdProcess) {
-      if (!this.processMap.has(cmdProcess.pid)) {
-        this.processMap.set(cmdProcess.pid, cmdProcess.pid);
+  public runCmd(command: string, args: string[] = []): Promise<SpawnSyncReturns<Buffer> | null> {
+    return new Promise((resolve) => {
+      const cmdProcess: any = this.getChildProcess(command, args);
+      if (cmdProcess) {
+        if (!this.processMap.has(cmdProcess.pid)) {
+          this.processMap.set(cmdProcess.pid, cmdProcess.pid);
+        }
+        resolve(cmdProcess);
+        return;
       }
-      return cmdProcess;
-    }
-    return null;
+      resolve(null);
+    });
   }
 
   public stopCmdRun(pid: number) {
@@ -107,18 +110,8 @@ export default class CmdScript {
     }
   }
 
-  private getChildProcess(command: string, args: string[]): ChildProcess {
-    const child = spawn(command, args, { stdio: 'inherit' });
-    child.on('error', (e) => {
-      console.log(e);
-    });
-    child.on('exit', (code) => {
-      if (!code) {
-        process.exit(0);
-      }
-      process.exit(1);
-    });
-    return child;
+  private getChildProcess(command: string, args: string[]): SpawnSyncReturns<Buffer> {
+    return spawnSync(command, args, { stdio: 'inherit' });
   }
 
   public rollBack(commitHash: string) {
@@ -153,11 +146,25 @@ export default class CmdScript {
     const pattern = /^.*?\/\/.*?\/([\w-]+)\/([\w-]+?)(\.git)?$/;
     const match = repoUrl.match(pattern);
     if (match) {
-      const [_, username, repository] = match;
+      const repository = match[2];
       return repository;
     } else {
       Log.error('Invalid Git repository URL');
       return null;
     }
   }
+  async switchToBranch(branch: string): Promise<boolean> {
+    try {
+      const result = await this.git.checkout(branch);
+      console.log('分支已经切换到：', result);
+      return true;
+    } catch (err) {
+      console.log('切换分支失败：', err);
+      return false;
+    }
+  }
+
+  // async updateGitConfigure(config: { auth: string, url: string }): Promise<boolean> {
+
+  // }
 }

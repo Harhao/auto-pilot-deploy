@@ -1,11 +1,14 @@
 import { PromptObject } from "prompts";
-import chalk from "chalk";
+
+const commonStyle = {
+    lineHeight: 2
+};
 
 const deployConfig: PromptObject[] = [
     {
         type: 'text',
         name: 'address',
-        message: '✨需要部署的服务器地址✨~'
+        message: '✨需要部署的服务器地址✨~',
     },
     {
         type: 'text',
@@ -21,11 +24,14 @@ const deployConfig: PromptObject[] = [
     },
 ];
 
-const projectConfig: PromptObject[] = [
+const projectConfig: any[] = [
     {
         type: "text",
         name: "gitUrl",
-        message: "输入需要部署的git仓库地址",
+        message: "",
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入需要部署的git仓库地址");
+        }
     },
     {
         type: "text",
@@ -33,13 +39,23 @@ const projectConfig: PromptObject[] = [
         message: "输入需要构建的git分支",
     },
     {
+        type: 'autocomplete',
+        name: 'tool',
+        message: '请选择构建的工具',
+        choices: [
+            { title: 'npm', value: 'npm' },
+            { title: 'yarn', value: 'yarn' },
+            { title: 'pnpm', value: 'pnpm' }
+        ]
+    },
+    {
         type: "text",
-        name: "branch",
+        name: "command",
         message: "输入需要构建脚本",
     },
     {
         type: "text",
-        name: "branch",
+        name: "dest",
         message: "输入需要构建脚本文件夹",
     },
 ];
