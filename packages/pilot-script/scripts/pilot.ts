@@ -2,7 +2,7 @@ import prompts from 'prompts';
 import CmdScript from './cmd';
 import { projectConfig, deployConfig } from '../config/index';
 import Log from '../scripts/utils/log';
-import path from 'path';
+import path, { resolve } from 'path';
 import fse from 'fs-extra';
 import { Client } from 'ssh2';
 import { ENVCONFIGNAME } from '../consts/index';
@@ -14,10 +14,16 @@ interface IEnvConfig {
     'gitPass': string;
 }
 
+
+export interface IPilotOptions {
+    deployFolder: string;
+}
+
 export default class Pilot {
     private cmd: CmdScript;
     private configPath: string;
     private client: Client = new Client();
+    private fileSftp: any;
     constructor() {
         this.cmd = new CmdScript({});
         this.configPath = this.getConfigPath();
@@ -94,11 +100,15 @@ export default class Pilot {
                     Log.success('开始执行上传操作～');
                     this.client.on('ready', async () => {
                         Log.success('已经准备完毕');
-                        this.sftpExec(`mkdir ${remotePath}`);
-                        this.client.exec(`mkdir ${remotePath}`, (e) => {
-                            console.log(e);
+                        await this.createRemoteDirectory(`${remotePath}`);
+                        this.client.sftp(async (e, sftp) => {
+                            if(e) {
+                                Log.error(`sftp error ${e}`);
+                                return;
+                            }   
+                            this.fileSftp = sftp;
+                            this.uploadDirectory(localTarget, remotePath);
                         });
-                        this.uploadDirectory(localDest, remotePath);
                     }).connect({
                         host: address,
                         port: 22,
@@ -115,32 +125,47 @@ export default class Pilot {
 
     }
 
-    public sftpExec(command: string) {
-        this.client.exec(command, (e, stream) => {
-            if (e) {
-                Log.error(`${command} exec error, ${e}`);
-                return;
-            }
-            stream.on('close', (code: number, signal: number) => {
-                this.client.end();
-            }).on('data', (data: string) => {
-                Log.success(`STDOUT: ${data}`);
-            }).stderr.on('data', (data) => {
-                Log.error(`${command} stdout error ${e}`);
+    public async createRemoteDirectory(remotePath: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.client.exec(`sudo mkdir ${remotePath}`, (err, stream) => {
+                if (err) {
+                    console.error(`mkdir ${remotePath} Error: ${err}`);
+                    reject(false);
+                } else {
+                    console.log(`mkdir ${remotePath} success`);
+                    resolve(true);
+                }
             });
         });
     }
 
-    public uploadDirectory(localPath: string, remotePath: string) {
-        const files = fse.readdirSync(localPath);
-        files.forEach((file) => {
-            const stat = fse.statSync(`${localPath}/${file}`);
-            if (stat.isFile()) {
-                Log.success(`${file} -> ${remotePath}`);
-            } else if (stat.isDirectory()) {
-                Log.success(`${localPath}/${file} -> ${remotePath}/${file}`);
-                this.uploadDirectory(`${localPath}/${file}`, `${remotePath}/${file}`);
-            }
+    public uploadFile(localFile: string, remoteFile: string) {
+        return new Promise((resolve, reject) => {
+            this.fileSftp.fastPut(`${localFile}`, `${remoteFile}`, (err: Error) => {
+                if (err) {
+                    Log.error(`${err}`);
+                    reject(false);
+                    return;
+                }
+                resolve(true);
+                Log.success(`${localFile} -> ${remoteFile}`);
+            });
+        });
+    }
+
+    public async uploadDirectory(localPath: string, remotePath: string) {
+        return new Promise((resolve) => {
+            const files = fse.readdirSync(localPath);
+            files.forEach(async (file) => {
+                const stat = fse.statSync(`${localPath}/${file}`);
+                if (stat.isFile()) {
+                    await this.uploadFile(`${localPath}/${file}`, `${remotePath}/${file}`);
+                } else if (stat.isDirectory()) {
+                    await this.createRemoteDirectory(`${remotePath}/${file}`);
+                    this.uploadDirectory(`${localPath}/${file}`, `${remotePath}/${file}`);
+                }
+            });
+            resolve(true);
         });
     }
 }

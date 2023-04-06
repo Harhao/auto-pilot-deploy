@@ -88,7 +88,10 @@ export default class CmdScript {
     }
   }
 
-  public runCmd(command: string, args: string[] = []): Promise<SpawnSyncReturns<Buffer> | null> {
+  public runCmd(
+    command: string,
+    args: string[] = []
+  ): Promise<SpawnSyncReturns<Buffer> | null> {
     return new Promise((resolve) => {
       const cmdProcess: any = this.getChildProcess(command, args);
       if (cmdProcess) {
@@ -111,7 +114,10 @@ export default class CmdScript {
     }
   }
 
-  private getChildProcess(command: string, args: string[]): SpawnSyncReturns<Buffer> {
+  private getChildProcess(
+    command: string,
+    args: string[]
+  ): SpawnSyncReturns<Buffer> {
     return spawnSync(command, args, { stdio: 'inherit' });
   }
 
@@ -165,17 +171,24 @@ export default class CmdScript {
     }
   }
 
-  async updateGitConfigure(config: { auth: string, url: string, user: string }): Promise<boolean> {
+  async updateGitConfigure(config: {
+    auth: string;
+    url: string;
+    user: string;
+  }): Promise<boolean> {
     return new Promise((resolve) => {
       try {
         const { auth, user } = config;
-        this.git = this.git.env({
-          'GIT_SSH_COMMAND': 'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no', // 可选：禁用 SSH 主机密钥检查
-          'GIT_ASKPASS': 'echo', // 禁用默认身份验证
-          'GIT_TERMINAL_PROMPT': '0', // 禁用终端提示
-          'GIT_HTTP_USER_AGENT': 'pilot-script', // 可选：设置自定义 User-Agent 标头
-          'GITHUB_TOKEN': auth // 设置个人访问令牌
-        }).addConfig('credential.helper', 'store') // 可选：存储凭据
+        this.git = this.git
+          .env({
+            GIT_SSH_COMMAND:
+              'ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no', // 可选：禁用 SSH 主机密钥检查
+            GIT_ASKPASS: 'echo', // 禁用默认身份验证
+            GIT_TERMINAL_PROMPT: '0', // 禁用终端提示
+            GIT_HTTP_USER_AGENT: 'pilot-script', // 可选：设置自定义 User-Agent 标头
+            GITHUB_TOKEN: auth, // 设置个人访问令牌
+          })
+          .addConfig('credential.helper', 'store') // 可选：存储凭据
           .addConfig('user.name', `${user}`);
         resolve(true);
       } catch (e) {
