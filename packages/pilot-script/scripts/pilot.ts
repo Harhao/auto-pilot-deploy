@@ -88,7 +88,6 @@ export default class Pilot {
     public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
             const { branch, command, tool, dest } = projectConfig;
-            const data = fse.readJsonSync(this.configPath);
             Log.success(`运行命令脚本目录是${localPath}`);
             if (localPath) {
                 const commands = command.split(' ');
@@ -174,7 +173,7 @@ export default class Pilot {
         return new Promise((resolve, reject) => {
             this.fileSftp.fastPut(`${localFile}`, `${remoteFile}`, (err: Error) => {
                 if (err) {
-                    Log.error(`${err}`);
+                    Log.error(`fastPut ${localFile} -> ${remoteFile} ${err}`);
                     reject(false);
                     return;
                 }
@@ -186,19 +185,23 @@ export default class Pilot {
 
     public async uploadDirectory(localPath: string, remotePath: string) {
         return new Promise((resolve) => {
-            const files = fse.readdirSync(localPath);
-            files.forEach(async (file) => {
-                const localActualPath = `${localPath}/${file}`;
-                const remoteActualPath = `${remotePath}/${file}`;
-                const stat = fse.statSync(localActualPath);
-                if (stat.isFile()) {
-                    await this.uploadFile(`${localActualPath}`, `${remoteActualPath}`);
-                } else if (stat.isDirectory()) {
-                    await this.createRemoteDirectory(`${remoteActualPath}`);
-                    await this.uploadDirectory(`${localActualPath}`, `${remoteActualPath}`);
-                }
-            });
-            resolve(true);
+            try {
+                const files = fse.readdirSync(localPath);
+                files.forEach(async (file) => {
+                    const localActualPath = `${localPath}/${file}`;
+                    const remoteActualPath = `${remotePath}/${file}`;
+                    const stat = fse.statSync(localActualPath);
+                    if(stat.isDirectory()) {
+                        await this.createRemoteDirectory(`${remoteActualPath}`);
+                        await this.uploadDirectory(`${localActualPath}`, `${remoteActualPath}`);
+                    } else {
+                        await this.uploadFile(`${localActualPath}`, `${remoteActualPath}`);
+                    }
+                });
+                resolve(true);
+            } catch(e) {
+                Log.error(`uploadDirectory ${localPath} -> ${remotePath} error`);
+            }
         });
     }
 }
