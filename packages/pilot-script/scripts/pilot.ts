@@ -67,9 +67,8 @@ export default class Pilot {
         const pilotCofig = (await this.initConfigure()) as IPilotCofig;
         const projectConfig = await this.initProject() as IProjectCofig;
         const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
-        console.log(localPath);
         if (localPath) {
-            this.deployJob(localPath, projectConfig, pilotCofig);
+            await this.deployJob(localPath, projectConfig, pilotCofig);
         }
     }
 
@@ -95,7 +94,7 @@ export default class Pilot {
                 await this.cmd.switchToBranch(branch);
                 await this.cmd.runCmd(tool, ['install']);
                 await this.cmd.runCmd(tool, [...commands]);
-                this.uploadFileToServer(pilotCofig, dest);
+                await this.uploadFileToServer(pilotCofig, dest);
             }
         } catch (e) {
             Log.error(`${e}`);
@@ -120,11 +119,12 @@ export default class Pilot {
         return this.cmd.checkPathExists(this.configPath);
     }
 
-    public uploadFileToServer(data: any, localDest: string) {
+    public async uploadFileToServer(data: any, localDest: string) {
         try {
             const { address, account, serverPass } = data;
             const remotePath = `/root/${localDest}`;
             const localTarget = path.resolve(process.cwd(), localDest);
+
             if (fse.existsSync(localTarget)) {
                 Log.success(`已经存在文件目录 ${localTarget}`);
                 if (address && account && serverPass) {
@@ -139,7 +139,7 @@ export default class Pilot {
                                     return;
                                 }
                                 this.fileSftp = sftp;
-                                this.uploadDirectory(localTarget, remotePath);
+                                await this.uploadDirectory(localTarget, remotePath);
                             });
                         })
                         .connect({
@@ -180,6 +180,8 @@ export default class Pilot {
                 resolve(true);
                 Log.success(`${localFile} -> ${remoteFile}`);
             });
+        }).catch((e: Error) => {
+            Log.error(`${localFile} -> ${remoteFile} error: ${e}`);
         });
     }
 
