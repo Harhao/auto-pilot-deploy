@@ -32,14 +32,15 @@ export default class CmdScript {
           this.deleteDirectory(gitFolder);
         }
         const load = this.showLoading('下载git仓库中');
-        this.git.clone(repoUrl, gitFolder, ['--progress'], (e, result) => {
+        this.git.clone(repoUrl, gitFolder, ['--progress'], (e) => {
           if (e) {
             Log.error(`Error cloning repository: ${e}`);
             resolve(null);
+            resolve(gitFolder);
             return;
           }
           load.succeed('下载成功');
-          resolve(gitFolder);
+          this.git.cwd({ path: gitFolder, root: true});
         });
       } catch (e) {
         Log.error(`download git repo error ${e}`);
