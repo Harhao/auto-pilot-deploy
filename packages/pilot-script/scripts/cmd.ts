@@ -36,11 +36,11 @@ export default class CmdScript {
           if (e) {
             Log.error(`Error cloning repository: ${e}`);
             resolve(null);
-            resolve(gitFolder);
             return;
           }
           load.succeed('下载成功');
           this.git.cwd({ path: gitFolder, root: true});
+          resolve(gitFolder);
         });
       } catch (e) {
         Log.error(`download git repo error ${e}`);
