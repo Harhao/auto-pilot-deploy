@@ -214,9 +214,15 @@ importers:
       '@types/prompts':
         specifier: ^2.4.4
         version: 2.4.4
+      '@types/ssh2-streams':
+        specifier: ^0.1.9
+        version: 0.1.9
       node-ssh:
         specifier: ^13.1.0
         version: 13.1.0
+      ssh2-streams:
+        specifier: ^0.4.10
+        version: 0.4.10
       ts-node:
         specifier: ^9.1.1
         version: 9.1.1(typescript@5.0.3)
@@ -1246,6 +1252,12 @@ packages:
 
   /@types/source-list-map@0.1.2:
     resolution: {integrity: sha512-K5K+yml8LTo9bWJI/rECfIPrGgxdpeNbj+d53lwN4QjW1MCwlkhUms+gtdzigTeUyBr09+u8BwOIY3MXvHdcsA==}
+    dev: true
+
+  /@types/ssh2-streams@0.1.9:
+    resolution: {integrity: sha512-I2J9jKqfmvXLR5GomDiCoHrEJ58hAOmFrekfFqmCFd+A6gaEStvWnPykoWUwld1PNg4G5ag1LwdA+Lz1doRJqg==}
+    dependencies:
+      '@types/node': 18.15.11
     dev: true
 
   /@types/ssh2@1.11.9:
@@ -10157,6 +10169,15 @@ packages:
     resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
     dev: true
 
+  /ssh2-streams@0.4.10:
+    resolution: {integrity: sha512-8pnlMjvnIZJvmTzUIIA5nT4jr2ZWNNVHwyXfMGdRJbug9TpI3kd99ffglgfSWqujVv/0gxwMsDn9j9RVst8yhQ==}
+    engines: {node: '>=5.2.0'}
+    dependencies:
+      asn1: 0.2.6
+      bcrypt-pbkdf: 1.0.2
+      streamsearch: 0.1.2
+    dev: true
+
   /ssh2@1.11.0:
     resolution: {integrity: sha512-nfg0wZWGSsfUe/IBJkXVll3PEZ//YH2guww+mP88gTpuSU4FtZN7zu9JoeTGOyCNx2dTDtT9fOpWwlzyj4uOOw==}
     engines: {node: '>=10.16.0'}
@@ -10246,6 +10267,11 @@ packages:
       readable-stream: 2.3.8
     transitivePeerDependencies:
       - supports-color
+
+  /streamsearch@0.1.2:
+    resolution: {integrity: sha512-jos8u++JKm0ARcSUTAZXOVC0mSox7Bhn6sBgty73P1f3JGf7yG2clTbBNHUdde/kdvP2FESam+vM6l8jBrNxHA==}
+    engines: {node: '>=0.8.0'}
+    dev: true
 
   /strict-uri-encode@1.1.0:
     resolution: {integrity: sha512-R3f198pcvnB+5IpnBlRkphuE9n46WyVl8I39W/ZUTZLz4nqSP/oLYUrcnJrw462Ds8he4YKMov2efsTIw1BDGQ==}

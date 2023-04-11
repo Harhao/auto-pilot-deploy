@@ -27,7 +27,9 @@
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.15.11",
     "@types/prompts": "^2.4.4",
+    "@types/ssh2-streams": "^0.1.9",
     "node-ssh": "^13.1.0",
+    "ssh2-streams": "^0.4.10",
     "ts-node": "^9.1.1",
     "typescript": "^5.0.3"
   }
