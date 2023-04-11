@@ -68,12 +68,12 @@ export default class Pilot {
         const projectConfig = await this.initProject() as IProjectCofig;
         const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
         if (localPath) {
-            switch(projectConfig.type) {
-                case EProjectType.FRONTEND:  await this.deployFrontJob(localPath, projectConfig, pilotCofig);break;
+            switch (projectConfig.type) {
+                case EProjectType.FRONTEND: await this.deployFrontJob(localPath, projectConfig, pilotCofig); break;
                 case EProjectType.BACKEND: await this.deployNodeJob(localPath, projectConfig, pilotCofig); break;
                 default: Log.warn('暂未支持其他服务类型项目');
             }
-            this.client.dispose();        
+            this.client.dispose();
         }
     }
 
@@ -92,14 +92,27 @@ export default class Pilot {
     public async deployNodeJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
             const { branch, command, tool, dest } = projectConfig;
+            const remoteRootFolder = dest || this.cmd.getGitRepoName(projectConfig.gitUrl);
+            const remoteDir = `/root/${remoteRootFolder}`;
+            const localDir = path.resolve(process.cwd(), localPath);
             if (localPath) {
-                const commands = command.split(' ');
-                this.cmd.changeDirectory(localPath);
-                await this.cmd.switchToBranch(branch);
-                await this.cmd.runCmd(tool, ['install']);
-                await this.cmd.runCmd(tool, [...commands]);
-                await this.cmd.runCmd('rm', ['-rf', 'node_modules']);
-                await this.uploadFileToServer(pilotCofig, localPath);
+                const cmdConfig = {
+                    cwd: remoteDir, onStderr(chunk: Buffer) {
+                        Log.warn(`${chunk}`);
+                    }, onStdout(chunk: Buffer) {
+                        Log.info(`${chunk}`);
+                    }
+                };
+                await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
+                await this.client.execCommand(`${tool} install`, cmdConfig);
+                await this.client.execCommand(`${tool} ${command}`, cmdConfig);
+                await this.client.execCommand(`${tool} run serve`, cmdConfig);
+
+                // await this.cmd.switchToBranch(branch);
+                // this.cmd.changeDirectory(localDir);
+                // Log.success(`开始执行部署脚本～ ${remoteRootFolder}`);
+                // await this.cmd.runCmd(`docker`, ['build', '-t', `${remoteRootFolder}`, '.']);
+                // await this.client.execCommand('');
             }
         } catch (e) {
             Log.error(`${e}`);
@@ -109,6 +122,8 @@ export default class Pilot {
     public async deployFrontJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
             const { branch, command, tool, dest } = projectConfig;
+            const remoteDir = `/root/${dest}`;
+            const localDir = path.resolve(process.cwd(), dest);
             Log.success(`运行命令脚本目录是${localPath}`);
             if (localPath) {
                 const commands = command.split(' ');
@@ -116,7 +131,7 @@ export default class Pilot {
                 await this.cmd.switchToBranch(branch);
                 await this.cmd.runCmd(tool, ['install']);
                 await this.cmd.runCmd(tool, [...commands]);
-                await this.uploadFileToServer(pilotCofig, dest);
+                await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
             }
         } catch (e) {
             Log.error(`${e}`);
@@ -141,12 +156,9 @@ export default class Pilot {
         return this.cmd.checkPathExists(this.configPath);
     }
 
-    public async uploadFileToServer(data: any, localDest: string) {
+    public async uploadFileToServer(data: any, localDir: string, remoteDir: string) {
         try {
             const { address, account, serverPass } = data;
-            const remoteDir = `/root/${localDest}`;
-            const localDir = path.resolve(process.cwd(), localDest);
-
             if (fse.existsSync(localDir)) {
                 Log.success(`已经存在文件目录 ${localDir}`);
                 if (address && account && serverPass) {

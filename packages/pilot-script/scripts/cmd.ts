@@ -127,7 +127,7 @@ export default class CmdScript {
     this.runCmd(cmd, []);
   }
 
-  private showLoading(loadingText: string) {
+  public showLoading(loadingText: string) {
     const load = loading({
       text: loadingText,
       color: 'green',
