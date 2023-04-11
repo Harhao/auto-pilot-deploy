@@ -62,12 +62,24 @@ const projectConfig: any[] = [
         name: 'tool',
         message: '请选择构建的工具',
         choices: [
-            { title: 'npm', value: 'npm' },
             { title: 'yarn', value: 'yarn' },
+            { title: 'npm', value: 'npm' },
             { title: 'pnpm', value: 'pnpm' }
         ],
         onRender(kleur: any) {
             this.msg = kleur.green("请选择构建的工具");
+        }
+    },
+    {
+        type: 'autocomplete',
+        name: 'type',
+        message: '请选择项目类型',
+        choices: [
+            { title: '前端项目', value: 'frontEnd' },
+            { title: 'node服务', value: 'backEnd' },
+        ],
+        onRender(kleur: any) {
+            this.msg = kleur.green("请选择项目类型");
         }
     },
     {

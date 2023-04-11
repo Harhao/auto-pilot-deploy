@@ -4,8 +4,8 @@ import { projectConfig, deployConfig } from '../config/index';
 import Log from '../scripts/utils/log';
 import path from 'path';
 import fse from 'fs-extra';
-import { Client } from 'ssh2';
-import { ENVCONFIGNAME } from '../consts/index';
+import { NodeSSH } from 'node-ssh';
+import { ENVCONFIGNAME, EProjectType } from '../consts/index';
 
 interface IPilotCofig {
     address: string;
@@ -19,7 +19,8 @@ interface IProjectCofig {
     branch: string;
     tool: string;
     command: string;
-    dest: string
+    dest: string;
+    type: string;
 }
 
 export interface IPilotOptions {
@@ -30,8 +31,7 @@ export default class Pilot {
     private cmd: CmdScript;
     // 本地配置密钥信息路径
     private configPath: string;
-    private client: Client = new Client();
-    private fileSftp: any;
+    private client: NodeSSH = new NodeSSH();
 
     constructor() {
         this.cmd = new CmdScript({});
@@ -68,7 +68,12 @@ export default class Pilot {
         const projectConfig = await this.initProject() as IProjectCofig;
         const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
         if (localPath) {
-            await this.deployJob(localPath, projectConfig, pilotCofig);
+            switch(projectConfig.type) {
+                case EProjectType.FRONTEND:  await this.deployFrontJob(localPath, projectConfig, pilotCofig);break;
+                case EProjectType.BACKEND: await this.deployNodeJob(localPath, projectConfig, pilotCofig); break;
+                default: Log.warn('暂未支持其他服务类型项目');
+            }
+            this.client.dispose();        
         }
     }
 
@@ -84,7 +89,24 @@ export default class Pilot {
         return null;
     }
 
-    public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
+    public async deployNodeJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
+        try {
+            const { branch, command, tool, dest } = projectConfig;
+            if (localPath) {
+                const commands = command.split(' ');
+                this.cmd.changeDirectory(localPath);
+                await this.cmd.switchToBranch(branch);
+                await this.cmd.runCmd(tool, ['install']);
+                await this.cmd.runCmd(tool, [...commands]);
+                await this.cmd.runCmd('rm', ['-rf', 'node_modules']);
+                await this.uploadFileToServer(pilotCofig, localPath);
+            }
+        } catch (e) {
+            Log.error(`${e}`);
+        }
+    }
+
+    public async deployFrontJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
             const { branch, command, tool, dest } = projectConfig;
             Log.success(`运行命令脚本目录是${localPath}`);
@@ -122,32 +144,21 @@ export default class Pilot {
     public async uploadFileToServer(data: any, localDest: string) {
         try {
             const { address, account, serverPass } = data;
-            const remotePath = `/root/${localDest}`;
-            const localTarget = path.resolve(process.cwd(), localDest);
+            const remoteDir = `/root/${localDest}`;
+            const localDir = path.resolve(process.cwd(), localDest);
 
-            if (fse.existsSync(localTarget)) {
-                Log.success(`已经存在文件目录 ${localTarget}`);
+            if (fse.existsSync(localDir)) {
+                Log.success(`已经存在文件目录 ${localDir}`);
                 if (address && account && serverPass) {
                     Log.success('开始执行上传操作～');
-                    this.client
-                        .on('ready', async () => {
-                            Log.success('已经准备完毕');
-                            await this.createRemoteDirectory(`${remotePath}`);
-                            this.client.sftp(async (e, sftp) => {
-                                if (e) {
-                                    Log.error(`sftp error ${e}`);
-                                    return;
-                                }
-                                this.fileSftp = sftp;
-                                await this.uploadDirectory(localTarget, remotePath);
-                            });
-                        })
-                        .connect({
-                            host: address,
-                            port: 22,
-                            username: account,
-                            password: serverPass,
-                        });
+                    this.client = await this.client.connect({
+                        host: address,
+                        port: 22,
+                        username: account,
+                        password: serverPass,
+                    });
+                    await this.uploadDirectory(localDir, remoteDir);
+                    Log.success('上传成功～');
                 }
             }
         } catch (e) {
@@ -155,55 +166,23 @@ export default class Pilot {
         }
     }
 
-    public async createRemoteDirectory(remotePath: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            this.client.exec(`sudo mkdir ${remotePath}`, (err, stream) => {
-                if (err) {
-                    Log.error(`mkdir ${remotePath} Error: ${err}`);
-                    reject(false);
-                } else {
-                    Log.success(`mkdir ${remotePath} success`);
-                    resolve(true);
-                }
-            });
-        });
-    }
+    async uploadDirectory(localDir: string, remoteDir: string) {
+        const files = await fse.promises.readdir(localDir, { withFileTypes: true });
 
-    public uploadFile(localFile: string, remoteFile: string) {
-        return new Promise((resolve, reject) => {
-            this.fileSftp.fastPut(`${localFile}`, `${remoteFile}`, (err: Error) => {
-                if (err) {
-                    Log.error(`fastPut ${localFile} -> ${remoteFile} ${err}`);
-                    reject(false);
-                    return;
-                }
-                resolve(true);
-                Log.success(`${localFile} -> ${remoteFile}`);
-            });
-        }).catch((e: Error) => {
-            Log.error(`${localFile} -> ${remoteFile} error: ${e}`);
-        });
-    }
+        for (const file of files) {
+            const localFilePath = path.join(localDir, file.name);
+            const remoteFilePath = path.join(remoteDir, file.name);
 
-    public async uploadDirectory(localPath: string, remotePath: string) {
-        return new Promise((resolve) => {
-            try {
-                const files = fse.readdirSync(localPath);
-                files.forEach(async (file) => {
-                    const localActualPath = `${localPath}/${file}`;
-                    const remoteActualPath = `${remotePath}/${file}`;
-                    const stat = fse.statSync(localActualPath);
-                    if(stat.isDirectory()) {
-                        await this.createRemoteDirectory(`${remoteActualPath}`);
-                        await this.uploadDirectory(`${localActualPath}`, `${remoteActualPath}`);
-                    } else {
-                        await this.uploadFile(`${localActualPath}`, `${remoteActualPath}`);
-                    }
-                });
-                resolve(true);
-            } catch(e) {
-                Log.error(`uploadDirectory ${localPath} -> ${remotePath} error`);
+            if (file.isDirectory()) {
+                // 如果是文件夹则递归调用uploadDirectory方法
+                await this.client.mkdir(remoteFilePath, 'sftp');
+                Log.success(`mkdir dir: ${localFilePath} -> ${remoteFilePath}`);
+                await this.uploadDirectory(localFilePath, remoteFilePath);
+            } else {
+                // 如果是文件则使用putFile方法上传
+                Log.success(`upload file: ${localFilePath} -> ${remoteFilePath}`);
+                await this.client.putFile(localFilePath, remoteFilePath);
             }
-        });
+        }
     }
 }
