@@ -63,16 +63,22 @@ export default class Pilot {
     }
 
     public async execute() {
-        Log.success('✨ 开始运行pilot脚本 ✨');
-        const pilotCofig = (await this.initConfigure()) as IPilotCofig;
-        const projectConfig = await this.initProject() as IProjectCofig;
-        const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
-        if (localPath) {
-            switch (projectConfig.type) {
-                case EProjectType.FRONTEND: await this.deployFrontJob(localPath, projectConfig, pilotCofig); break;
-                case EProjectType.BACKEND: await this.deployNodeJob(localPath, projectConfig, pilotCofig); break;
-                default: Log.warn('暂未支持其他服务类型项目');
+        try {
+            Log.success('✨ 开始运行pilot脚本 ✨');
+            const pilotCofig = (await this.initConfigure()) as IPilotCofig;
+            const projectConfig = await this.initProject() as IProjectCofig;
+            const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
+            if (localPath) {
+                switch (projectConfig.type) {
+                    case EProjectType.FRONTEND: await this.deployFrontJob(localPath, projectConfig, pilotCofig); break;
+                    case EProjectType.BACKEND: await this.deployNodeJob(localPath, projectConfig, pilotCofig); break;
+                    default: Log.warn('暂未支持其他服务类型项目');
+                }
+                Log.success('部署成功～');
             }
+        } catch(e) {
+            Log.error(`execute error ${e}`);
+        } finally {
             this.client.dispose();
         }
     }
@@ -103,11 +109,12 @@ export default class Pilot {
                         Log.info(`${chunk}`);
                     }
                 };
+                await this.cmd.switchToBranch(branch);
                 await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
                 await this.client.execCommand(`${tool} install`, cmdConfig);
                 await this.client.execCommand(`${tool} ${command}`, cmdConfig);
                 await this.client.execCommand(`${tool} run serve`, cmdConfig);
-
+                // docker 部署方式
                 // await this.cmd.switchToBranch(branch);
                 // this.cmd.changeDirectory(localDir);
                 // Log.success(`开始执行部署脚本～ ${remoteRootFolder}`);
