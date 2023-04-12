@@ -17,6 +17,7 @@
     "@topcli/spinner": "^2.0.0",
     "cac": "^6.7.14",
     "chalk": "^3.0.0",
+    "ejs": "^3.1.9",
     "fs-extra": "^11.1.1",
     "loading-cli": "^1.1.0",
     "log-symbols": "^3.0.0",
@@ -24,6 +25,7 @@
     "simple-git": "^3.17.0"
   },
   "devDependencies": {
+    "@types/ejs": "^3.1.2",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.15.11",
     "@types/prompts": "^2.4.4",

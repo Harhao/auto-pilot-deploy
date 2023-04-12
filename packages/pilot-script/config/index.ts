@@ -100,4 +100,33 @@ const projectConfig: any[] = [
     },
 ];
 
-export { deployConfig, projectConfig };
+
+const nginxConfig: any[] = [
+    {
+        type: "text",
+        name: "apiPrefix",
+        message: "",
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入需要部署的前缀名");
+        }
+    },
+    {
+        type: "text",
+        name: "apiHost",
+        message: "",
+        initial: "http://127.0.0.1",
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入需要部署的地址");
+        }
+    },
+    {
+        type: 'number',
+        name: 'apiPort',
+        message: '',
+        onRender(kleur: any) {
+            this.msg = kleur.green("请输入需要部署的端口号");
+        }
+    },
+];
+
+export { deployConfig, projectConfig, nginxConfig };
