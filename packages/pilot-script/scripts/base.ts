@@ -3,7 +3,8 @@ import Log from '../scripts/utils/log';
 import path from 'path';
 import fse from 'fs-extra';
 import { NodeSSH } from 'node-ssh';
-import { ENVCONFIGNAME, IPilotCofig } from '../consts/index';
+import { IPilotCofig } from '../consts/index';
+import { ENVCONFIGNAME } from '../config';
 
 
 export default class Base {
@@ -37,6 +38,7 @@ export default class Base {
     public async uploadFileToServer(data: any, localDir: string, remoteDir: string) {
         try {
             const { address, account, serverPass } = data;
+            console.log('====>', data, localDir, remoteDir);
             if (fse.existsSync(localDir)) {
                 Log.success(`已经存在文件目录 ${localDir}`);
                 if (address && account && serverPass) {

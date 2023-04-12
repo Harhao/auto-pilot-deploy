@@ -5,8 +5,8 @@ import CmdScript from './cmd';
 import Log from './utils/log';
 import ClientPlaform from './client';
 import NodePlatform from './node';
-import { projectConfig, deployConfig } from '../config/index';
-import { ENVCONFIGNAME, EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
+import { projectConfig, deployConfig, ENVCONFIGNAME } from '../config';
+import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
 
 export interface IPilotOptions {
     deployFolder: string;

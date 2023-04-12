@@ -5,7 +5,7 @@ import Log from './utils/log';
 import loading from 'loading-cli';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { SpawnSyncReturns, spawnSync } from 'child_process';
-import { CREATEFOLDER } from '../consts/index';
+import { CREATEFOLDER } from '../config';
 
 export interface ICmdOptions {
   generateFolderName?: string;

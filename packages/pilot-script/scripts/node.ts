@@ -5,8 +5,15 @@ import prompts from 'prompts';
 import ejs from 'ejs';
 import fse from 'fs-extra';
 import { IProjectCofig, IPilotCofig } from '../consts';
-import { SSHExecCommandOptions } from 'node-ssh';
-import { nginxConfig } from '../config/index';
+import { BACKENDDIR, NGINXCONFIGPATH, nginxConfig } from '../config/index';
+
+const options = {
+    onStderr(chunk: Buffer) {
+        process.stdout.write(`${chunk.toString('utf8')}`);
+    }, onStdout(chunk: Buffer) {
+        process.stderr.write(`${chunk.toString('utf8')}`);
+    }
+};
 
 export default class NodePlatform extends Base {
     public async execute(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
@@ -27,22 +34,19 @@ export default class NodePlatform extends Base {
         try {
             const { branch, command, tool, dest } = projectConfig;
             const remoteRootFolder = (dest || this.cmd.getGitRepoName(projectConfig.gitUrl)) as string;
-            const remoteDir = `/root/${remoteRootFolder}`;
+            const remoteDir = `${BACKENDDIR}/${remoteRootFolder}`;
             const localDir = path.resolve(process.cwd(), localPath);
             if (localPath) {
                 const cmdConfig = {
-                    cwd: remoteDir, onStderr(chunk: Buffer) {
-                        Log.warn(`${chunk}`);
-                    }, onStdout(chunk: Buffer) {
-                        Log.info(`${chunk}`);
-                    }
+                    cwd: remoteDir,
+                    ...options
                 };
                 await this.cmd.switchToBranch(branch);
                 await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
                 await this.client.execCommand(`${tool} install`, cmdConfig);
                 await this.client.execCommand(`${tool} ${command}`, cmdConfig);
                 await this.client.execCommand(`${tool} run serve`, cmdConfig);
-                await this.configNginxConf({ cmdConfig: cmdConfig}, remoteRootFolder);
+                await this.configNginxConf(remoteRootFolder);
 
                 // docker 部署方式
                 // await this.cmd.switchToBranch(branch);
@@ -56,15 +60,18 @@ export default class NodePlatform extends Base {
         }
     }
 
-    public async configNginxConf(config: { cmdConfig: SSHExecCommandOptions}, remoteFolder:string) {
+    public async configNginxConf(remoteFolder: string) {
         try {
-            const remoteConf = `/etc/nginx/conf.d/${remoteFolder}.conf`;
+            const remoteConf = `${NGINXCONFIGPATH}/${remoteFolder}.conf`;
             const answers = await prompts(nginxConfig);
             const nginxEjsPath = resolve(__dirname, '../ejs/backend_nginx.ejs');
             const ejsContent = fse.readFileSync(nginxEjsPath, 'utf8');
             const nginxConf = ejs.render(ejsContent, answers);
-            await this.client.execCommand(`echo "${nginxConf}" > ${remoteConf}`, config.cmdConfig);
-            await this.client.execCommand('nginx -S reload', config.cmdConfig);
+            Log.info('create backend nginx.conf file start');
+            await this.client.execCommand(`echo "${nginxConf}" > ${remoteConf}`, options);
+            Log.info('restart nginx');
+            await this.client.execCommand('nginx -s reload', options);
+            await this.client.execCommand('ls -al', options);
         } catch (e) {
             Log.error(`restartNginx restart error ${e}`);
         }
