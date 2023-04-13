@@ -60,7 +60,7 @@ export const projectConfig: promptType[] = [
         name: "gitUrl",
         message: "",
         onRender(kleur: any) {
-            this.msg = kleur.green("输入需要部署的git仓库地址");
+            this.msg = kleur.green("输入git仓库地址");
         }
     },
     {
@@ -128,7 +128,7 @@ export const nginxConfig: promptType[] = [
         name: "apiPrefix",
         message: "",
         onRender(kleur: any) {
-            this.msg = kleur.green("输入需要部署的前缀名");
+            this.msg = kleur.green("输入需要服务的前缀名");
         }
     },
     {
@@ -137,7 +137,7 @@ export const nginxConfig: promptType[] = [
         message: "",
         initial: "http://127.0.0.1",
         onRender(kleur: any) {
-            this.msg = kleur.green("输入需要部署的地址");
+            this.msg = kleur.green("输入需要服务的地址");
         }
     },
     {
@@ -145,7 +145,19 @@ export const nginxConfig: promptType[] = [
         name: 'apiPort',
         message: '',
         onRender(kleur: any) {
-            this.msg = kleur.green("请输入需要部署的端口号");
+            this.msg = kleur.green("请输入需要服务的端口号");
         }
     },
+];
+
+
+export const rollBackConfig:promptType[] = [
+    {
+        type: "text",
+        name: "rollNode",
+        message: "",
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入回退的节点(tag/commit)");
+        }
+    }
 ];

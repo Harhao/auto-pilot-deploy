@@ -18,7 +18,7 @@ const options = {
 export default class NodePlatform extends Base {
     public async execute(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
         try {
-            Log.success('✨ 开始运行pilot脚本 ✨');
+            Log.success('✨ 开始部署啦 ～✨');
             const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
             if (localPath) {
                 await this.deployJob(localPath, projectConfig, pilotCofig);
@@ -26,14 +26,14 @@ export default class NodePlatform extends Base {
         } catch (e) {
             Log.error(`execute error ${e}`);
         } finally {
-            this.destroyRemoveHandle();
+            this.client.dispose();
         }
     }
 
     public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
             const { branch, command, tool, dest, deploy } = projectConfig;
-            const remoteRootFolder = (dest || this.cmd.getGitRepoName(projectConfig.gitUrl)) as string;
+            const remoteRootFolder = (dest || this.git.getGitRepoName(projectConfig.gitUrl)) as string;
             const remoteDir = `${BACKENDDIR}/${remoteRootFolder}`;
             const localDir = path.resolve(process.cwd(), localPath);
             if (localPath) {
@@ -41,19 +41,12 @@ export default class NodePlatform extends Base {
                     cwd: remoteDir,
                     ...options
                 };
-                await this.cmd.switchToBranch(branch);
+                await this.git.switchToBranch(branch);
                 await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
                 await this.client.execCommand(`${tool} install`, cmdConfig);
                 await this.client.execCommand(`${tool} ${command}`, cmdConfig);
                 await this.client.execCommand(`${tool} ${deploy}`, cmdConfig);
                 await this.configNginxConf(remoteRootFolder);
-
-                // docker 部署方式
-                // await this.cmd.switchToBranch(branch);
-                // this.cmd.changeDirectory(localDir);
-                // Log.success(`开始执行部署脚本～ ${remoteRootFolder}`);
-                // await this.cmd.runCmd(`docker`, ['build', '-t', `${remoteRootFolder}`, '.']);
-                // await this.client.execCommand('');
             }
         } catch (e) {
             Log.error(`${e}`);

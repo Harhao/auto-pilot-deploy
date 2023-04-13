@@ -17,20 +17,20 @@ export default class ClientPlatform extends Base {
         } catch (e) {
             Log.error(`execute error ${e}`);
         } finally {
-            this.destroyRemoveHandle();
+            this.client.dispose();
         }
     }
     public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
             const { branch, command, tool, dest } = projectConfig;
-            const folderName = this.cmd.getGitRepoName(projectConfig.gitUrl) as string;
+            const folderName = this.git.getGitRepoName(projectConfig.gitUrl) as string;
             const remoteDir = `${FROMTENDDIR}/${folderName}`;
             const localDir = path.resolve(localPath, dest);
             Log.success(`运行命令脚本目录是${localPath}`);
             if (localPath) {
                 const commands = command.split(' ');
-                this.cmd.changeDirectory(localPath);
-                await this.cmd.switchToBranch(branch);
+                this.file.changeDirectory(localPath);
+                await this.git.switchToBranch(branch);
                 await this.cmd.runCmd(`npm config set registry ${NPMREGISTRY}`,[]);
                 await this.cmd.runCmd(tool, ['install']);
                 await this.cmd.runCmd(tool, [...commands]);

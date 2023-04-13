@@ -2,6 +2,8 @@
 export interface IPilotCofig {
     // 服务器IP
     address: string; 
+    // 用户名
+    account: string;
     // 服务器密码
     serverPass: string;
     // git仓库用户名
@@ -25,4 +27,10 @@ export interface IProjectCofig {
     type: string;
     // node服务部署命令
     deploy?: string;
+}
+
+// 回退配置
+export interface IRollBackConfig  extends IProjectCofig {
+    // 回退类
+    rollNode: string;
 }

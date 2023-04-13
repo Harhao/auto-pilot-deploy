@@ -1,44 +1,55 @@
 import CmdScript from './cmd';
-import { Log } from '../scripts/utils';
+import FileScript from './file';
+import GitScript from './git';
 import path from 'path';
-import fse from 'fs-extra';
 import { NodeSSH } from 'node-ssh';
 import { IPilotCofig } from '../consts/index';
-import { ENVCONFIGNAME } from '../config';
+import { Log } from '../scripts/utils';
+import { Dirent } from 'fs-extra';
+
 
 
 export default class Base {
+
     public cmd: CmdScript;
-    // 本地配置密钥信息路径
-    public configPath: string;
-    public client: NodeSSH = new NodeSSH();
+    public file: FileScript;
+    public git: GitScript;
+    public client: NodeSSH;
 
     constructor() {
-        this.cmd = new CmdScript({});
-        this.configPath = this.getConfigPath();
+        this.cmd = new CmdScript();
+        this.git = new GitScript();
+        this.file = new FileScript();
+        this.client = new NodeSSH();
     }
 
+    /**
+     * 下载git仓库，返回本地路径
+     * @param gitUrl git仓库地址
+     * @param data 服务器/git权限信息
+     * @returns 返回下载的git仓库本地地址
+     */
     public async downloadRepo(gitUrl: string, data: IPilotCofig) {
         if (data?.gitPass) {
-            const isConfig = await this.cmd.updateGitConfigure({
+            const isConfig = await this.git.updateGitConfigure({
                 auth: data.gitPass,
                 user: data.gitUser,
                 url: gitUrl,
             });
-            return isConfig ? await this.cmd.cloneRepo(gitUrl) : null;
+            return isConfig ? await this.git.cloneRepo(gitUrl) : null;
         }
         return null;
     }
-
-    public getConfigPath(): string {
-        const rootDir = this.cmd.targetPath;
-        return path.resolve(rootDir, ENVCONFIGNAME);
-    }
-
-    public async uploadFileToServer(data: any, localDir: string, remoteDir: string) {
+    /**
+     * 上传文件夹到服务器
+     * @param data 服务器密钥配置
+     * @param localDir 本地需要上传的文件夹
+     * @param remoteDir 需要上传到远程文件夹
+     */
+    public async uploadFileToServer(data: IPilotCofig, localDir: string, remoteDir: string) {
         try {
             const { address, account, serverPass } = data;
-            if (fse.existsSync(localDir)) {
+            if (this.file.checkPathExists(localDir)) {
                 Log.success(`已经存在文件目录 ${localDir}`);
                 if (address && account && serverPass) {
                     Log.success('开始执行上传操作～');
@@ -56,9 +67,13 @@ export default class Base {
             Log.error(`上传文件到服务器失败${e}`);
         }
     }
-
+    /**
+     * 上传文件夹到远程
+     * @param localDir 本地文件夹（需要上传）
+     * @param remoteDir 远程服务目录
+     */
     public async uploadDirectory(localDir: string, remoteDir: string) {
-        const files = await fse.promises.readdir(localDir, { withFileTypes: true });
+        const files = await this.file.readDirectory(localDir) as Dirent[];
 
         for (const file of files) {
             const localFilePath = path.join(localDir, file.name);
@@ -77,15 +92,17 @@ export default class Base {
         }
     }
 
+    /**
+     * 判断远程文件是否存在
+     * @param filePath 
+     * @param fileName 
+     * @returns 
+     */
     public async isFileExist(filePath: string, fileName: string) {
         const result = await this.client.execCommand(`ls -l ${filePath}`);
-        if(result.stdout.includes(`${fileName}`)) {
+        if (result.stdout.includes(`${fileName}`)) {
             return true;
         }
         return false;
-    }
-
-    public destroyRemoveHandle() {
-        this.client.dispose();
     }
 }

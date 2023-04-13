@@ -1,12 +1,10 @@
 import prompts from 'prompts';
-import path from 'path';
-import fse from 'fs-extra';
-import CmdScript from '../common/cmd';
-import { Log } from './utils';
 import ClientPlaform from '../client';
 import NodePlatform from '../node';
-import { projectConfig, deployConfig, ENVCONFIGNAME } from '../config';
-import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
+import FileScript from '../common/file';
+import { Log } from './utils';
+import { projectConfig, deployConfig, rollBackConfig } from '../config';
+import { EProjectType, IPilotCofig, IProjectCofig, IRollBackConfig } from '../consts/index';
 
 export interface IPilotOptions {
     deployFolder: string;
@@ -15,24 +13,24 @@ export interface IPilotOptions {
 type PilotPlatform = ClientPlaform | NodePlatform | undefined;
 export default class Pilot {
     // 本地配置密钥信息路径
-    private configPath: string;
-    private cmd: CmdScript;
+    private pilotConfigPath: string;
+    private file: FileScript;
     private platform: PilotPlatform;
 
     constructor() {
-        this.cmd = new CmdScript({});
-        this.configPath = this.getConfigPath();
+        this.file = new FileScript();
+        this.pilotConfigPath = this.file.getPilotConfigPath();
     }
-
+    // 
     public async initConfigure() {
         try {
-            const hasGitEnv = this.checkGitConfig();
+            const hasGitEnv = this.file.checkPathExists(this.pilotConfigPath);
             let answers = null;
             if (!hasGitEnv) {
                 answers = await prompts(deployConfig);
-                this.createGitEnv(answers);
+                this.file.writeFileSync(this.pilotConfigPath, JSON.stringify(answers));
             } else {
-                answers = fse.readJsonSync(this.configPath);
+                answers = this.file.readJsonFile(this.pilotConfigPath);
             }
             return answers;
         } catch (e) {
@@ -48,11 +46,37 @@ export default class Pilot {
         }
     }
 
-    public async execute() {
+    // pilot-script 运行入口
+    public async startWork() {
         try {
             const pilotCofig = (await this.initConfigure()) as IPilotCofig;
             const projectConfig = await this.initProject() as IProjectCofig;
+            await this.startDeploy(pilotCofig, projectConfig);
+        } catch (e) {
+            Log.error(`${e}`);
+        }
+    }
+    // pilot-script 回退入口
+    public async rollBackWork() {
+        try {
+            const config = (await prompts([...projectConfig,...rollBackConfig])) as IRollBackConfig;
+            await this.startRollBackJob(config);
+        } catch (e) {
+            Log.error(`rollback error ${e}`);
+        }
+    }
 
+    // 终止进程
+    public async stopWork() {
+        try {
+            Log.info('stopWork');
+        } catch (e) {
+            Log.error(`stopWork error ${e}`);
+        }
+    }
+
+    public async startDeploy(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
+        try {
             switch (projectConfig.type) {
                 case EProjectType.FRONTEND:
                     this.platform = new ClientPlaform();
@@ -70,21 +94,11 @@ export default class Pilot {
         }
     }
 
-    public getConfigPath(): string {
-        const rootDir = this.cmd.targetPath;
-        return path.resolve(rootDir, ENVCONFIGNAME);
-    }
-
-    public createGitEnv(answers: Record<string, string>) {
-        const data = JSON.stringify(answers);
-        fse.writeFileSync(this.configPath, data, {
-            encoding: 'utf8',
-            mode: 0o644,
-            flag: 'w+',
-        });
-    }
-
-    public checkGitConfig(): boolean {
-        return this.cmd.checkPathExists(this.configPath);
+    public async startRollBackJob(rollBackConfig: IRollBackConfig) {
+        try {
+            Log.info(`${rollBackConfig}`);
+        } catch(e) {
+            Log.error(`startRollBackJob error: ${e}`);
+        }
     }
 }

@@ -15,7 +15,7 @@ function main() {
         .command('configure [envname]', '[envname]提供部署github项目')
         .alias('cf')
         .action((envname: string) => {
-            pilot.execute();
+            pilot.startWork();
         });
 
 
@@ -23,13 +23,13 @@ function main() {
         .command('clone [project]', '[project]提供部署github项目')
         .alias('dp')
         .action((gitUrl: string) => {
-            pilot.execute();
+            pilot.startWork();
         });
     cli
         .command('deploy [project]', '[project]提供部署github项目')
         .alias('dp')
         .action((project: string) => {
-            pilot.execute();
+            pilot.startWork();
         });
 
     cli.help();
