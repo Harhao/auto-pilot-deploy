@@ -1,9 +1,10 @@
-import path from 'path';
+import path, { resolve } from 'path';
 import Base from './base';
 import Log from './utils/log';
 import fse from 'fs-extra';
 import { IPilotCofig, IProjectCofig } from '../consts';
 import { FROMTENDDIR, NGINXCONFIGPATH, NPMREGISTRY } from '../config';
+import ejs from 'ejs';
 
 export default class ClientPlatform extends Base {
     public async execute(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
@@ -24,7 +25,7 @@ export default class ClientPlatform extends Base {
             const { branch, command, tool, dest } = projectConfig;
             const folderName = this.cmd.getGitRepoName(projectConfig.gitUrl) as string;
             const remoteDir = `${FROMTENDDIR}/${folderName}`;
-            const localDir = path.resolve(process.cwd(), dest);
+            const localDir = path.resolve(localPath, dest);
             Log.success(`运行命令脚本目录是${localPath}`);
             if (localPath) {
                 const commands = command.split(' ');
@@ -34,7 +35,7 @@ export default class ClientPlatform extends Base {
                 await this.cmd.runCmd(tool, ['install']);
                 await this.cmd.runCmd(tool, [...commands]);
                 await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
-                // await this.configNginxConf();
+                await this.configNginxConf();
             }
         } catch (e) {
             Log.error(`${e}`);
@@ -44,10 +45,12 @@ export default class ClientPlatform extends Base {
     public async configNginxConf() {
         try {
             const remoteConf = `${NGINXCONFIGPATH}/frontend.conf`;
-            const localNginx = path.resolve(__dirname, '../ejs/frontend_nginx.conf');
-            const nginxConf = fse.readFileSync(localNginx, 'utf8');
+            const nginxEjsPath = resolve(__dirname, '../ejs/frontend_nginx.ejs');
+            const ejsContent = fse.readFileSync(nginxEjsPath, 'utf8');
+            const nginxConf = ejs.render(ejsContent);
             const isFileExist = await this.isFileExist(remoteConf, 'frontend.conf');
-            Log.info(`fronend.conf is exist ${isFileExist}`);
+            Log.info(`frontend.conf is exist ${isFileExist}`);
+            console.log(nginxConf);
             if(!isFileExist) {
                 await this.client.execCommand(`echo "${nginxConf}" > ${remoteConf}`);
                 await this.client.execCommand('nginx -s reload');

@@ -38,7 +38,6 @@ export default class Base {
     public async uploadFileToServer(data: any, localDir: string, remoteDir: string) {
         try {
             const { address, account, serverPass } = data;
-            console.log('====>', data, localDir, remoteDir);
             if (fse.existsSync(localDir)) {
                 Log.success(`已经存在文件目录 ${localDir}`);
                 if (address && account && serverPass) {
