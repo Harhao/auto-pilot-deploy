@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
 import fse from 'fs-extra';
-import Log from './utils/log';
+import { Log } from '../scripts/utils';
 import loading from 'loading-cli';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { SpawnSyncReturns, spawnSync } from 'child_process';

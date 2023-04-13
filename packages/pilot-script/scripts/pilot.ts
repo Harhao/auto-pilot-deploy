@@ -1,10 +1,10 @@
 import prompts from 'prompts';
 import path from 'path';
 import fse from 'fs-extra';
-import CmdScript from './cmd';
-import Log from './utils/log';
-import ClientPlaform from './client';
-import NodePlatform from './node';
+import CmdScript from '../common/cmd';
+import { Log } from './utils';
+import ClientPlaform from '../client';
+import NodePlatform from '../node';
 import { projectConfig, deployConfig, ENVCONFIGNAME } from '../config';
 import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
 

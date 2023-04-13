@@ -1,5 +1,5 @@
 import CmdScript from './cmd';
-import Log from '../scripts/utils/log';
+import { Log } from '../scripts/utils';
 import path from 'path';
 import fse from 'fs-extra';
 import { NodeSSH } from 'node-ssh';

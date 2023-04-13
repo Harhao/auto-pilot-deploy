@@ -1,6 +1,6 @@
 import path, { resolve } from 'path';
-import Base from './base';
-import Log from './utils/log';
+import Base from '../common/base';
+import { Log } from '../scripts/utils';
 import fse from 'fs-extra';
 import { IPilotCofig, IProjectCofig } from '../consts';
 import { FROMTENDDIR, NGINXCONFIGPATH, NPMREGISTRY } from '../config';

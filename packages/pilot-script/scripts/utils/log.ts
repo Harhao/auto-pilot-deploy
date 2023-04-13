@@ -2,7 +2,7 @@ import logSymbols from 'log-symbols';
 import chalk from 'chalk';
 const log = console.log;
 
-export default class Log {
+export class Log {
   public static warn(msg: string) {
     log(logSymbols.warning, chalk.yellow(msg));
   }
