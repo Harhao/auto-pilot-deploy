@@ -32,7 +32,7 @@ export default class NodePlatform extends Base {
 
     public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
         try {
-            const { branch, command, tool, dest } = projectConfig;
+            const { branch, command, tool, dest, deploy } = projectConfig;
             const remoteRootFolder = (dest || this.cmd.getGitRepoName(projectConfig.gitUrl)) as string;
             const remoteDir = `${BACKENDDIR}/${remoteRootFolder}`;
             const localDir = path.resolve(process.cwd(), localPath);
@@ -45,7 +45,7 @@ export default class NodePlatform extends Base {
                 await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
                 await this.client.execCommand(`${tool} install`, cmdConfig);
                 await this.client.execCommand(`${tool} ${command}`, cmdConfig);
-                await this.client.execCommand(`${tool} run serve`, cmdConfig);
+                await this.client.execCommand(`${tool} ${deploy}`, cmdConfig);
                 await this.configNginxConf(remoteRootFolder);
 
                 // docker 部署方式
@@ -71,7 +71,6 @@ export default class NodePlatform extends Base {
             await this.client.execCommand(`echo "${nginxConf}" > ${remoteConf}`, options);
             Log.info('restart nginx');
             await this.client.execCommand('nginx -s reload', options);
-            await this.client.execCommand('ls -al', options);
         } catch (e) {
             Log.error(`restartNginx restart error ${e}`);
         }

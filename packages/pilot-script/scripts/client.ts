@@ -50,7 +50,6 @@ export default class ClientPlatform extends Base {
             const nginxConf = ejs.render(ejsContent);
             const isFileExist = await this.isFileExist(remoteConf, 'frontend.conf');
             Log.info(`frontend.conf is exist ${isFileExist}`);
-            console.log(nginxConf);
             if(!isFileExist) {
                 await this.client.execCommand(`echo "${nginxConf}" > ${remoteConf}`);
                 await this.client.execCommand('nginx -s reload');

@@ -18,4 +18,5 @@ export interface IProjectCofig {
     command: string;
     dest: string;
     type: string;
+    deploy?: string;
 }

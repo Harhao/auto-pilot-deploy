@@ -1,6 +1,17 @@
 import cac from 'cac';
 import Pilot from '../scripts/pilot';
 import pkg from '../package.json';
+import Log from '../scripts/utils/log';
+
+process.on('unhandledRejection', (reason, promise) => {
+    Log.error(`Unhandled Rejection at: ${promise}\n` + `Reason: ${reason}`);
+    // 进行错误处理，例如发送警报、日志记录等等
+});
+
+process.on('uncaughtException', (err, origin) => {
+    // 进行错误处理，例如发送警报、日志记录等等
+    Log.error(`Caught exception: ${err}\n` + `Exception origin: ${origin}`);
+});
 
 
 const cli = cac(`${pkg.name}`);

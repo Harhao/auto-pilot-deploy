@@ -1,8 +1,13 @@
+import { EProjectType } from "../consts";
 import prompts from "prompts";
 
 type promptType = prompts.PromptObject & {
     msg?: string;
 };
+
+const isFrontEndType = (answer: Record<string, unknown>) => {
+    return answer?.type === EProjectType.FRONTEND;
+}
 
 export const deployConfig: promptType[]  = [
     {
@@ -97,12 +102,21 @@ export const projectConfig: promptType[] = [
         }
     },
     {
-        type: "text",
+        type: (_, answer) => isFrontEndType(answer) ? 'text' : null,
         name: "dest",
         message: "输入需要发布的文件",
         initial: '',
         onRender(kleur: any) {
             this.msg = kleur.green("输入需要发布的文件");
+        }
+    },
+    {
+        type: (_, answer) => !isFrontEndType(answer) ? 'text' : null,
+        name: "deploy",
+        message: "",
+        initial: '',
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入服务发布的构建脚本");
         }
     },
 ];
