@@ -7,7 +7,7 @@ export default function App() {
   useEffect(() => {
     const socket = io('http://localhost:8080');
     setSocket(socket);
-    socket.on('cmdLog', (msg) => {
+    socket.on('stdout', (msg) => {
       console.log(msg);
     });
   }, []);

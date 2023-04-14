@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "description": "",
   "bin": {
-    "pilot": "./dist/bin/index.js",
-    "plt": "./dist/bin/index.js"
+    "pilot-script": "./dist/bin/index.js",
+    "plts": "./dist/bin/index.js"
   },
-  "main": "./dist/scripts/pilot.js",
+  "main": "./dist/bin/index.js",
   "scripts": {
-    "build": "tsc ",
-    "test": "ts-node ./bin/index.ts deploy"
+    "build": "node ./build/index.js",
+    "test": "ts-node ./bin/index.ts rollback"
   },
   "keywords": [],
   "author": "",

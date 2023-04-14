@@ -12,5 +12,6 @@ commonRouter.delete('/deleteFile', authMiddleWare, commonController.deleteFile);
 commonRouter.post('/deleteGroup', authMiddleWare, commonController.deleteGroupFile);
 commonRouter.post('/sendEmail', commonController.sendEmail);
 commonRouter.get('/validate', commonController.validateWechat);
+commonRouter.get('/deploy', commonController.deploy);
 
 export default commonRouter;

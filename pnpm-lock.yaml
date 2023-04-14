@@ -232,15 +232,27 @@ importers:
       node-ssh:
         specifier: ^13.1.0
         version: 13.1.0
+      raw-loader:
+        specifier: ^4.0.2
+        version: 4.0.2(webpack@5.76.2)
       ssh2-streams:
         specifier: ^0.4.10
         version: 0.4.10
+      ts-loader:
+        specifier: ^9.4.2
+        version: 9.4.2(typescript@5.0.3)(webpack@5.76.2)
       ts-node:
         specifier: ^9.1.1
         version: 9.1.1(typescript@5.0.3)
       typescript:
         specifier: ^5.0.3
         version: 5.0.3
+      url-loader:
+        specifier: ^3.0.0
+        version: 3.0.0(webpack@5.76.2)
+      webpack-node-externals:
+        specifier: ^3.0.0
+        version: 3.0.0
 
   packages/server:
     dependencies:
@@ -9034,6 +9046,17 @@ packages:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
+  /raw-loader@4.0.2(webpack@5.76.2):
+    resolution: {integrity: sha512-ZnScIV3ag9A4wPX/ZayxL/jZH+euYb6FcUinPcgiQW0+UBtEv0O6Q3lGd3cqJ+GHH+rksEv3Pj99oxJ3u3VIKA==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.1.1
+      webpack: 5.76.2(webpack-cli@5.0.1)
+    dev: true
+
   /rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
@@ -10850,6 +10873,21 @@ packages:
       webpack: 5.76.2(webpack-cli@5.0.1)
     dev: true
 
+  /ts-loader@9.4.2(typescript@5.0.3)(webpack@5.76.2):
+    resolution: {integrity: sha512-OmlC4WVmFv5I0PpaxYb+qGeGOdm5giHU7HwDDUjw59emP2UYMHy9fFSDcYgSNoH8sXcj4hGCSEhlDZ9ULeDraA==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      typescript: '*'
+      webpack: ^5.0.0
+    dependencies:
+      chalk: 4.1.2
+      enhanced-resolve: 5.12.0
+      micromatch: 4.0.5
+      semver: 7.3.8
+      typescript: 5.0.3
+      webpack: 5.76.2(webpack-cli@5.0.1)
+    dev: true
+
   /ts-node@9.1.1(typescript@4.2.4):
     resolution: {integrity: sha512-hPlt7ZACERQGf03M253ytLY3dHbGNGrAq9qIHWUY9XHYl1z7wYngSr3OQ5xmui8o2AaxsONxIzjafLUiWBo1Fg==}
     engines: {node: '>=10.0.0'}
@@ -11480,6 +11518,11 @@ packages:
     dependencies:
       clone-deep: 4.0.1
       wildcard: 2.0.0
+    dev: true
+
+  /webpack-node-externals@3.0.0:
+    resolution: {integrity: sha512-LnL6Z3GGDPht/AigwRh2dvL9PQPFQ8skEpVrWZXLWBYmqcaojHNN0onvHzie6rq7EWKrrBfPYqNEzTJgiwEQDQ==}
+    engines: {node: '>=6'}
     dev: true
 
   /webpack-sources@1.4.3:

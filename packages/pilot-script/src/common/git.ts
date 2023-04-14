@@ -86,7 +86,7 @@ export default class GitScript {
 
     public resetGitRepo() {
         return new Promise((resolve, reject) => {
-            resolve();
+            this.git.reset();
         });
     }
 }

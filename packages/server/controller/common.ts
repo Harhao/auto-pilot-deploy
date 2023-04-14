@@ -4,6 +4,7 @@ import path from 'path';
 import uploadService from '../utils/oss-upload';
 import { Context } from 'koa';
 import WechatAuth from '../utils/wechat';
+import { spawn } from "child_process"
 
 class CommonController {
     // 上传图片文件到七牛云
@@ -131,15 +132,15 @@ class CommonController {
         });
         try {
             const data = await schema.validateAsync(ctx.request.body);
-            const isSuccess =  await ctx.redisClient.publish('send-email', JSON.stringify(data));
-            if(isSuccess) {
+            const isSuccess = await ctx.redisClient.publish('send-email', JSON.stringify(data));
+            if (isSuccess) {
                 ctx.body = {
                     code: 200,
                     data: null,
                     msg: '已发送到邮箱中'
                 };
             }
-            
+
         } catch (e) {
             ctx.body = e;
         }
@@ -160,8 +161,53 @@ class CommonController {
                 msg: 'success'
             }
 
-        } catch(e) {
+        } catch (e) {
             ctx.body = e
+        }
+    }
+    async deploy(ctx: Context) {
+        const pilotConfig = JSON.stringify({
+            "address": "47.106.90.4",
+            "account": "root",
+            "serverPass": "abc6845718ABC",
+            "gitUser": "Harhao",
+            "gitPass": "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"
+        });
+
+        // const projectConfig = JSON.stringify({
+        //     gitUrl:"https://github.com/Harhao/simple-redux.git",
+        //     branch: "develop",
+        //     tool: "yarn",
+        //     command: "build",
+        //     dest: "build",
+        //     type: "frontEnd"
+        // });
+        const projectConfig = JSON.stringify({
+            gitUrl:"https://github.com/Harhao/social-server.git",
+            branch: "develop",
+            tool: "yarn",
+            command: "build",
+            dest: "dist",
+            type: "backEnd",
+            deploy: 'serve'
+        });
+        const child = spawn(`pilot-script`, ['deploy', '--pilotConfig', pilotConfig, '--projectConfig', projectConfig]);
+        child.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+            ctx.webSocket.emit('stdout', `${data}`);
+        });
+
+        child.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+
+        child.on('close', (code) => {
+            console.log(`child process exited with code ${code}`);
+        });
+        ctx.body = {
+            code: 200,
+            data: "开始运行",
+            msg: 'success'
         }
     }
 }
@@ -169,3 +215,4 @@ class CommonController {
 const commonController = new CommonController();
 
 export { commonController };
+

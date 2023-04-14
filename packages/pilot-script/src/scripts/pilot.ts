@@ -4,7 +4,7 @@ import NodePlatform from '../node';
 import FileScript from '../common/file';
 import { Log } from './utils';
 import { projectConfig, deployConfig, rollBackConfig } from '../config';
-import { EProjectType, IPilotCofig, IProjectCofig, IRollBackConfig } from '../consts/index';
+import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
 
 export interface IPilotOptions {
     deployFolder: string;
@@ -51,7 +51,7 @@ export default class Pilot {
         try {
             const pilotCofig = (await this.initConfigure()) as IPilotCofig;
             const projectConfig = await this.initProject() as IProjectCofig;
-            await this.startDeploy(pilotCofig, projectConfig);
+            await this.startDeploy({ pilotCofig, projectConfig });
         } catch (e) {
             Log.error(`${e}`);
         }
@@ -59,8 +59,10 @@ export default class Pilot {
     // pilot-script 回退入口
     public async rollBackWork() {
         try {
-            const config = (await prompts([...projectConfig,...rollBackConfig])) as IRollBackConfig;
-            await this.startRollBackJob(config);
+            const pilotCofig = (await this.initConfigure()) as IPilotCofig;
+            const projectConfig = await this.initProject() as IProjectCofig; 
+            const config = (await prompts(rollBackConfig));
+            await this.startRollBackJob({ pilotCofig, projectConfig, rollBackConfig: config});
         } catch (e) {
             Log.error(`rollback error ${e}`);
         }
@@ -75,9 +77,9 @@ export default class Pilot {
         }
     }
 
-    public async startDeploy(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
+    public async startDeploy(config: { pilotCofig: IPilotCofig, projectConfig: IProjectCofig}) {
         try {
-            switch (projectConfig.type) {
+            switch (config.projectConfig.type) {
                 case EProjectType.FRONTEND:
                     this.platform = new ClientPlaform();
                     break;
@@ -86,7 +88,7 @@ export default class Pilot {
                     break;
                 default: Log.warn('暂未支持其他服务类型项目');
             }
-            await this.platform?.execute(pilotCofig, projectConfig);
+            await this.platform?.execute(config.pilotCofig, config.projectConfig);
             Log.success('部署成功～');
 
         } catch (e) {
@@ -94,9 +96,9 @@ export default class Pilot {
         }
     }
 
-    public async startRollBackJob(rollBackConfig: IRollBackConfig) {
+    public async startRollBackJob(rollBackConfig: unknown) {
         try {
-            Log.info(`${rollBackConfig}`);
+            console.log(rollBackConfig);
         } catch(e) {
             Log.error(`startRollBackJob error: ${e}`);
         }

@@ -30,7 +30,7 @@ export interface IProjectCofig {
 }
 
 // 回退配置
-export interface IRollBackConfig  extends IProjectCofig {
+export interface IRollBackConfig {
     // 回退类
     rollNode: string;
 }

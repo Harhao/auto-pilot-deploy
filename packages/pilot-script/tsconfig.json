@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2017",
-    "module": "commonjs",
+    "module": "CommonJS",
     "rootDir": ".",
     "outDir": "dist",
     "sourceMap": false,
@@ -12,9 +12,7 @@
     "typeRoots": ["node_modules/@types", "types"],
     "lib": ["es2017", "es2020.bigint", "esnext.asynciterable", "dom"],
     "baseUrl": ".",
-    "paths": {
-      "@scripts/*": ["./scripts/"]
-    }
+    "paths": {}
   },
   "include": ["./."],
   "exclude": ["node_modules", "dist"]

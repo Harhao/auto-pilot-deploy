@@ -38,15 +38,11 @@ try {
       app.use(commentRouter.routes()).use(commentRouter.allowedMethods());
 
       io.on('connection', (socket) => {
-        let interval = null;
         socket.on('disconnect', () => {
           console.log('user disconnected');
         });
         socket.on('chatMessage', (msg) => {
           console.log('doing');
-          interval = setInterval(() => {
-            io.emit('cmdLog', 'doing');
-          }, 1000);
         });
       });  
 
@@ -54,7 +50,7 @@ try {
         console.log(`服务器启动成功，端口监听在 ${config.port}`);
       });
       
-      app.context.socketio = io;   
+      app.context.webSocket = io;   
       app.context.redisClient = connectToRedis();
 
       runTask(app.context.redisClient);
