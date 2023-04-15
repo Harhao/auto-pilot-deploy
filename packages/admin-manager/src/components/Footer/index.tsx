@@ -20,20 +20,20 @@ const Footer: React.FC = () => {
       copyright={`${currentYear} ${defaultMessage}`}
       links={[
         {
-          key: 'Ant Design Pro',
-          title: 'Ant Design Pro',
+          key: 'Auto Pilot 发布平台',
+          title: 'Auto Pilot 发布平台',
           href: 'https://pro.ant.design',
           blankTarget: true,
         },
         {
           key: 'github',
           title: <GithubOutlined />,
-          href: 'https://github.com/ant-design/ant-design-pro',
+          href: 'https://github.com/Harhao/auto-pilot-deploy',
           blankTarget: true,
         },
         {
-          key: 'Ant Design',
-          title: 'Ant Design',
+          key: 'Auto Pilot',
+          title: 'Auto Pilot',
           href: 'https://ant.design',
           blankTarget: true,
         },
