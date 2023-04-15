@@ -9,6 +9,6 @@ module.exports = {
   ignore: ["node_modules"],
   urlPrefix: process.env.PUBLIC_PATH,
   environment: process.env.NODE_ENV,
-  url: "http://sentry2.gztest.mail.163.com/",
+  url: "",
   authToken: "994443fca888401eb44193c9f2721996b8fa958ac2f14ef68e9cc0a6b8f7ef7b"
 };

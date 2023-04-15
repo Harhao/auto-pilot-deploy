@@ -174,23 +174,23 @@ class CommonController {
             "gitPass": "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"
         });
 
-        // const projectConfig = JSON.stringify({
-        //     gitUrl:"https://github.com/Harhao/simple-redux.git",
-        //     branch: "develop",
-        //     tool: "yarn",
-        //     command: "build",
-        //     dest: "build",
-        //     type: "frontEnd"
-        // });
         const projectConfig = JSON.stringify({
-            gitUrl:"https://github.com/Harhao/social-server.git",
+            gitUrl:"https://github.com/Harhao/simple-redux.git",
             branch: "develop",
             tool: "yarn",
             command: "build",
-            dest: "dist",
-            type: "backEnd",
-            deploy: 'serve'
+            dest: "build",
+            type: "frontEnd"
         });
+        // const projectConfig = JSON.stringify({
+        //     gitUrl:"https://github.com/Harhao/social-server.git",
+        //     branch: "develop",
+        //     tool: "yarn",
+        //     command: "build",
+        //     dest: "dist",
+        //     type: "backEnd",
+        //     deploy: 'serve'
+        // });
         const child = spawn(`pilot-script`, ['deploy', '--pilotConfig', pilotConfig, '--projectConfig', projectConfig]);
         child.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);
@@ -199,6 +199,7 @@ class CommonController {
 
         child.stderr.on('data', (data) => {
             console.error(`stderr: ${data}`);
+            ctx.webSocket.emit('stdout', `${data}`);
         });
 
         child.on('close', (code) => {
