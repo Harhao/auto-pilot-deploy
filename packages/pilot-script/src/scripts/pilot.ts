@@ -2,14 +2,16 @@ import prompts from 'prompts';
 import ClientPlaform from '../client';
 import NodePlatform from '../node';
 import FileScript from '../common/file';
+import Pm2 from '../common/pm2';
 import { Log } from './utils';
 import { projectConfig, deployConfig, rollBackConfig } from '../config';
 import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
-import Pm2 from '../common/pm2';
+
 
 export interface IPilotOptions {
     deployFolder: string;
 }
+
 
 type PilotPlatform = ClientPlaform | NodePlatform | undefined;
 export default class Pilot {
@@ -22,7 +24,8 @@ export default class Pilot {
         this.file = new FileScript();
         this.pilotConfigPath = this.file.getPilotConfigPath();
     }
-    // 
+    
+
     public async initConfigure() {
         try {
             const hasGitEnv = this.file.checkPathExists(this.pilotConfigPath);
@@ -75,7 +78,6 @@ export default class Pilot {
             const pilotCofig = (await this.initConfigure()) as IPilotCofig;
             const pm2 = new Pm2(pilotCofig);
             const json = await pm2.getServiceList();
-            console.log(json);
         } catch (e) {
             Log.error(`rollback error ${e}`);
         }
