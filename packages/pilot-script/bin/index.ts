@@ -1,41 +1,41 @@
-import cac from "cac";
-import Pilot from "../src/scripts/pilot";
-import pkg from "../package.json";
-import { Log, writeLogo } from "../src/scripts/utils";
-import process from "process";
+import cac from 'cac';
+import Pilot from '../src/scripts/pilot';
+import pkg from '../package.json';
+import { Log, writeLogo } from '../src/scripts/utils';
+import process from 'process';
 
 function main() {
-    writeLogo("pilot");
+    writeLogo('pilot');
 
     const cli = cac(`${pkg.name}`);
     const pilot = new Pilot();
 
     cli
-        .command("configure [envname]", "[envname]提供部署github项目")
-        .alias("cf")
+        .command('configure [envname]', '[envname]提供部署github项目')
+        .alias('cf')
         .action((options) => {
             console.log(options);
             // pilot.startWork();
         });
 
     cli
-        .command("clone [project]", "[project]提供部署github项目")
-        .alias("dp")
+        .command('clone [project]', '[project]提供部署github项目')
+        .alias('dp')
         .action((gitUrl: string) => {
             pilot.startWork();
         });
 
     // 部署命令
     cli
-        .command("deploy", "部署github项目")
-        .alias("dpl")
+        .command('deploy', '部署github项目')
+        .alias('dpl')
         .option(
-            "--pilotConfig [pilotConfig]",
-            "[pilotConfig]提供git仓库/服务器配置，可参考readme.md"
+            '--pilotConfig [pilotConfig]',
+            '[pilotConfig]提供git仓库/服务器配置，可参考readme.md'
         )
         .option(
-            "--projectConfig [projectConfig]",
-            "[projectConfig] 提供项目配置，可参考readme.md"
+            '--projectConfig [projectConfig]',
+            '[projectConfig] 提供项目配置，可参考readme.md'
         )
         .action((options) => {
             if (options?.pilotConfig && options?.projectConfig) {
@@ -53,22 +53,31 @@ function main() {
 
     // 回滚命令
     cli
-        .command("rollback", "回滚github项目")
-        .alias("rlb")
+        .command('rollback', '回滚github项目')
+        .alias('rlb')
         .option(
-            "--pilotConfig <pilotConfig>",
-            "<pilotConfig> 提供git仓库/服务器配置，可参考readme.md"
+            '--pilotConfig <pilotConfig>',
+            '<pilotConfig> 提供git仓库/服务器配置，可参考readme.md'
         )
         .option(
-            "--projectConfig <projectConfig>",
-            "<projectConfig> 提供项目配置，可参考readme.md"
+            '--projectConfig <projectConfig>',
+            '<projectConfig> 提供项目配置，可参考readme.md'
         )
         .option(
-            "--rollback <projectConfig>",
-            "<projectConfig> 提供项目配置，可参考readme.md"
+            '--rollback <projectConfig>',
+            '<projectConfig> 提供项目配置，可参考readme.md'
         )
         .action((options) => {
             pilot.rollBackWork();
+        });
+
+
+    // 获取服务列表
+    cli
+        .command('service', '获取pm2 运行服务列表')
+        .alias('')
+        .action((options) => {
+            pilot.listServiceWork();
         });
 
     cli.help();

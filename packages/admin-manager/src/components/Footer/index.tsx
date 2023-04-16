@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
         {
           key: 'Auto Pilot 发布平台',
           title: 'Auto Pilot 发布平台',
-          href: 'https://pro.ant.design',
+          href: 'https://github.com/Harhao/auto-pilot-deploy',
           blankTarget: true,
         },
         {
@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
         {
           key: 'Auto Pilot',
           title: 'Auto Pilot',
-          href: 'https://ant.design',
+          href: 'https://github.com/Harhao/auto-pilot-deploy',
           blankTarget: true,
         },
       ]}

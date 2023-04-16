@@ -5,6 +5,7 @@ import FileScript from '../common/file';
 import { Log } from './utils';
 import { projectConfig, deployConfig, rollBackConfig } from '../config';
 import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
+import Pm2 from '../common/pm2';
 
 export interface IPilotOptions {
     deployFolder: string;
@@ -60,9 +61,21 @@ export default class Pilot {
     public async rollBackWork() {
         try {
             const pilotCofig = (await this.initConfigure()) as IPilotCofig;
-            const projectConfig = await this.initProject() as IProjectCofig; 
+            const projectConfig = await this.initProject() as IProjectCofig;
             const config = (await prompts(rollBackConfig));
-            await this.startRollBackJob({ pilotCofig, projectConfig, rollBackConfig: config});
+            await this.startRollBackJob({ pilotCofig, projectConfig, rollBackConfig: config });
+        } catch (e) {
+            Log.error(`rollback error ${e}`);
+        }
+    }
+
+    // pilot-script 回退入口
+    public async listServiceWork() {
+        try {
+            const pilotCofig = (await this.initConfigure()) as IPilotCofig;
+            const pm2 = new Pm2(pilotCofig);
+            const json = await pm2.getServiceList();
+            console.log(json);
         } catch (e) {
             Log.error(`rollback error ${e}`);
         }
@@ -77,7 +90,7 @@ export default class Pilot {
         }
     }
 
-    public async startDeploy(config: { pilotCofig: IPilotCofig, projectConfig: IProjectCofig}) {
+    public async startDeploy(config: { pilotCofig: IPilotCofig, projectConfig: IProjectCofig }) {
         try {
             switch (config.projectConfig.type) {
                 case EProjectType.FRONTEND:
@@ -99,7 +112,7 @@ export default class Pilot {
     public async startRollBackJob(rollBackConfig: unknown) {
         try {
             console.log(rollBackConfig);
-        } catch(e) {
+        } catch (e) {
             Log.error(`startRollBackJob error: ${e}`);
         }
     }
