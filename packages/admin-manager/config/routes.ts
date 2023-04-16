@@ -52,6 +52,12 @@ export default [
     component: './TableList',
   },
   {
+    name: 'deploy',
+    icon: 'table',
+    path: '/deploy',
+    component: './Deploy',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },

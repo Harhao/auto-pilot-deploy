@@ -9,7 +9,7 @@
   "main": "./dist/bin/index.js",
   "scripts": {
     "build": "node ./build/index.js",
-    "test": "ts-node ./bin/index.ts rollback"
+    "test": "ts-node ./bin/index.ts deploy"
   },
   "keywords": [],
   "author": "",

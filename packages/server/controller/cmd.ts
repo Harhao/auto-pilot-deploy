@@ -6,9 +6,18 @@ class CmdController {
         const shcema = Joi.object({
             title: Joi.string().required(),
             isHot: Joi.boolean()
-          });
+        });
+    }
+    async rollback(ctx: Context) {
+        const shcema = Joi.object({
+            title: Joi.string().required(),
+            isHot: Joi.boolean()
+        });
+    }
+
+    async stopRun(ctx: Context) {
+        
     }
 }
 
-const cmdController = new CmdController();
-export { cmdController }; 
+export const cmdController = new CmdController()

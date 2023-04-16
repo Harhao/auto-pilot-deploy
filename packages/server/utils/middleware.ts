@@ -17,16 +17,16 @@ const initLogger = () => {
   return koaLog4.koaLogger(logger, { level: 'auto'});
 };
 
-const logger = initLogger();
+export const logger = initLogger();
 
-const bodyParser = body({
+export const bodyParser = body({
   multipart: true,
   formidable: {
     maxFileSize: 200 * 1024 * 1024,
   },
 });
 
-const postFormat = (err: Error, data: ErrorType) => {
+export const postFormat = (err: Error, data: ErrorType) => {
   const errorStack =
     process.env.NODE_ENV === 'prod'
       ? {
@@ -37,12 +37,10 @@ const postFormat = (err: Error, data: ErrorType) => {
   return errorStack;
 };
 
-const corsOptions: cors.Options = {
+export const corsOptions: cors.Options = {
   origin: '*',
   maxAge: 5,
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
   credentials: true
 };
-
-export { logger, bodyParser, postFormat, corsOptions };
