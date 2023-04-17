@@ -3,6 +3,7 @@ import { IPilotCofig } from 'src/consts';
 import { Log, RequireClient, catchError } from '../scripts/utils';
 
 
+export type PidType = string | string;
 export default class Pm2 {
     public client: NodeSSH | undefined;
     public pilotConfig: IPilotCofig;
@@ -33,7 +34,7 @@ export default class Pm2 {
 
     @catchError()
     @RequireClient()
-    public async stopService(pid: string | number) {
+    public async stopService(pid: PidType) {
         const result = await this.client!.execCommand(`pm2 stop ${pid}`);
         return result.stdout;
     }
@@ -48,7 +49,7 @@ export default class Pm2 {
 
     @catchError()
     @RequireClient()
-    public async stopAllService() {
+    public async stopAllService(pid?: PidType) {
         const result = await this.client!.execCommand('pm2 stop all');
         return result.stdout;
 

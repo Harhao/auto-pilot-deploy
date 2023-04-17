@@ -1,16 +1,16 @@
 import path, { resolve } from 'path';
-import Base from '../common/base';
-import { Log, catchError } from '../scripts/utils';
+import Base from '../../common/base';
+import { Log, catchError } from '../../scripts/utils';
 import fse from 'fs-extra';
-import { IPilotCofig, IProjectCofig } from '../consts';
-import { FROMTENDDIR, NGINXCONFIGPATH, NPMREGISTRY } from '../config';
+import { IPilotCofig, IProjectCofig } from '../../consts';
+import { FROMTENDDIR, NGINXCONFIGPATH, NPMREGISTRY } from '../../config';
 import ejs from 'ejs';
 
-export default class ClientPlatform extends Base {
+export class ClientPlatform extends Base {
 
     @catchError()
     public async execute(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
-        Log.success('✨ 开始运行pilot脚本 ✨');
+        Log.success('✨ 开始运行前端部署脚本 ✨');
         const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
         if (localPath) {
             await this.deployJob(localPath, projectConfig, pilotCofig);

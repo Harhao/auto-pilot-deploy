@@ -8,7 +8,7 @@ export const writeLogo = (logoText: string) => {
     // 使用 chalk 添加颜色和样式
     const styledText = chalk.green(asciiArt);
     // 使用 boxen 绘制带边框的框架
-    const box = boxen(styledText, {padding:0, align: 'center', borderColor: 'white' });
+    const box = boxen(styledText, {padding:0, align: 'center', borderColor: 'yellow'  });
 
     console.log(box);
     // 打印图案和符号

@@ -1,6 +1,5 @@
 import prompts from 'prompts';
-import ClientPlaform from '../client';
-import NodePlatform from '../node';
+import  { NodePlatform, ClientPlatform } from '../platform';
 import FileScript from '../common/file';
 import Pm2 from '../common/pm2';
 import { Log, catchError } from './utils';
@@ -13,7 +12,7 @@ export interface IPilotOptions {
 }
 
 
-type PilotPlatform = ClientPlaform | NodePlatform | undefined;
+type PilotPlatform = ClientPlatform | NodePlatform | undefined;
 export default class Pilot {
     // 本地配置密钥信息路径
     private pilotConfigPath: string;
@@ -87,7 +86,7 @@ export default class Pilot {
 
         switch (config.projectConfig.type) {
             case EProjectType.FRONTEND:
-                this.platform = new ClientPlaform();
+                this.platform = new ClientPlatform();
                 break;
             case EProjectType.BACKEND:
                 this.platform = new NodePlatform();
