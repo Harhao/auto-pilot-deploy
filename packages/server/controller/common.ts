@@ -191,10 +191,13 @@ class CommonController {
         //     type: "backEnd",
         //     deploy: 'serve'
         // });
-        const child = spawn(`pilot-script`, ['deploy', '--pilotConfig', pilotConfig, '--projectConfig', projectConfig]);
+        // const child = spawn(`pilot-script`, ['deploy', '--pilotConfig', pilotConfig, '--projectConfig', projectConfig]);
+        const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
         child.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
-            ctx.webSocket.emit('stdout', `${data}`);
+            // console.log(`stdout: ${data}`);
+            // ctx.webSocket.emit('stdout', `${data}`);
+           const jsonData = JSON.stringify(data.toString('utf8'));
+           console.log(JSON.parse(jsonData))
         });
 
         child.stderr.on('data', (data) => {

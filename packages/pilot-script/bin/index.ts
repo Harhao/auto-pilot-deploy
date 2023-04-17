@@ -60,9 +60,18 @@ function main() {
     cli
         .command('service', '获取pm2 运行服务列表')
         .alias('psl')
-        .action(async () => {
-            const list = await pilot.listServiceWork();
-            process.stdout.write(list);
+        .option(
+            '--pilotConfig <pilotConfig>',
+            '<pilotConfig> 提供git仓库/服务器配置，可参考readme.md'
+        )
+        .action(async (options) => {
+            if (options?.pilotConfig) {
+                const { pilotConfig } = options;
+                const pilotJson = JSON.parse(pilotConfig);
+                const list = await pilot.getServiceList(pilotJson);
+                process.stdout.write(list);
+            }
+
         });
 
     cli.help();

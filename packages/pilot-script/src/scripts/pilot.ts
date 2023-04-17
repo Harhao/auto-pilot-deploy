@@ -65,11 +65,15 @@ export default class Pilot {
 
     //查询在跑服务
     @catchError()
-    public async listServiceWork() {
+    public async getServiceWorks() {
         const pilotCofig = (await this.initConfigure()) as IPilotCofig;
+        return (await this.getServiceList(pilotCofig));
+    }
+
+    @catchError()
+    public async getServiceList(pilotCofig: IPilotCofig) {
         const pm2 = new Pm2(pilotCofig);
         return await pm2.getServiceList();
-
     }
 
     @catchError()
