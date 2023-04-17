@@ -17,14 +17,15 @@ export function RequireClient() {
 
 export function catchError() {
     return function (target: any, propertyKey: string, descriptor: any) {
-        const value = descriptor.value;
+        const originalMethod = descriptor.value;
         descriptor.value = function (...args: any[]) {
+            let result;
             try {
-                value.apply(this, args);
+                result = originalMethod.apply(this, args);
             } catch (e) {
                 Log.error(`${propertyKey} error ${e}`);
-                return null;
             }
+            return result ?? null;
         };
         return descriptor;
     };

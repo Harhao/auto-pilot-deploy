@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "node ./build/index.js",
-    "test": "ts-node ./bin/index.ts service"
+    "test": "ts-node ./bin/index.ts deploy"
   },
   "dependencies": {
     "@topcli/spinner": "^2.0.0",

@@ -80,7 +80,6 @@ export default class FileScript {
             fse.mkdirsSync(folderPath);
         }
         return folderPath;
-
     }
 
     @catchError()
