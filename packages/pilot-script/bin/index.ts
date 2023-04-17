@@ -2,28 +2,12 @@ import cac from 'cac';
 import Pilot from '../src/scripts/pilot';
 import pkg from '../package.json';
 import { Log, writeLogo } from '../src/scripts/utils';
-import process from 'process';
 
 function main() {
     writeLogo('pilot');
 
     const cli = cac(`${pkg.name}`);
     const pilot = new Pilot();
-
-    cli
-        .command('configure [envname]', '[envname]提供部署github项目')
-        .alias('cf')
-        .action((options) => {
-            console.log(options);
-            // pilot.startWork();
-        });
-
-    cli
-        .command('clone [project]', '[project]提供部署github项目')
-        .alias('dp')
-        .action((gitUrl: string) => {
-            pilot.startWork();
-        });
 
     // 部署命令
     cli
@@ -75,9 +59,10 @@ function main() {
     // 获取服务列表
     cli
         .command('service', '获取pm2 运行服务列表')
-        .alias('')
-        .action((options) => {
-            pilot.listServiceWork();
+        .alias('psl')
+        .action(async () => {
+            const list = await pilot.listServiceWork();
+            process.stdout.write(list);
         });
 
     cli.help();

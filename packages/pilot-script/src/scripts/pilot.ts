@@ -1,5 +1,5 @@
 import prompts from 'prompts';
-import  { NodePlatform, ClientPlatform } from '../platform';
+import { NodePlatform, ClientPlatform } from '../platform';
 import FileScript from '../common/file';
 import Pm2 from '../common/pm2';
 import { Log, catchError } from './utils';
@@ -52,7 +52,7 @@ export default class Pilot {
         await this.startDeploy({ pilotCofig, projectConfig });
 
     }
-    // pilot-script 回退入口
+    // pilot-script 回滚入口
     @catchError()
     public async rollBackWork() {
 
@@ -63,21 +63,12 @@ export default class Pilot {
 
     }
 
-    // pilot-script 回退入口
+    //查询在跑服务
     @catchError()
     public async listServiceWork() {
-
         const pilotCofig = (await this.initConfigure()) as IPilotCofig;
         const pm2 = new Pm2(pilotCofig);
-        const json = await pm2.getServiceList();
-
-    }
-
-    // 终止进程
-    @catchError()
-    public async stopWork() {
-
-        Log.info('stopWork');
+        return await pm2.getServiceList();
 
     }
 
@@ -96,9 +87,9 @@ export default class Pilot {
         await this.platform?.execute(config.pilotCofig, config.projectConfig);
         Log.success('部署成功～');
 
-
     }
 
+    // 开始回滚
     @catchError()
     public async startRollBackJob(rollBackConfig: unknown) {
 

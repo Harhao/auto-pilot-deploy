@@ -27,7 +27,6 @@ export default class Pm2 {
     @RequireClient()
     public async getServiceList() {
         const result = await this.client!.execCommand('pm2 jlist');
-        console.log(result);
         return result.stdout;
 
     }

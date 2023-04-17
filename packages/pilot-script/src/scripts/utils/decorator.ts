@@ -6,10 +6,10 @@ export function RequireClient() {
         descriptor.value = async function (...args: any[]) {
             if (!this.client) {
                 this.client = await this.getClientHandle(this.pilotConfig);
-                value.apply(this, args);
-                return;
             }
-            value.apply(this, args);
+            const result = value.apply(this, args);
+            return result ?? null;
+
         };
         return descriptor;
     };
