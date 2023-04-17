@@ -1,5 +1,5 @@
 import path from 'path';
-import { Log } from '../scripts/utils';
+import { Log, catchError } from '../scripts/utils';
 import simpleGit, { SimpleGit } from 'simple-git';
 import FileScript from './file';
 
@@ -34,6 +34,7 @@ export default class GitScript {
         });
     }
 
+    @catchError()
     public getGitRepoName(repoUrl: string): string | null {
         const pattern = /^.*?\/\/.*?\/([\w-]+)\/([\w-]+?)(\.git)?$/;
         const match = repoUrl.match(pattern);
@@ -46,15 +47,11 @@ export default class GitScript {
         }
     }
 
+    @catchError()
     public async switchToBranch(branch: string): Promise<boolean> {
-        try {
-            const result = await this.git.checkout(branch);
-            console.log('分支已经切换到：', result);
-            return true;
-        } catch (err) {
-            console.log('切换分支失败：', err);
-            return false;
-        }
+        const result = await this.git.checkout(branch);
+        console.log('分支已经切换到：', result);
+        return true;
     }
 
     public updateGitConfigure(config: {

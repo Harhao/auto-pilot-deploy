@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Button } from "antd"
-import { useEmotionCss } from "@ant-design/use-emotion-css";
-import io from "socket.io-client";
+import React, { useState } from 'react';
+import { Button } from 'antd';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
+import io from 'socket.io-client';
+import { FormattedMessage } from '@umijs/max';
 
 const Deploy: React.FC = () => {
   const [socket, setSocket] = useState<any>(null);
@@ -21,9 +22,9 @@ const Deploy: React.FC = () => {
   });
 
   const connectSocket = () => {
-    const socket = io("http://localhost:8080");
+    const socket = io('http://localhost:8080');
     setSocket(socket);
-    socket.on("stdout", (message) => {
+    socket.on('stdout', (message) => {
       setMessages((prevMessages: string[]) => {
         return [...prevMessages, message];
       });
@@ -37,7 +38,7 @@ const Deploy: React.FC = () => {
         type="primary"
         onClick={connectSocket}
       >
-       部署
+       <FormattedMessage id="pages.deploy.deployBtn" defaultMessage="Deploy-btn" />,
       </Button>
         <ul>
           {messages.map((message, index) => (

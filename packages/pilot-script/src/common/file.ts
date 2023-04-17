@@ -1,7 +1,7 @@
 import os from 'os';
 import path from 'path';
 import fse from 'fs-extra';
-import { Log } from '../scripts/utils';
+import { catchError } from '../scripts/utils';
 import { CREATEFOLDER, ENVCONFIGNAME } from '../config';
 
 export default class FileScript {
@@ -20,6 +20,7 @@ export default class FileScript {
      * 删除文件夹
      * @param directory 本地文件夹
      */
+    @catchError()
     public deleteDirectory(directory: string) {
         if (this.checkPathExists(directory)) {
             fse.removeSync(directory); // 删除当前目录
@@ -30,12 +31,9 @@ export default class FileScript {
      * 读取文件夹
      * 
      */
+    @catchError()
     public async readDirectory(directory: string) {
-        try {
-            return await fse.promises.readdir(directory, { withFileTypes: true });
-        } catch (e) {
-            Log.error(`readDirectory error: ${e}`);
-        }
+        return await fse.promises.readdir(directory, { withFileTypes: true });
     }
 
     /**
@@ -43,10 +41,12 @@ export default class FileScript {
      * @param targetPath 
      * @returns 
      */
+    @catchError()
     public checkPathExists(targetPath: string): boolean {
         return fse.pathExistsSync(targetPath);
     }
 
+    @catchError()
     public getPilotConfigPath(): string {
         return path.resolve(this.targetPath, ENVCONFIGNAME);
     }
@@ -55,14 +55,12 @@ export default class FileScript {
      * 切换程序文件夹上下文
      * @param targetPath 
      */
+    @catchError()
     public async changeDirectory(targetPath: string) {
-        try {
-            const checkPathExists = this.checkPathExists(targetPath);
-            if (checkPathExists) {
-                process.chdir(targetPath);
-            }
-        } catch (e) {
-            Log.error(`${e}`);
+
+        const checkPathExists = this.checkPathExists(targetPath);
+        if (checkPathExists) {
+            process.chdir(targetPath);
         }
     }
 
@@ -71,23 +69,21 @@ export default class FileScript {
      * @param targetPath 
      * @returns 
      */
+    @catchError()
     public getUserHomePath(targetPath: string): string {
-        try {
-            const homeDir = os.homedir();
-            const folderPath = path.resolve(
-                homeDir,
-                this.generateFolderName || targetPath
-            );
-            if (!this.checkPathExists(folderPath)) {
-                fse.mkdirsSync(folderPath);
-            }
-            return folderPath;
-        } catch (e) {
-            Log.error(`${e}`);
-            return '';
+        const homeDir = os.homedir();
+        const folderPath = path.resolve(
+            homeDir,
+            this.generateFolderName || targetPath
+        );
+        if (!this.checkPathExists(folderPath)) {
+            fse.mkdirsSync(folderPath);
         }
+        return folderPath;
+
     }
 
+    @catchError()
     public writeFileSync(filePath: string, data: string) {
         fse.writeFileSync(filePath, data, {
             encoding: 'utf8',
@@ -96,6 +92,7 @@ export default class FileScript {
         });
     }
 
+    @catchError()
     public readJsonFile(jsonFilePath: string) {
         return fse.readJsonSync(jsonFilePath);
     }

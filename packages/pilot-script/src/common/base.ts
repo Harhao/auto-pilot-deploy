@@ -4,7 +4,7 @@ import GitScript from './git';
 import path from 'path';
 import { NodeSSH } from 'node-ssh';
 import { IPilotCofig } from '../consts/index';
-import { Log } from '../scripts/utils';
+import { Log, catchError } from '../scripts/utils';
 import { Dirent } from 'fs-extra';
 
 
@@ -29,6 +29,7 @@ export default class Base {
      * @param data 服务器/git权限信息
      * @returns 返回下载的git仓库本地地址
      */
+    @catchError()
     public async downloadRepo(gitUrl: string, data: IPilotCofig) {
         if (data?.gitPass) {
             const isConfig = await this.git.updateGitConfigure({
@@ -46,32 +47,31 @@ export default class Base {
      * @param localDir 本地需要上传的文件夹
      * @param remoteDir 需要上传到远程文件夹
      */
+    @catchError()
     public async uploadFileToServer(data: IPilotCofig, localDir: string, remoteDir: string) {
-        try {
-            const { address, account, serverPass } = data;
-            if (this.file.checkPathExists(localDir)) {
-                Log.success(`已经存在文件目录 ${localDir}`);
-                if (address && account && serverPass) {
-                    Log.success('开始执行上传操作～');
-                    this.client = await this.client.connect({
-                        host: address,
-                        port: 22,
-                        username: account,
-                        password: serverPass,
-                    });
-                    await this.uploadDirectory(localDir, remoteDir);
-                    Log.success('上传成功～');
-                }
+        const { address, account, serverPass } = data;
+        if (this.file.checkPathExists(localDir)) {
+            Log.success(`已经存在文件目录 ${localDir}`);
+            if (address && account && serverPass) {
+                Log.success('开始执行上传操作～');
+                this.client = await this.client.connect({
+                    host: address,
+                    port: 22,
+                    username: account,
+                    password: serverPass,
+                });
+                await this.uploadDirectory(localDir, remoteDir);
+                Log.success('上传成功～');
             }
-        } catch (e) {
-            Log.error(`上传文件到服务器失败${e}`);
         }
+
     }
     /**
      * 上传文件夹到远程
      * @param localDir 本地文件夹（需要上传）
      * @param remoteDir 远程服务目录
      */
+    @catchError()
     public async uploadDirectory(localDir: string, remoteDir: string) {
         const files = await this.file.readDirectory(localDir) as Dirent[];
 
@@ -98,6 +98,7 @@ export default class Base {
      * @param fileName 
      * @returns 
      */
+    @catchError()
     public async isFileExist(filePath: string, fileName: string) {
         const result = await this.client.execCommand(`ls -l ${filePath}`);
         if (result.stdout.includes(`${fileName}`)) {
