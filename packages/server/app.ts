@@ -14,8 +14,8 @@ import { Server } from 'socket.io';
 import http from 'http';
 
 try {
-  // connectToDB(
-  //   () => {
+  connectToDB(
+    () => {
       const app = new Koa();
       const server = http.createServer(app.callback());
       const io = new Server(server, {
@@ -49,16 +49,15 @@ try {
       server.listen(config.port, () => {
         console.log(`服务器启动成功，端口监听在 ${config.port}`);
       });
-      
       app.context.webSocket = io;   
       app.context.redisClient = connectToRedis();
 
       runTask(app.context.redisClient);
-  //   },
-  //   (error: Error) => {
-  //     throw error;
-  //   }
-  // );
+    },
+    (error: Error) => {
+      throw error;
+    }
+  );
 } catch (e) {
   console.error('数据库连接异常， 请检查数据库是否可访问');
 }
