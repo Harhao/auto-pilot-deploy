@@ -53,7 +53,7 @@ export class NodePlatform extends Base {
         
         const remoteConf = `${NGINXCONFIGPATH}/${remoteFolder}.conf`;
         const answers = await prompts(nginxConfig);
-        const nginxEjsPath = resolve(__dirname, '../ejs/backend_nginx.ejs');
+        const nginxEjsPath = resolve(__dirname, '../../ejs/backend_nginx.ejs');
         const ejsContent = fse.readFileSync(nginxEjsPath, 'utf8');
         const nginxConf = ejs.render(ejsContent, answers);
         Log.info('create backend nginx.conf file start');

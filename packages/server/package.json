@@ -13,10 +13,14 @@
   "author": "huahao",
   "license": "MIT",
   "dependencies": {
+    "@pilot/script": "0.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "joi": "^17.4.0",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
     "koa-body": "^4.2.0",
+    "koa-compose": "^4.1.0",
     "koa-helmet": "^6.1.0",
     "koa-json-error": "^3.1.2",
     "koa-jwt": "^4.0.1",
@@ -28,9 +32,9 @@
     "nodemailer": "^6.6.1",
     "qiniu": "7.3.2",
     "redis": "^2.8.0",
+    "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
-    "uuid": "^9.0.0",
-    "@pilot/script": "0.0.1"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^8.5.1",

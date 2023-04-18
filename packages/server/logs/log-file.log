@@ -1,0 +1,1 @@
+[2023-04-18T19:03:50.595] [ERROR] default - ::1 - - "GET /favicon.ico HTTP/1.1" 404 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"

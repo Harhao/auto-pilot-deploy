@@ -3,8 +3,6 @@ import Joi from 'joi';
 import path from 'path';
 import uploadService from '../utils/oss-upload';
 import { Context } from 'koa';
-import WechatAuth from '../utils/wechat';
-import { spawn } from "child_process"
 
 class CommonController {
     // 上传图片文件到七牛云
@@ -146,113 +144,8 @@ class CommonController {
         }
     }
 
-    async validateWechat(ctx: Context) {
-        const schema = Joi.object({
-            url: Joi.string().required()
-        });
-        try {
-            const data: { url: string } = await schema.validateAsync(ctx.request.body);
-            const accessTokenData: any = await WechatAuth.getAccessToken();
-            const ticketData: any = await WechatAuth.getTicket(accessTokenData.access_token);
-            const wxConfig = await WechatAuth.getWxConfigData(ticketData.ticket, data.url);
-            ctx.body = {
-                code: 200,
-                data: wxConfig,
-                msg: 'success'
-            }
 
-        } catch (e) {
-            ctx.body = e
-        }
-    }
-    async deploy(ctx: Context) {
-        const pilotConfig = JSON.stringify({
-            "address": "47.106.90.4",
-            "account": "root",
-            "serverPass": "abc6845718ABC",
-            "gitUser": "Harhao",
-            "gitPass": "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"
-        });
-
-        const projectConfig = JSON.stringify({
-            gitUrl: "https://github.com/Harhao/simple-redux.git",
-            branch: "develop",
-            tool: "yarn",
-            command: "build",
-            dest: "build",
-            type: "frontEnd"
-        });
-        // const projectConfig = JSON.stringify({
-        //     gitUrl:"https://github.com/Harhao/social-server.git",
-        //     branch: "develop",
-        //     tool: "yarn",
-        //     command: "build",
-        //     dest: "dist",
-        //     type: "backEnd",
-        //     deploy: 'serve'
-        // });
-        // const child = spawn(`pilot-script`, ['deploy', '--pilotConfig', pilotConfig, '--projectConfig', projectConfig]);
-        // child.stdout.on('data', (data) => {
-        //     // console.log(`stdout: ${data}`);
-        //     // ctx.webSocket.emit('stdout', `${data}`);
-        //    const jsonData = JSON.stringify(data.toString('utf8'));
-        //    console.log(JSON.parse(jsonData))
-        // });
-
-        // child.stderr.on('data', (data) => {
-        //     console.error(`stderr: ${data}`);
-        //     ctx.webSocket.emit('stdout', `${data}`);
-        // });
-
-        const getServiceList = () => {
-            return new Promise((resolve, reject) => {
-                const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
-                child.stdout.on('data', (data) => {
-                    const jsonData = JSON.parse(data.toString('utf-8'));
-                    resolve(jsonData);
-                });
-            });
-        }
-
-        const list = await getServiceList();
-
-        ctx.body = {
-            code: 200,
-            data: list,
-            msg: 'success'
-        }
-    }
-
-    async getNodeService(ctx: Context) {
-        const pilotConfig = JSON.stringify({
-            "address": "47.106.90.4",
-            "account": "root",
-            "serverPass": "abc6845718ABC",
-            "gitUser": "Harhao",
-            "gitPass": "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"
-        });
-
-        const getServiceList = () => {
-            return new Promise((resolve, reject) => {
-                const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
-                child.stdout.on('data', (data) => {
-                    const jsonData = JSON.parse(data.toString('utf-8'));
-                    resolve(jsonData);
-                });
-            });
-        }
-
-        const list = await getServiceList();
-
-        ctx.body = {
-            code: 200,
-            data: list,
-            msg: 'success'
-        }
-    }
 }
 
-const commonController = new CommonController();
-
-export { commonController };
+export const commonController = new CommonController();
 

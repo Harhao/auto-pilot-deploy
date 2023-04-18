@@ -43,7 +43,7 @@ export class ClientPlatform extends Base {
     @catchError()
     public async configNginxConf() {
         const remoteConf = `${NGINXCONFIGPATH}/frontend.conf`;
-        const nginxEjsPath = resolve(__dirname, '../ejs/frontend_nginx.ejs');
+        const nginxEjsPath = resolve(__dirname, '../../ejs/frontend_nginx.ejs');
         const ejsContent = fse.readFileSync(nginxEjsPath, 'utf8');
         const nginxConf = ejs.render(ejsContent);
         const isFileExist = await this.isFileExist(remoteConf, 'frontend.conf');
