@@ -1,10 +1,11 @@
 import cac from 'cac';
 import Pilot from '../src/scripts/pilot';
 import pkg from '../package.json';
-import { Log, writeLogo } from '../src/scripts/utils';
+import { Log, formatPmJSON, writeLogo } from '../src/scripts/utils';
+import process from 'process';
 
 function main() {
-    writeLogo('pilot');
+    // writeLogo('pilot');
 
     const cli = cac(`${pkg.name}`);
     const pilot = new Pilot();
@@ -66,12 +67,14 @@ function main() {
         )
         .action(async (options) => {
             if (options?.pilotConfig) {
-                const { pilotConfig } = options;
-                const pilotJson = JSON.parse(pilotConfig);
+                const pilotJson = JSON.parse(options.pilotConfig);
                 const list = await pilot.getServiceList(pilotJson);
-                process.stdout.write(list);
+                const filterList = formatPmJSON(JSON.parse(list));
+                process.stdout.write(JSON.stringify(filterList));
+            } else {
+                const list = await pilot.getServiceWorks();
+                Log.success(`${list}`);
             }
-
         });
 
     cli.help();

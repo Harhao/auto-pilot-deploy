@@ -175,7 +175,7 @@ class CommonController {
         });
 
         const projectConfig = JSON.stringify({
-            gitUrl:"https://github.com/Harhao/simple-redux.git",
+            gitUrl: "https://github.com/Harhao/simple-redux.git",
             branch: "develop",
             tool: "yarn",
             command: "build",
@@ -192,25 +192,61 @@ class CommonController {
         //     deploy: 'serve'
         // });
         // const child = spawn(`pilot-script`, ['deploy', '--pilotConfig', pilotConfig, '--projectConfig', projectConfig]);
-        const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
-        child.stdout.on('data', (data) => {
-            // console.log(`stdout: ${data}`);
-            // ctx.webSocket.emit('stdout', `${data}`);
-           const jsonData = JSON.stringify(data.toString('utf8'));
-           console.log(JSON.parse(jsonData))
-        });
+        // child.stdout.on('data', (data) => {
+        //     // console.log(`stdout: ${data}`);
+        //     // ctx.webSocket.emit('stdout', `${data}`);
+        //    const jsonData = JSON.stringify(data.toString('utf8'));
+        //    console.log(JSON.parse(jsonData))
+        // });
 
-        child.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
-            ctx.webSocket.emit('stdout', `${data}`);
-        });
+        // child.stderr.on('data', (data) => {
+        //     console.error(`stderr: ${data}`);
+        //     ctx.webSocket.emit('stdout', `${data}`);
+        // });
 
-        child.on('close', (code) => {
-            console.log(`child process exited with code ${code}`);
-        });
+        const getServiceList = () => {
+            return new Promise((resolve, reject) => {
+                const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
+                child.stdout.on('data', (data) => {
+                    const jsonData = JSON.parse(data.toString('utf-8'));
+                    resolve(jsonData);
+                });
+            });
+        }
+
+        const list = await getServiceList();
+
         ctx.body = {
             code: 200,
-            data: "开始运行",
+            data: list,
+            msg: 'success'
+        }
+    }
+
+    async getNodeService(ctx: Context) {
+        const pilotConfig = JSON.stringify({
+            "address": "47.106.90.4",
+            "account": "root",
+            "serverPass": "abc6845718ABC",
+            "gitUser": "Harhao",
+            "gitPass": "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"
+        });
+
+        const getServiceList = () => {
+            return new Promise((resolve, reject) => {
+                const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
+                child.stdout.on('data', (data) => {
+                    const jsonData = JSON.parse(data.toString('utf-8'));
+                    resolve(jsonData);
+                });
+            });
+        }
+
+        const list = await getServiceList();
+
+        ctx.body = {
+            code: 200,
+            data: list,
             msg: 'success'
         }
     }
