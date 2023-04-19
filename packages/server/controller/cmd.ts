@@ -1,8 +1,7 @@
-import { Context } from 'koa';
-import { CmdDeployDto } from '../dto/cmdDto';
-import { Controller, Get, Post, catchError } from '../utils';
-
 import CmdService from '../service/cmd';
+import { Context } from 'koa';
+import { Controller, Get, Post, ValidateDto, CatchError } from '../decorator';
+import { ProjectDto } from '../dto';
 
 @Controller('/cmd')
 export default class CmdController {
@@ -21,27 +20,19 @@ export default class CmdController {
         this.cmdService =  new CmdService({ pilotConfig: this.pilotConfig});
     }
 
-    private getPilotConfig = async (ctx: Context) => { }
-
     @Post('/deploy')
-    @catchError()
+    @CatchError()
+    @ValidateDto(ProjectDto)
     public async deploy(ctx: Context) {
 
-        const projectConfig = JSON.stringify({
-            gitUrl: "https://github.com/Harhao/simple-redux.git",
-            branch: "develop",
-            tool: "yarn",
-            command: "build",
-            dest: "build",
-            type: "frontEnd"
-        });
+        const projectConfig = ctx.request.body;
 
         const callBack = (data: Buffer) => {
             console.log(data.toString());
             ctx.webSocket.emit(data.toString());
         };
 
-        this.cmdService.deployService(projectConfig, callBack, callBack);
+        this.cmdService.deployService(JSON.stringify(projectConfig), callBack, callBack);
 
         ctx.body = {
             code: 200,
@@ -51,13 +42,12 @@ export default class CmdController {
     }
 
     @Post('/rollback')
-    @catchError()
+    @CatchError()
     public async rollback(ctx: Context) {
     }
 
     @Get('/stopRun')
-    @catchError()
-    
+    @CatchError()
     public async stopRun(ctx: Context) {
         ctx.body = {
             code: 200,
@@ -67,7 +57,7 @@ export default class CmdController {
     }
 
     @Get('/services')
-    @catchError()
+    @CatchError()
     public async getServices (ctx: Context) {
         const list = await this.cmdService.getServiceList(this.pilotConfig);
         ctx.body = {

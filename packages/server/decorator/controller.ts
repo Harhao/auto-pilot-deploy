@@ -56,7 +56,7 @@ function createMappingDecorator(method: HTTPMethod): (path: string, ...middlewar
     };
 }
 
-export function catchError() {
+export function CatchError() {
     return function (target: any, propertyKey: string, descriptor: any) {
         const originalMethod = descriptor.value;
         descriptor.value = function (...args: any[]) {

@@ -1,1 +1,5 @@
-export class UserDto {}
+import { IsString } from 'class-validator';
+
+export class UserRegisterDto {
+
+}

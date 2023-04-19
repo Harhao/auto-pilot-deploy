@@ -2,7 +2,7 @@ import figlet, { fonts } from 'figlet';
 import chalk from 'chalk';
 import boxen from 'boxen';
 
-export const writeLogo = (logoText: string) => {
+export const stdoutLogo = (logoText: string) => {
     // 使用 figlet 将文本转换为 ASCII 艺术字体
     const asciiArt = figlet.textSync(logoText);
     // 使用 chalk 添加颜色和样式

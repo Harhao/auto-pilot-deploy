@@ -1,11 +1,10 @@
 import cac from 'cac';
 import Pilot from '../src/scripts/pilot';
 import pkg from '../package.json';
-import { Log, formatPmJSON, writeLogo } from '../src/scripts/utils';
+import { Log, formatPmJSON, stdoutLogo } from '../src/scripts/utils';
 import process from 'process';
 
 function main() {
-    // writeLogo('pilot');
 
     const cli = cac(`${pkg.name}`);
     const pilot = new Pilot();
@@ -86,4 +85,6 @@ try {
 } catch (e) {
     Log.error(`pilot run error ${e}`);
     process.exit(0);
+} finally {
+    stdoutLogo('pilot');
 }

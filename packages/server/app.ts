@@ -4,10 +4,9 @@ import error from 'koa-json-error';
 import helmet from 'koa-helmet';
 import config from './config/config';
 import http from 'http';
-import { ControllerLoader } from './utils';
+import { ControllerLoader,logger, bodyParser, postFormat, corsOptions } from './utils';
 import { resolve } from 'path';
 import { connectToDB, connectToRedis } from './config/db';
-import { logger, bodyParser, postFormat, corsOptions } from './utils/middleware';
 import { Server } from 'socket.io';
 
 try {
