@@ -1,9 +1,11 @@
 import { Context } from 'koa';
-import CmdService from '../service/cmd';
 import { CmdDeployDto } from '../dto/cmdDto';
+import { Controller, Get, Post, catchError } from '../utils';
+
+import CmdService from '../service/cmd';
 
 @Controller('/cmd')
-class CmdController {
+export default class CmdController {
 
     private pilotConfig: string;
     public cmdService: CmdService;
@@ -16,14 +18,15 @@ class CmdController {
             "gitUser": "Harhao",
             "gitPass": "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"
         });
-        this.cmdService = new CmdService({ pilotConfig: this.pilotConfig });
+        this.cmdService =  new CmdService({ pilotConfig: this.pilotConfig});
+        this.getServices = this.getServices.bind(this);
     }
 
-    getPilotConfig = async (ctx: Context) => {
+    private getPilotConfig = async (ctx: Context) => { }
 
-    }
-
-    async deploy(ctx: Context) {
+    @Post('/deploy')
+    @catchError()
+    public async deploy(ctx: Context) {
 
         const projectConfig = JSON.stringify({
             gitUrl: "https://github.com/Harhao/simple-redux.git",
@@ -48,21 +51,31 @@ class CmdController {
         }
     }
 
-    rollback = async (ctx: Context) => {
+    @Post('/rollback')
+    @catchError()
+    public async rollback(ctx: Context) {
     }
 
-    stopRun = async (ctx: Context) => {
-
+    @Get('/stopRun')
+    @catchError()
+    
+    public async stopRun(ctx: Context) {
+        ctx.body = {
+            code: 200,
+            data: "stopRun function",
+            msg: 'success'
+        }
     }
 
-    getServices = async (ctx: Context) => {
+    @Get('/services')
+    @catchError()
+    public async getServices (ctx: Context) {
+        console.log('===>', this);
         const list = await this.cmdService.getServiceList(this.pilotConfig);
         ctx.body = {
             code: 200,
             data: list,
             msg: 'success'
-        }
+        }  
     }
 }
-
-export const cmdController = new CmdController()

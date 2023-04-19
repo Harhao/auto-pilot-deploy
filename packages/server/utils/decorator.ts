@@ -1,21 +1,73 @@
 import "reflect-metadata";
+import Koa from "koa";
 
-export function Controller(pathPrefix: string) {
+type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 
-    return function<T extends { new (...args: any[]): {}}>(target: T) {
-        const methods = Object.getOwnPropertyNames(target.prototype);
+interface Middleware {
+    (ctx: Koa.Context, next: () => Promise<any>): any;
+}
 
-        for(let i = 0; i < methods.length; i++) {
-            const methodName = methods[i];
-            const method = target.prototype[methodName];
+interface IControllerRoute {
+    routePath: string;
+    method: HTTPMethod;
+    middlewares: Middleware[];
+    handler: (ctx: Koa.Context) => void;
+};
 
-            if(typeof method !== 'function' && methodName === 'constructor') {
-                continue;
+export const Get = createMappingDecorator('get');
+export const Post = createMappingDecorator('post');
+export const Put = createMappingDecorator('put');
+export const Delete = createMappingDecorator('del');
+
+export function Controller(prefix: string): ClassDecorator {
+    return (target: any) => {
+        const prefixPath = prefix || '';
+        const routes = Reflect.getMetadata('routes', target.prototype) || [];
+        const controllers: IControllerRoute[] = [];
+        routes.forEach((route: any) => {
+            const { method, path } = route.options;
+            const middlewares = [...(target.middlewares || []), ...(route.middlewares || [])];
+            const handler = route.handler.bind(target.prototype);
+            controllers.push({
+                routePath: `${prefixPath}${path}`,
+                method: method,
+                middlewares: middlewares,
+                handler: handler,
+            });
+        });
+        Reflect.defineMetadata('controllerInfo', controllers, target);
+    };
+}
+
+function createMappingDecorator(method: HTTPMethod): (path: string, ...middlewares: Middleware[]) => MethodDecorator {
+    return (path: string, ...middlewares: Middleware[]) => {
+        return (target: any, key: string, decriptor: any) => {
+            const routes = Reflect.getMetadata('routes', target.constructor.prototype) || [];
+            routes.push({
+                options: {
+                    method,
+                    path,
+                },
+                middlewares,
+                handler: decriptor.value,
+            });
+            Reflect.defineMetadata('routes', routes, target.constructor.prototype);
+        };
+    };
+}
+
+export function catchError() {
+    return function (target: any, propertyKey: string, descriptor: any) {
+        const originalMethod = descriptor.value;
+        descriptor.value = function (...args: any[]) {
+            let result;
+            try {
+                result = originalMethod.apply(this, args);
+            } catch (e) {
+                console.error(`${propertyKey} error ${e}`);
             }
-
-            const route = Reflect.getMetadata("route", method);
-            const methodType = Reflect.getMetadata("method", method);
-            
-        }
-    }
+            return result ?? null;
+        };
+        return descriptor;
+    };
 }
