@@ -27,7 +27,7 @@ export function Controller(prefix: string): ClassDecorator {
         routes.forEach((route: any) => {
             const { method, path } = route.options;
             const middlewares = [...(target.middlewares || []), ...(route.middlewares || [])];
-            const handler = route.handler.bind(target.prototype);
+            const handler = route.handler.bind(new target());
             controllers.push({
                 routePath: `${prefixPath}${path}`,
                 method: method,

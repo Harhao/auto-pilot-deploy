@@ -26,3 +26,4 @@
 [2023-04-19T11:50:37.734] [INFO] default - ::1 - - "GET /cmd/stopRun HTTP/1.1" 200 54 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
 [2023-04-19T11:51:06.302] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 42 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
 [2023-04-19T11:51:34.323] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 42 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"
+[2023-04-19T13:32:57.763] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 316 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"

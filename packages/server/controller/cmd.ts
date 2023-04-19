@@ -19,7 +19,6 @@ export default class CmdController {
             "gitPass": "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"
         });
         this.cmdService =  new CmdService({ pilotConfig: this.pilotConfig});
-        this.getServices = this.getServices.bind(this);
     }
 
     private getPilotConfig = async (ctx: Context) => { }
@@ -46,7 +45,7 @@ export default class CmdController {
 
         ctx.body = {
             code: 200,
-            data: null,
+            data: true,
             msg: 'success'
         }
     }
@@ -70,7 +69,6 @@ export default class CmdController {
     @Get('/services')
     @catchError()
     public async getServices (ctx: Context) {
-        console.log('===>', this);
         const list = await this.cmdService.getServiceList(this.pilotConfig);
         ctx.body = {
             code: 200,
