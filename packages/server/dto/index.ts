@@ -1,4 +1,3 @@
-export * from './cmdDto';
-export * from './pilotDto';
-export * from './projectDto';
-export * from './userDto';
+export * from './pilot';
+export * from './project';
+export * from './user';

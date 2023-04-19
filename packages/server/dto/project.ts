@@ -7,7 +7,7 @@ export class GitCheck implements ValidatorConstraintInterface {
         return reg.test(text);
     }
     defaultMessage(args?: any): string {
-        return "git url is invalid";
+        return 'git url is invalid';
     }
 }
 
