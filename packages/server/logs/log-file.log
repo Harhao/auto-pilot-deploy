@@ -1,0 +1,4 @@
+[2023-04-19T19:11:26.956] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-19T19:12:22.322] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-19T19:15:04.811] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 316 "" "PostmanRuntime/7.32.2"
+[2023-04-19T19:50:08.615] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"

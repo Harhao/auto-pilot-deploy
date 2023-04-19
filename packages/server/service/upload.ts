@@ -1,6 +1,6 @@
 import qiniu from 'qiniu';
 import fs from 'fs';
-import config from '../config/config';
+import config from '../config';
 
 export class OSSUploadService {
     private bucket: string;
