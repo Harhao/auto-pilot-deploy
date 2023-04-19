@@ -1,6 +1,6 @@
 import qiniu from 'qiniu';
 import fs from 'fs';
-import config from '../config';
+import { QiniuOssConfig } from '../config';
 
 export class OSSUploadService {
     private bucket: string;
@@ -12,10 +12,10 @@ export class OSSUploadService {
     public bucketManager;
 
     constructor() {
-        this.bucket = config.UploadSpace;
-        this.accessKey = config.AccessKey;
-        this.secretKey = config.SecretKey;
-        this.domain = config.Domain;
+        this.bucket = QiniuOssConfig.UploadSpace;
+        this.accessKey = QiniuOssConfig.AccessKey;
+        this.secretKey = QiniuOssConfig.SecretKey;
+        this.domain = QiniuOssConfig.Domain;
         this.mac = new qiniu.auth.digest.Mac(this.accessKey, this.secretKey);
         this.config = new qiniu.conf.Config();
         this.config.zone = qiniu.zone.Zone_z2;
@@ -142,7 +142,7 @@ export class OSSUploadService {
 
     // 批量删除文件
     public deleteGroupFile(fileList: Array<string>) {
-        const deleteOperations = [];
+        const deleteOperations: string[] = [];
         fileList.forEach((filename) =>
             deleteOperations.push(qiniu.rs.deleteOp(this.bucket, filename))
         );
@@ -155,8 +155,8 @@ export class OSSUploadService {
                     } else {
                         const statusCode: number = info.statusCode;
                         if (Math.floor(statusCode / 2) == 2) {
-                            const successFileList = [];
-                            const errorFileList = [];
+                            const successFileList: any[] = [];
+                            const errorFileList: any[] = [];
                             body.forEach((item: any) => {
                                 if (item.code == 200) {
                                     successFileList.push(item.data);
