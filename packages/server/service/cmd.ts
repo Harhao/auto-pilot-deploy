@@ -11,13 +11,16 @@ export interface ICmdService {
 export default class CmdService {
 
     public pilotConfig: any;
+    public service: any;
 
     constructor(props: ICmdService) {
         this.pilotConfig = props.pilotConfig;
+        this.service = (CmdService as any).service;
     }
     //  获取服务列表
     public getServiceList(pilotConfig: string) {
         return new Promise((resolve) => {
+            console.log("===>", (CmdService as any).service);
             const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
             child.stdout.on('data', (data) => {
                 const jsonData = JSON.parse(data.toString('utf-8'));

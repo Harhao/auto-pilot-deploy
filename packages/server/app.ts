@@ -45,13 +45,13 @@ export default class App {
 
   async initDBHandle() {
 
-    const mongodbService = await this.getMongoInstance();
+    // const mongodbService = await this.getMongoInstance();
     const redisService = await this.getRedisInstance();
 
 
     this.app.context.state = {
       ...this.app.context.state,
-        mongodbService,
+        // mongodbService,
         redisService, 
     };
   }

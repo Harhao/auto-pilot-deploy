@@ -4,11 +4,22 @@ export class createUserDto {
 
     @IsDefined()
     @IsString()
-    userNumber: string;
+    userName: string;
 
 
     @IsDefined()
     @IsString()
     password: string;
 
+}
+
+export class LoginUserDto {
+    @IsDefined()
+    @IsString()
+    userName: string;
+
+
+    @IsDefined()
+    @IsString()
+    password: string;
 }

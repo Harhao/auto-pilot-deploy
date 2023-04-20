@@ -16,33 +16,39 @@ export function ValidateDto(dtoClass: ClassConstructor<any>, type: validateType 
         const originalMethod = descriptor.value;
 
         descriptor.value = async function (...args: any[]) {
+            try {
+                const ctx = args[0];
+                const sourceData = type === EValidateFields.BODY ? ctx.request.body : ctx.request.query;
 
-            const ctx = args[0];
-            const sourceData = type === EValidateFields.BODY ? ctx.request.body : ctx.request.query;
-            const dto = plainToClassFromExist(new dtoClass(), sourceData);
-            const errors = await validate(dto);
-
-
-            if (errors.length > 0) {
-
-                const errorMsg = getErrorMsg(errors);
-
-                ctx.body = {
-                    code: 400,
-                    data: errorMsg,
-                    msg: 'fail'
-                };
-
-                return;
+                const dto = plainToClassFromExist(new dtoClass(), sourceData);
+    
+                const errors = await validate(dto);
+    
+    
+                if (errors.length > 0) {
+    
+                    const errorMsg = getErrorMsg(errors);
+    
+                    ctx.body = {
+                        code: 400,
+                        data: errorMsg,
+                        msg: 'fail'
+                    };
+    
+                    return;
+                }
+    
+                if (type === EValidateFields.BODY) {
+                    ctx.request.body = dto;
+                } else {
+                    ctx.request.query = dto;
+                }
+    
+                return originalMethod.apply(this, args);
+            } catch(e) {
+                console.error(e);
+                return null
             }
-
-            if (type === EValidateFields.BODY) {
-                ctx.request.body = dto;
-            } else {
-                ctx.request.query = dto;
-            }
-
-            return originalMethod.apply(this, args);
         };
 
         return descriptor;
