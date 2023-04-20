@@ -1,6 +1,6 @@
 import CmdService from '../service/cmd';
 import { Context } from 'koa';
-import { Controller, Get, Post, ValidateDto, CatchError } from '../decorator';
+import { Controller, Get, Post, ValidateDto, CatchError, Inject } from '../decorator';
 import { ProjectDto } from '../dto';
 
 @Controller('/cmd')
@@ -58,6 +58,7 @@ export default class CmdController {
 
     @Get('/services')
     @CatchError()
+    @ValidateDto(ProjectDto)
     public async getServices (ctx: Context) {
         const list = await this.cmdService.getServiceList(this.pilotConfig);
         ctx.body = {
