@@ -1,13 +1,5 @@
 import Koa from 'koa';
-import jwt from 'jsonwebtoken';
-import { AuthService } from '../service';
-import { ServerConfig } from '../config';
-
-interface IUserPayload {
-    id: string | number;
-    name: string;
-}
-
+import AuthService  from '../service/auth';
 
 function validateJwt(): Koa.Middleware {
     return async (ctx, next) => {

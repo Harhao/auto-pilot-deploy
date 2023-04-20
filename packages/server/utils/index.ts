@@ -1,2 +1,3 @@
-export * from './middlewares';
-export * from './register';
+export * from './register-middleware';
+export * from './register-controller';
+export * from './register-service';

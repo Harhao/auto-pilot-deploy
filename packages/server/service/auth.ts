@@ -6,7 +6,7 @@ interface IUserPayload {
     name: string;
 }
 
-export class AuthService {
+export default class AuthService {
 
     public static generateToken(user: IUserPayload) {      
         return jwt.sign(user, ServerConfig.jwtSecret, { expiresIn: '5h'});

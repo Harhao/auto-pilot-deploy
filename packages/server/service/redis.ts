@@ -7,7 +7,7 @@ interface IEntity {
     id: string;
 }
 
-export class RedisService<T extends IEntity> {
+export default class RedisService<T extends IEntity> {
     public redisClient: RedisClient;
     public prefix: string;
 

@@ -7,7 +7,7 @@ enum ESocketMsgType {
     SINGLECHANNEL = "singleChannel",
 }
 
-export class SocketService {
+export default class SocketService {
 
     private readonly io: SocketServer;
     private socketId: string | string[];

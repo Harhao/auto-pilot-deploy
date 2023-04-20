@@ -2,7 +2,7 @@ import { MongoClient, Db, Collection, Document, ServerApiVersion } from 'mongodb
 import { MongoConfig } from '../config';
 import { CatchError } from '../decorator';
 
-export class MongoDBService {
+export default class MongoDBService {
 
   private client: MongoClient;
   private db: Db;

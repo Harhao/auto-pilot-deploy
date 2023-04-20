@@ -95,3 +95,5 @@
 [2023-04-20T18:05:16.404] [ERROR] default - ::1 - - "POST /user/register HTTP/1.1" 404 572 "" "PostmanRuntime/7.32.2"
 [2023-04-20T18:27:40.257] [INFO] default - ::1 - - "POST /user/register HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
 [2023-04-20T18:29:00.351] [INFO] default - ::1 - - "POST /user/register HTTP/1.1" 200 81 "" "PostmanRuntime/7.32.2"
+[2023-04-20T20:18:49.982] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 47 "" "PostmanRuntime/7.32.2"
+[2023-04-20T20:19:16.140] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 316 "" "PostmanRuntime/7.32.2"

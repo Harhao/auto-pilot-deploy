@@ -2,7 +2,7 @@ import qiniu from 'qiniu';
 import fs from 'fs';
 import { QiniuOssConfig } from '../config';
 
-export class OSSUploadService {
+export default class OSSUploadService {
     private bucket: string;
     private accessKey: string;
     private secretKey: string;

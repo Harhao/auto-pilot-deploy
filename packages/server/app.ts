@@ -1,10 +1,13 @@
 // app.ts
 import Koa from 'koa';
+import MongoDBService from './service/mongo';
+import RedisService from './service/redis';
+import SocketService from './service/socket';
+
 import { ServerConfig } from './config'
 import { Server } from "http";
 import { resolve } from 'path';
-import { ControllerLoader, MiddlewareLoader } from './utils';
-import { MongoDBService, RedisService, SocketService } from './service';
+import { ControllerLoader, MiddlewareLoader, ServiceLoader } from './utils';
 
 export default class App {
 
@@ -15,9 +18,6 @@ export default class App {
   constructor() {
     this.app = new Koa();
     this.port = ServerConfig.port;
-
-    MiddlewareLoader.load(this.app);
-    ControllerLoader.load(this.app, resolve(__dirname, './controller'));
   }
 
   async getMongoInstance() {
@@ -37,7 +37,7 @@ export default class App {
     const socketService = new SocketService(this.app.callback());
     this.socketServer = socketService.getSocketServer();
 
-    this.app.context.state.services = {
+    this.app.context.state = {
       ...this.app.context.state,
       socketService: socketService
     }
@@ -60,6 +60,10 @@ export default class App {
 
     await this.initDBHandle();
     await this.initSocketHandle();
+    
+    MiddlewareLoader.load(this.app);
+    ControllerLoader.load(this.app, resolve(__dirname, './controller'));
+    ServiceLoader.load(this.app, resolve(__dirname, './service'));
   }
 
   async start(): Promise<void> {

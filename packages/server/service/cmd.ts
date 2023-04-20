@@ -1,4 +1,5 @@
 import { spawn } from "child_process";
+import { Injectable } from "../decorator";
 
 
 export interface ICmdService {
@@ -6,7 +7,9 @@ export interface ICmdService {
 }
 
 
+@Injectable
 export default class CmdService {
+
     public pilotConfig: any;
 
     constructor(props: ICmdService) {
