@@ -22,7 +22,6 @@
     "koa-compose": "^4.1.0",
     "koa-helmet": "^6.1.0",
     "koa-json-error": "^3.1.2",
-    "koa-jwt": "^4.0.1",
     "koa-log4": "^2.3.2",
     "koa-router": "^10.0.0",
     "koa2-cors": "^2.0.6",

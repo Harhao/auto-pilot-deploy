@@ -1,5 +1,3 @@
-import { Context } from "koa";
-
 interface ServiceClasses {
     [key: string]: new () => any;
 }
@@ -29,5 +27,4 @@ export function getInstanceOfClass(services: Record<string, any>, ServiceClass: 
         }
     }
     return new ServiceClass();
-
 }

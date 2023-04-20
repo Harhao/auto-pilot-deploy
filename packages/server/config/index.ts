@@ -43,4 +43,11 @@ export const ServerConfig = {
         allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
         credentials: true
     },
+    bodyConfig: {
+        multipart: true,
+        formidable: {
+            maxFileSize: 200 * 1024 * 1024,
+        },
+    }
+
 };

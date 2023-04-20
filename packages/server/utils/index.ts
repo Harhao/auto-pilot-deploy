@@ -1,3 +1,2 @@
-export * from "./auth";
-export * from './middleware';
+export * from './middlewares';
 export * from './register';

@@ -1,6 +1,6 @@
 import CmdService from '../service/cmd';
 import { Context } from 'koa';
-import { Controller, Get, Post, ValidateDto, CatchError, Inject } from '../decorator';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth } from '../decorator';
 import { ProjectDto } from '../dto';
 
 @Controller('/cmd')
@@ -21,32 +21,36 @@ export default class CmdController {
     }
 
     @Post('/deploy')
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(ProjectDto)
     public async deploy(ctx: Context) {
 
         const projectConfig = ctx.request.body;
+        const socketService = ctx.app.context.state.socketService;
 
-        const callBack = (data: Buffer) => {
-            console.log(data.toString());
-            ctx.webSocket.emit(data.toString());
+        const callBack = (data: Buffer) => {    
+            console.log(data.toString()); 
         };
-
-        this.cmdService.deployService(JSON.stringify(projectConfig), callBack, callBack);
 
         ctx.body = {
             code: 200,
             data: true,
             msg: 'success'
         }
+
+        this.cmdService.deployService(JSON.stringify(projectConfig), callBack, callBack);
+
     }
 
     @Post('/rollback')
+    @ValidateAuth()
     @CatchError()
     public async rollback(ctx: Context) {
     }
 
     @Get('/stopRun')
+    @ValidateAuth()
     @CatchError()
     public async stopRun(ctx: Context) {
         ctx.body = {
@@ -56,9 +60,10 @@ export default class CmdController {
         }
     }
 
+
     @Get('/services')
+    @ValidateAuth()
     @CatchError()
-    @ValidateDto(ProjectDto)
     public async getServices (ctx: Context) {
         const list = await this.cmdService.getServiceList(this.pilotConfig);
         ctx.body = {
