@@ -9,20 +9,9 @@ import { Inject } from '../ioc';
 export default class CmdController {
 
     private pilotConfig: string;
-    public cmdService: CmdService;
 
     @Inject private sockertService: SocketService;
-
-    constructor() {
-        this.pilotConfig = JSON.stringify({
-            "address": "47.106.90.4",
-            "account": "root",
-            "serverPass": "abc6845718ABC",
-            "gitUser": "Harhao",
-            "gitPass": "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"
-        });
-        this.cmdService =  new CmdService({ pilotConfig: this.pilotConfig});
-    }
+    @Inject private cmdService: CmdService;
 
     @Post('/deploy')
     @ValidateAuth()

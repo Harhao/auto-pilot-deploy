@@ -17,7 +17,7 @@ export default class UserService {
     @CatchError()
     public async login(data: LoginUserDto) {
         const user = await this.mongodbService.findOne(UserService.tableName, data);
-        
+
         if (user?.password === data?.password) {
             const token = AuthService.generateToken({
                 id: user._id,
@@ -38,6 +38,20 @@ export default class UserService {
 
     @CatchError()
     public async register(data: createUserDto) {
-        return await this.mongodbService.insertOne(UserService.tableName, data);
+        const matchUser = await this.mongodbService.findOne(UserService.tableName, data);
+
+        if (!matchUser) {
+            const newUser = await this.mongodbService.insertOne(UserService.tableName, data);
+            return {
+                code: EResponseCodeMap.SUCCESS,
+                data: newUser,
+                msg: 'success'
+            }
+        }
+        return {
+            code: EResponseCodeMap.USEREXIST,
+            data: null,
+            msg: 'success'
+        }
     }
 }

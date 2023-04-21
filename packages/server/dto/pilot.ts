@@ -1,5 +1,5 @@
-import { IsString } from 'class-validator';
-export class PilotDto {
+import { IsString, IsNumber } from 'class-validator';
+export class CreatePilotDto {
     @IsString()
     address: string;
 
@@ -14,4 +14,7 @@ export class PilotDto {
 
     @IsString()
     gitPass: string;
+
+    @IsNumber()
+    id?: number;
 }

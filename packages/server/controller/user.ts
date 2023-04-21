@@ -24,11 +24,7 @@ export default class UserController {
     @ValidateDto(createUserDto)
     public async register(ctx: Context) {
         const userData = ctx.request.body;
-        const result = await this.userService.register(userData);
-        ctx.body = {
-            code: 200,
-            data: result,
-            msg: "success",
-        };
+        const resp = await this.userService.register(userData);
+        ctx.body = resp;        
     }
 }

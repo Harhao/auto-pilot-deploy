@@ -1,19 +1,27 @@
 import { spawn } from "child_process";
+import { Inject, Injectable } from "../ioc";
+import { CreatePilotDto } from "../dto";
+
+import PilotService from "./pilot";
 
 
-export interface ICmdService {
-    pilotConfig: string;
-}
 
+@Injectable
 export default class CmdService {
 
-    public pilotConfig: any;
-    public service: any;
+    public pilotConfig: string;
 
-    constructor(props: ICmdService) {
-        this.pilotConfig = props.pilotConfig;
-        this.service = (CmdService as any).service;
+    @Inject pilotService: PilotService;
+
+    constructor() {
+        this.initPilotService();
     }
+
+    public async initPilotService() {
+        const config: CreatePilotDto = await this.pilotService.getPilot();
+        this.pilotConfig = JSON.stringify(config);
+    }
+
     //  获取服务列表
     public getServiceList(pilotConfig: string) {
         return new Promise((resolve) => {
@@ -24,10 +32,28 @@ export default class CmdService {
             });
         });
     }
+
     // 部署服务
     public deployService(projectConfig: string, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
             const child = spawn('pilot-script', ['deploy', '--pilotConfig', this.pilotConfig, '--projectConfig', projectConfig]);
+            child.stdout.on('data', (data) => {
+                onData?.(data);
+            });
+            child.stderr.on('data', (data) => {
+                onErr?.(data);
+            });
+            child.stdout.on('close', () => {
+                resolve(true);
+            });
+        });
+    }
+
+
+    //  回滚服务
+    public rollbackService(projectConfig: string, onData: Function, onErr: Function) {
+        return new Promise((resolve) => {
+            const child = spawn('pilot-script', ['rollback', '--pilotConfig', this.pilotConfig, '--projectConfig', projectConfig]);
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });

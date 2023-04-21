@@ -12,8 +12,8 @@ interface Middleware {
 
 interface IControllerRoute {
     routePath: string;
-    method: HTTPMethod,
-    middlewares: Middleware[],
+    method: HTTPMethod;
+    middlewares: Middleware[];
     handler: (ctx: Koa.Context) => void;
 };
 
