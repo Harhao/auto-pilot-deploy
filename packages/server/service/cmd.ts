@@ -18,8 +18,8 @@ export default class CmdService {
     }
 
     public async initPilotService() {
-        const config: CreatePilotDto = await this.pilotService.getPilot();
-        this.pilotConfig = JSON.stringify(config);
+        // const config: CreatePilotDto = await this.pilotService.getPilot();
+        // this.pilotConfig = JSON.stringify(config);
     }
 
     //  获取服务列表

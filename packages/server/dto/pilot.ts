@@ -14,7 +14,14 @@ export class CreatePilotDto {
 
     @IsString()
     gitPass: string;
+}
 
+export class UpdatePilotDto extends CreatePilotDto {
     @IsNumber()
-    id?: number;
+    id: number;
+}
+
+export class getPilotDto {
+    @IsNumber()
+    id: number;
 }

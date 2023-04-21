@@ -14,7 +14,7 @@ export default class App {
 
   private readonly app: Koa;
   private readonly port: number;
-  private socketServer: Server ;
+  private socketServer: Server;
 
   constructor() {
     this.app = new Koa();
@@ -40,7 +40,7 @@ export default class App {
 
     container.setProvider(SocketService, SocketService);
     container.setInstance(SocketService, socketService);
-    
+
   }
 
   async initDBHandle() {
@@ -59,7 +59,7 @@ export default class App {
 
     await this.initDBHandle();
     await this.initSocketHandle();
-    
+
     MiddlewareLoader.load(this.app);
     ControllerLoader.load(this.app, resolve(__dirname, './controller'));
 

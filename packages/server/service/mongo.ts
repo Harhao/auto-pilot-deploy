@@ -10,11 +10,11 @@ export default class MongoDBService {
   @CatchError()
   public async connect() {
     this.client = new MongoClient(MongoConfig.databaseUrl, {
-      serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-      }
+      // serverApi: {
+      //   version: ServerApiVersion.v1,
+      //   strict: true,
+      //   deprecationErrors: true,
+      // }
     });
     await this.client.connect();
     this.db = this.client.db(MongoConfig.databaseName);
