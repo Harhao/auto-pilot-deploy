@@ -20,6 +20,7 @@ export const RedisConfig = {
 // mongodb配置
 export const MongoConfig = {
     databaseUrl: process.env.DATABASE_URL,
+    databaseName: process.env.DATABASE_NAME,
     useNewUrlParser: true,
     useUnifiedTopology: true,
 };

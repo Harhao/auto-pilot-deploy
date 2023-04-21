@@ -3,11 +3,12 @@ import Koa from 'koa';
 import MongoDBService from './service/mongo';
 import RedisService from './service/redis';
 import SocketService from './service/socket';
+import container from './ioc/container';
 
 import { ServerConfig } from './config';
 import { Server } from 'http';
 import { resolve } from 'path';
-import { ControllerLoader, MiddlewareLoader, ServiceLoader } from './utils';
+import { ControllerLoader, MiddlewareLoader } from './utils';
 
 export default class App {
 
@@ -37,10 +38,9 @@ export default class App {
     const socketService = new SocketService(this.app.callback());
     this.socketServer = socketService.getSocketServer();
 
-    this.app.context.state = {
-      ...this.app.context.state,
-      socketService: socketService
-    };
+    container.setProvider(SocketService, SocketService);
+    container.setInstance(SocketService, socketService);
+    
   }
 
   async initDBHandle() {
@@ -48,12 +48,11 @@ export default class App {
     const mongodbService = await this.getMongoInstance();
     const redisService = await this.getRedisInstance();
 
+    container.setProvider(MongoDBService, MongoDBService);
+    container.setInstance(MongoDBService, mongodbService);
+    container.setProvider(RedisService, RedisService);
+    container.setInstance(RedisService, redisService);
 
-    this.app.context.state = {
-      ...this.app.context.state,
-        mongodbService,
-        redisService, 
-    };
   }
 
   async beforeBootstrap(): Promise<void> {
@@ -63,7 +62,7 @@ export default class App {
     
     MiddlewareLoader.load(this.app);
     ControllerLoader.load(this.app, resolve(__dirname, './controller'));
-    ServiceLoader.load(this.app, resolve(__dirname, './service'));
+
   }
 
   async start(): Promise<void> {

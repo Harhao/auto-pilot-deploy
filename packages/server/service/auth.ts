@@ -3,7 +3,7 @@ import { ServerConfig } from '../config';
 
 interface IUserPayload {
     id: string | number;
-    name: string;
+    userName: string;
 }
 
 export default class AuthService {

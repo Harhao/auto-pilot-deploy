@@ -1,46 +1,34 @@
-import { Context } from 'koa';
-import { Controller, Post, ValidateDto, CatchError } from '../decorator';
-import { LoginUserDto, createUserDto } from '../dto';
-import UserService from '../service/user';
-import AuthService from '../service/auth';
+import { Context } from "koa";
+import { CatchError, Controller, Post, ValidateDto } from "../decorator";
+import { createUserDto, LoginUserDto } from "../dto";
+import { Inject } from "../ioc";
 
-@Controller('/user')
+import UserService from "../service/user";
+
+@Controller("/user")
 export default class UserController {
     
-    private userService: UserService;
+    @Inject private userService: UserService;
 
-    constructor() {
-        this.userService = new UserService();
-    }
-
-    @Post('/login')
+    @Post("/login")
     @CatchError()
-    @ValidateDto(LoginUserDto) 
+    @ValidateDto(LoginUserDto)
     public async login(ctx: Context) {
-        const token = AuthService.generateToken({
-            id: 123,
-            name: ctx.request.body.userName
-        });
-
-        ctx.body = {
-            code: 200,
-            data: token,
-            msg: 'success'
-        };
+        const loginDto: LoginUserDto = ctx.request.body;
+        const resp =  await this.userService.login(loginDto);
+        ctx.body = resp;
     }
 
-
-    @Post('/register')
+    @Post("/register")
     @CatchError()
-    @ValidateDto(createUserDto) 
+    @ValidateDto(createUserDto)
     public async register(ctx: Context) {
-    
-        await this.userService.register();
+        const userData = ctx.request.body;
+        const result = await this.userService.register(userData);
         ctx.body = {
             code: 200,
-            data: null,
-            msg: 'success'
+            data: result,
+            msg: "success",
         };
     }
-
 }

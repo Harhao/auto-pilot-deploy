@@ -1,13 +1,17 @@
 import CmdService from '../service/cmd';
+import SocketService from '../service/socket';
 import { Context } from 'koa';
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth } from '../decorator';
 import { ProjectDto } from '../dto';
+import { Inject } from '../ioc';
 
 @Controller('/cmd')
 export default class CmdController {
 
     private pilotConfig: string;
     public cmdService: CmdService;
+
+    @Inject private sockertService: SocketService;
 
     constructor() {
         this.pilotConfig = JSON.stringify({
@@ -27,7 +31,6 @@ export default class CmdController {
     public async deploy(ctx: Context) {
 
         const projectConfig = ctx.request.body;
-        const socketService = ctx.app.context.state.socketService;
 
         const callBack = (data: Buffer) => {    
             console.log(data.toString()); 

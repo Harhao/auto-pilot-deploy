@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection, Document, ServerApiVersion } from 'mongodb';
+import { MongoClient, Db, Collection, Document, ServerApiVersion, InsertOneResult } from 'mongodb';
 import { MongoConfig } from '../config';
 import { CatchError } from '../decorator';
 
@@ -17,14 +17,15 @@ export default class MongoDBService {
       }
     });
     await this.client.connect();
-    this.db = this.client.db("admin");
+    this.db = this.client.db(MongoConfig.databaseName);
+    
     console.log('连接到MognoDB数据库');
   }
 
   @CatchError()
-  public async insertOne<T>(collectionName: string, doc: T): Promise<void> {
+  public async insertOne<T>(collectionName: string, doc: T): Promise<InsertOneResult<Document>> {
     const collection: Collection = this.db.collection(collectionName);
-    await collection.insertOne(doc);
+    return  await collection.insertOne(doc); 
   }
 
   @CatchError()
