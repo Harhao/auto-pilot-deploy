@@ -2,16 +2,16 @@
   "name": "@pilot/server",
   "version": "1.0.0",
   "description": "",
+  "license": "MIT",
+  "author": "huahao",
   "main": "index.ts",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon --exec ts-node index.ts",
-    "build-ts": "tsc",
     "build": "rm -fr dist && npm run build-ts",
-    "test": "cross-env NODE_ENV=production pm2 start dist/index.js --no-daemon",
+    "build-ts": "tsc",
+    "serve": "cross-env NODE_ENV=production pm2 start dist/index.js --no-daemon",
+    "start": "cross-env NODE_ENV=development nodemon --exec ts-node index.ts",
     "stop": "pm2 status && pm2 stop all"
   },
-  "author": "huahao",
-  "license": "MIT",
   "dependencies": {
     "@pilot/script": "0.0.1",
     "class-transformer": "^0.5.1",

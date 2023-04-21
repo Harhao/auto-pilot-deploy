@@ -4,8 +4,8 @@ import MongoDBService from './service/mongo';
 import RedisService from './service/redis';
 import SocketService from './service/socket';
 
-import { ServerConfig } from './config'
-import { Server } from "http";
+import { ServerConfig } from './config';
+import { Server } from 'http';
 import { resolve } from 'path';
 import { ControllerLoader, MiddlewareLoader, ServiceLoader } from './utils';
 
@@ -40,18 +40,18 @@ export default class App {
     this.app.context.state = {
       ...this.app.context.state,
       socketService: socketService
-    }
+    };
   }
 
   async initDBHandle() {
 
-    // const mongodbService = await this.getMongoInstance();
+    const mongodbService = await this.getMongoInstance();
     const redisService = await this.getRedisInstance();
 
 
     this.app.context.state = {
       ...this.app.context.state,
-        // mongodbService,
+        mongodbService,
         redisService, 
     };
   }

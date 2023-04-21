@@ -1,5 +1,5 @@
 # Here we are getting our node as Base image
-FROM node:13-alpine
+FROM node:14-alpine
 
 # create user in the docker image
 USER node
@@ -14,10 +14,10 @@ WORKDIR /home/node/app
 COPY --chown=node:node . .
 
 # installing the dependencies into the container
-RUN npm install --registry=https://registry.npm.taobao.org
+RUN npm install --registry=https://registry.npmmirror.com
 
 # container exposed network port number
-EXPOSE 3000
+EXPOSE 8080
 
 # command to run within the container
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "serve" ]
