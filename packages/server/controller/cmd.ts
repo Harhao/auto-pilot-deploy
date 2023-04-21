@@ -8,8 +8,6 @@ import { Inject } from '../ioc';
 @Controller('/cmd')
 export default class CmdController {
 
-    private pilotConfig: string;
-
     @Inject private sockertService: SocketService;
     @Inject private cmdService: CmdService;
 
@@ -57,7 +55,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     public async getServices (ctx: Context) {
-        const list = await this.cmdService.getServiceList(this.pilotConfig);
+        const list = await this.cmdService.getServiceList();
         ctx.body = {
             code: 200,
             data: list,

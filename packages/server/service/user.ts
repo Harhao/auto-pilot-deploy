@@ -17,12 +17,14 @@ export default class UserService {
 
     @CatchError()
     public async login(data: LoginUserDto) {
+
         const user = await this.mongodbService.findOne(UserService.tableName, {
             userName: data.userName,
-            password: CreateCrpyto.asymEncrypt(data.password)
         });
 
-        if (!!user) {
+        const isValid = CreateCrpyto.decrypt(user.password) === data.password;
+
+        if (isValid) {
             const token = AuthService.generateToken({
                 id: user._id,
                 userName: user.userName,
@@ -45,7 +47,7 @@ export default class UserService {
         const matchUser = await this.mongodbService.findOne(UserService.tableName, data);
 
         if (!matchUser) {
-            const insertInfo = { ...data, password: CreateCrpyto.asymEncrypt(data.password)};
+            const insertInfo = { ...data, password: CreateCrpyto.encrypt(data.password)};
             const newUser = await this.mongodbService.insertOne(UserService.tableName, insertInfo);
             return {
                 code: EResponseCodeMap.SUCCESS,

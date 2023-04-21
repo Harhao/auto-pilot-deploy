@@ -1,29 +1,19 @@
 import { ServerConfig } from "../config";
-import crypto from "crypto";
+import CryptoJS from "crypto-js";
 
 export class CreateCrpyto {
 
-    private static algorithm = 'aes-256-cbc';
-    private static key = crypto.randomBytes(32);
-    private static iv = crypto.randomBytes(16);
-
-    public static asymEncrypt(hash: string) {
-        const hmac = crypto.createHmac("sha1", ServerConfig.jwtSecret);
-        return hmac.update(hash).digest("base64");
+    // 加密函数
+    public static encrypt(text: string) {
+        let encrypted =  CryptoJS.AES.encrypt(text, ServerConfig.cryptoRandom).toString()
+        return encrypted;
     }
 
-    public static symEncrypt(text: string) {
-        const cipher = crypto.createCipheriv(CreateCrpyto.algorithm, CreateCrpyto.key, CreateCrpyto.iv);
-        let encrypted = cipher.update(text, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-        return encrypted;
-    };
-
-    public static symDecrypt(encrypted: string) {
-        const decipher = crypto.createDecipheriv(CreateCrpyto.algorithm, CreateCrpyto.key, CreateCrpyto.iv);
-        let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
-        return decrypted;
-    };
+    // 解密函数
+    public static decrypt(encrypted: string) {
+        const bytes = CryptoJS.AES.decrypt(encrypted, ServerConfig.cryptoRandom);
+        const decryptedPlaintext = bytes.toString(CryptoJS.enc.Utf8);
+        return decryptedPlaintext;
+    }
 
 }

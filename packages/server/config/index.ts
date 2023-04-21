@@ -37,6 +37,7 @@ export const QiniuOssConfig = {
 export const ServerConfig = {
     port: +(process.env.PORT || 8080),
     jwtSecret: process.env.JWT_SECRET,
+    cryptoRandom: process.env.CRYPTORANDOM,
     serverCors: {
         origin: '*',
         maxAge: 5,

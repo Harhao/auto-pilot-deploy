@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection, Document, ServerApiVersion, InsertOneResult } from 'mongodb';
+import { MongoClient, Db, Collection, Document, ServerApiVersion, InsertOneResult, DeleteResult } from 'mongodb';
 import { MongoConfig } from '../config';
 import { CatchError } from '../decorator';
 
@@ -31,18 +31,19 @@ export default class MongoDBService {
   @CatchError()
   public async findOne(collectionName: string, filter: object): Promise<Document> {
     const collection: Collection = this.db.collection(collectionName);
-    return await collection.findOne(filter);
+    const result = await collection.findOne(filter);
+    return result;
   }
 
   @CatchError()
-  public async updateOne<T>(collectionName: string, filter: object, update: object): Promise<void> {
+  public async updateOne<T>(collectionName: string, filter: object, update: object): Promise<Document> {
     const collection: Collection = this.db.collection(collectionName);
-    await collection.updateOne(filter, { $set: update });
+    return await collection.updateOne(filter, { $set: update });
   }
 
   @CatchError()
-  public async deleteOne(collectionName: string, filter: object): Promise<void> {
+  public async deleteOne(collectionName: string, filter: object): Promise<DeleteResult> {
     const collection: Collection = this.db.collection(collectionName);
-    await collection.deleteOne(filter);
+    return await collection.deleteOne(filter);
   }
 }

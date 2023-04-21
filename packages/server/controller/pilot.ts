@@ -1,6 +1,6 @@
 import { Context } from "koa";
-import { CatchError, Controller, Delete, Get, Post, ValidateDto } from "../decorator";
-import { CreatePilotDto, UpdatePilotDto, getPilotDto } from "../dto";
+import { CatchError, Controller, Delete, Get, Post, Put, ValidateDto } from "../decorator";
+import { CommonPilot, UpdatePilotDto, deletePilotDto, getPilotDto } from "../dto";
 import { Inject } from "../ioc";
 
 import PilotService from "../service/pilot";
@@ -12,14 +12,14 @@ export default class PilotController {
 
     @Post("/createPilot")
     @CatchError()
-    @ValidateDto(CreatePilotDto)
+    @ValidateDto(CommonPilot)
     public async createPilot(ctx: Context) {
-        const pilotDto: CreatePilotDto = ctx.request.body;
+        const pilotDto: CommonPilot = ctx.request.body;
         const resp = await this.pilotService.createPilot(pilotDto);
         ctx.body = resp;
     }
 
-    @Post("/updatePilot")
+    @Put("/updatePilot")
     @CatchError()
     @ValidateDto(UpdatePilotDto)
     public async updatePilot(ctx: Context) {
@@ -32,17 +32,17 @@ export default class PilotController {
     @CatchError()
     @ValidateDto(getPilotDto)
     public async getPilot(ctx: Context) {
-        const userData = ctx.request.body;
-        const resp = await this.pilotService.getPilot();
+        const { id = null } = ctx.request.body;
+        const resp = await this.pilotService.getPilot(id);
         ctx.body = resp;        
     }
 
-    @Delete("/delPilot")
+    @Post("/delPilot")
     @CatchError()
-    @ValidateDto(getPilotDto)
+    @ValidateDto(deletePilotDto)
     public async deletePilot(ctx: Context) {
-        const userData = ctx.request.body;
-        const resp = await this.pilotService.getPilot();
+        const { id } = ctx.request.body;
+        const resp = await this.pilotService.deletePilot(id);
         ctx.body = resp;        
     }
 }

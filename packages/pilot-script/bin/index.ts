@@ -76,6 +76,18 @@ function main() {
             }
         });
 
+    // 获取服务列表
+    cli
+        .command('stopService', '停止pm2 的服务')
+        .alias('stps')
+        .option(
+            '--pilotConfig <pilotConfig>',
+            '<pilotConfig> 提供git仓库/服务器配置，可参考readme.md'
+        )
+        .action(async (options) => {
+           
+        });
+
     cli.help();
     cli.parse();
 }

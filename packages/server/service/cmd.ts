@@ -1,8 +1,8 @@
 import { spawn } from "child_process";
 import { Inject, Injectable } from "../ioc";
-import { CreatePilotDto } from "../dto";
 
 import PilotService from "./pilot";
+import { CreateCrpyto } from "../utils";
 
 
 
@@ -18,14 +18,15 @@ export default class CmdService {
     }
 
     public async initPilotService() {
-        // const config: CreatePilotDto = await this.pilotService.getPilot();
-        // this.pilotConfig = JSON.stringify(config);
+        const config = await this.pilotService.getPilot();
+        const { address, account, serverPass, gitUser, gitPass } = config?.data;
+        this.pilotConfig = JSON.stringify({ address, account, serverPass, gitUser, gitPass });
     }
 
     //  获取服务列表
-    public getServiceList(pilotConfig: string) {
+    public getServiceList() {
         return new Promise((resolve) => {
-            const child = spawn(`pilot-script`, ['service', '--pilotConfig', pilotConfig]);
+            const child = spawn(`pilot-script`, ['service', '--pilotConfig', this.pilotConfig]);
             child.stdout.on('data', (data) => {
                 const jsonData = JSON.parse(data.toString('utf-8'));
                 resolve(jsonData);

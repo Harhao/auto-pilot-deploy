@@ -1,5 +1,5 @@
-import { IsString, IsNumber } from 'class-validator';
-export class CreatePilotDto {
+import { IsString, IsNumber, IsOptional } from 'class-validator';
+export class CommonPilot {
     @IsString()
     address: string;
 
@@ -16,12 +16,19 @@ export class CreatePilotDto {
     gitPass: string;
 }
 
-export class UpdatePilotDto extends CreatePilotDto {
-    @IsNumber()
-    id: number;
+export class UpdatePilotDto extends CommonPilot {
+    @IsString()
+    id: string;
 }
 
 export class getPilotDto {
-    @IsNumber()
-    id: number;
+
+    @IsOptional()
+    @IsString()
+    id: string;
+}
+
+export class deletePilotDto {
+    @IsString()
+    id: string;
 }
