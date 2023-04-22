@@ -32,12 +32,12 @@ export default class SocketService {
         return this.httpServer;
     }
 
-    public sendToAll(event: ESocketMsgType.ALLCHANEL, data: any): void {
-        this.io.emit(event, data);
+    public sendToAll(data: string): void {
+        this.io.emit(ESocketMsgType.ALLCHANEL, data);
     }
 
-    public sendToSocketId(event: ESocketMsgType.SINGLECHANNEL, data: any) {
-        this.io.to(this.socketId).emit(event, data);
+    public sendToSocketId(data: string) {
+        this.io.to(this.socketId).emit( ESocketMsgType.SINGLECHANNEL, data);
     }
 
     public removeSocketId() {

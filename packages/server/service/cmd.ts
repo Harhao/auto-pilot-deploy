@@ -65,4 +65,36 @@ export default class CmdService {
             });
         });
     }
+
+    //  停止服务
+    public stopService(serviceId: number, onData: Function, onErr: Function) {
+        return new Promise((resolve) => {
+            const child = spawn('pilot-script', ['stopService', `${serviceId}`, '--pilotConfig', this.pilotConfig]);
+            child.stdout.on('data', (data) => {
+                onData?.(data);
+            });
+            child.stderr.on('data', (data) => {
+                onErr?.(data);
+            });
+            child.stdout.on('close', () => {
+                resolve(true);
+            });
+        });
+    }
+
+    //  开始服务
+    public startService(serviceId: number, onData: Function, onErr: Function) {
+        return new Promise((resolve) => {
+            const child = spawn('pilot-script', ['startService', `${serviceId}`, '--pilotConfig', this.pilotConfig]);
+            child.stdout.on('data', (data) => {
+                onData?.(data);
+            });
+            child.stderr.on('data', (data) => {
+                onErr?.(data);
+            });
+            child.stdout.on('close', () => {
+                resolve(true);
+            });
+        });
+    }
 }
