@@ -1,5 +1,6 @@
 import { ServerConfig } from "../config";
 import { Server } from "http";
+import { Injectable } from "../ioc";
 import { Server as SocketServer } from "socket.io";
 
 enum ESocketMsgType {
@@ -7,6 +8,7 @@ enum ESocketMsgType {
     SINGLECHANNEL = "singleChannel",
 }
 
+@Injectable
 export default class SocketService {
 
     private readonly io: SocketServer;
@@ -27,7 +29,7 @@ export default class SocketService {
             });
         });
     }
-    
+
     public getSocketServer() {
         return this.httpServer;
     }
@@ -37,7 +39,8 @@ export default class SocketService {
     }
 
     public sendToSocketId(data: string) {
-        this.io.to(this.socketId).emit( ESocketMsgType.SINGLECHANNEL, data);
+        console.log(this.socketId, ESocketMsgType.SINGLECHANNEL, data);
+        this.io.to(this.socketId).emit(ESocketMsgType.SINGLECHANNEL, data);
     }
 
     public removeSocketId() {

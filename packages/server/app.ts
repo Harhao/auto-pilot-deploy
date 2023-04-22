@@ -56,9 +56,9 @@ export default class App {
   }
 
   async beforeBootstrap(): Promise<void> {
-
-    await this.initDBHandle();
+    
     await this.initSocketHandle();
+    await this.initDBHandle();
 
     MiddlewareLoader.load(this.app);
     ControllerLoader.load(this.app, resolve(__dirname, './controller'));

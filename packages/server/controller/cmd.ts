@@ -8,13 +8,12 @@ import { Inject } from '../ioc';
 @Controller('/cmd')
 export default class CmdController {
 
-    @Inject private sockertService: SocketService;
     @Inject private cmdService: CmdService;
+    @Inject private socketService: SocketService;
 
 
-    public onStdoutHandle(data: Buffer) {
-        console.log(data.toString());
-        this.sockertService.sendToSocketId(data.toString());
+    public onStdoutHandle = (data: Buffer) => {
+        this.socketService.sendToSocketId(data.toString());
     }
 
     @Post('/deploy')

@@ -1,4 +1,5 @@
-import { IsDefined, IsNumber } from "class-validator";
+import { IsDefined, IsNumber, IsString } from "class-validator";
+import { ProjectDto } from "./project";
 
 export class CommonCmdDto {
     
@@ -7,7 +8,13 @@ export class CommonCmdDto {
     id: number;
 }
 
-export class RollbackCmdDto extends CommonCmdDto {}
+export class RollbackCmdDto extends ProjectDto{
+
+    @IsString()
+    @IsDefined()
+    rollNode: string;
+
+}
 
 
 export class StopCmdDto extends CommonCmdDto {}
