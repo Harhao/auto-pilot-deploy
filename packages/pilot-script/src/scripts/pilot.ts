@@ -1,6 +1,6 @@
-import prompts from "prompts";
-import FileScript from "../common/file";
-import Pm2 from "../common/pm2";
+import prompts from 'prompts';
+import FileScript from '../common/file';
+import Pm2 from '../common/pm2';
 
 import {
     deployConfig,
@@ -8,7 +8,7 @@ import {
     NodeNginxConfig,
     projectConfig,
     rollBackConfig,
-} from "../config";
+} from '../config';
 
 import {
     EProjectType,
@@ -16,10 +16,10 @@ import {
     INginxConfig,
     IPilotCofig,
     IProjectCofig,
-} from "../consts";
+} from '../consts';
 
-import { ClientPlatform, NodePlatform } from "../platform";
-import { catchError, Log } from "./utils";
+import { ClientPlatform, NodePlatform } from '../platform';
+import { catchError, Log } from './utils';
 
 export interface IPilotOptions {
     deployFolder: string;
@@ -79,7 +79,7 @@ export default class Pilot {
 
     // pilot-script 单独部署入口
     @catchError()
-    public async startWork() {
+    public async starDeploytWork() {
         const commonConfig = await this.getCommonConfig();
         await this.startDeploy(commonConfig);
     }
@@ -91,7 +91,7 @@ export default class Pilot {
         await this.startRollBackJob({ ...commonConfig, projectConfig: { ...commonConfig.projectConfig, ...config } });
     }
 
-    //查询在跑服务
+    //查询服务
     @catchError()
     public async getServiceWorks() {
         const pilotCofig = (await this.initConfigure()) as IPilotCofig;
@@ -115,10 +115,10 @@ export default class Pilot {
                 this.platform = new NodePlatform();
                 break;
             default:
-                Log.warn("暂未支持其他服务类型项目");
+                Log.warn('暂未支持其他服务类型项目');
         }
         await this.platform?.execute(config);
-        Log.success("部署成功～");
+        Log.success('部署成功～');
     }
 
     // 开始回滚
@@ -127,5 +127,33 @@ export default class Pilot {
         if (config) {
             await this.startDeploy(config);
         }
+    }
+
+    @catchError()
+    public async stopPm2Work(id: number) {
+        const pilotConfig = await this.initConfigure();
+        await this.stopPm2Service(pilotConfig, id);
+
+    }
+
+    @catchError()
+    public async stopPm2Service(pilotConfig: IPilotCofig, id: number) {
+        const pm2 = new Pm2(pilotConfig);
+        const stdout =  await pm2.stopService(id);
+        Log.success(stdout);
+    }
+
+    @catchError()
+    public async startPm2Work(id: number) {
+        const pilotConfig = await this.initConfigure();
+        await this.startPm2Service(pilotConfig, id);
+
+    }
+
+    @catchError()
+    public async startPm2Service(pilotConfig: IPilotCofig, id: number) {
+        const pm2 = new Pm2(pilotConfig);
+        const stdout = await pm2.startService(id);
+        Log.success(stdout);
     }
 }

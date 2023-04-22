@@ -24,8 +24,9 @@ export function catchError() {
                 result = originalMethod.apply(this, args);
             } catch (e) {
                 Log.error(`${propertyKey} error ${e}`);
+                result = null;
             }
-            return result ?? null;
+            return result;
         };
         return descriptor;
     };

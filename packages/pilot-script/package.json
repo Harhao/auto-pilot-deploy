@@ -12,7 +12,8 @@
   },
   "scripts": {
     "build": "node ./build/index.js",
-    "test": "ts-node ./bin/index.ts rollback"
+    "deploy": "ts-node ./bin/index.ts deploy",
+    "stop": "ts-node ./bin/index.ts startService 0"
   },
   "dependencies": {
     "@topcli/spinner": "^2.0.0",

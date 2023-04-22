@@ -30,7 +30,7 @@ function main() {
             stdoutLogo('pilot');
 
             if (options?.pilotConfig && options?.projectConfig) {
-                       
+
                 const pilotJson = JsonParse(options.pilotConfig);
                 const projectJSon = JsonParse(options.projectConfig);
                 const nginxJson = JsonParse(options.nginxConfig);
@@ -40,10 +40,10 @@ function main() {
                     projectConfig: projectJSon,
                     nginxConfig: nginxJson
                 });
-                
+
                 return;
             }
-            pilot.startWork();
+            pilot.starDeploytWork();
         });
 
     // 回滚命令
@@ -63,6 +63,23 @@ function main() {
             '<projectConfig> 提供项目配置，可参考readme.md'
         )
         .action((options) => {
+
+            stdoutLogo('pilot');
+
+            if (options?.pilotConfig && options?.projectConfig) {
+
+                const pilotJson = JsonParse(options.pilotConfig);
+                const projectJSon = JsonParse(options.projectConfig);
+                const nginxJson = JsonParse(options.nginxConfig);
+
+                pilot.startRollBackJob({
+                    pilotCofig: pilotJson,
+                    projectConfig: projectJSon,
+                    nginxConfig: nginxJson
+                });
+
+                return;
+            }
             pilot.rollBackWork();
         });
 
@@ -77,9 +94,9 @@ function main() {
         )
         .action(async (options) => {
             if (options?.pilotConfig) {
-                const pilotJson = JSON.parse(options.pilotConfig);
+                const pilotJson = JsonParse(options.pilotConfig);
                 const list = await pilot.getServiceList(pilotJson);
-                const filterList = formatPmJSON(JSON.parse(list));
+                const filterList = formatPmJSON(JsonParse(list));
                 process.stdout.write(JSON.stringify(filterList));
             } else {
                 const list = await pilot.getServiceWorks();
@@ -89,14 +106,33 @@ function main() {
 
     // 获取服务列表
     cli
-        .command('stopService', '停止pm2 的服务')
+        .command('stopService <id>', '停止pm2的服务id')
         .alias('stps')
         .option(
             '--pilotConfig <pilotConfig>',
-            '<pilotConfig> 提供git仓库/服务器配置，可参考readme.md'
+            '<pilotConfig> 提供git仓库/服务器配置'
         )
-        .action(async (options) => {
-           
+        .action(async (id, options) => {
+
+            if (options?.pilotConfig) {
+                pilot.stopPm2Service(options.pilotCofig, id);
+            }
+            pilot.stopPm2Work(id);
+        });
+
+    cli
+        .command('startService <id>', '停止pm2的服务id')
+        .alias('stps')
+        .option(
+            '--pilotConfig <pilotConfig>',
+            '<pilotConfig> 提供git仓库/服务器配置'
+        )
+        .action(async (id, options) => {
+
+            if (options?.pilotConfig) {
+                pilot.startPm2Service(options.pilotCofig, id);
+            }
+            pilot.startPm2Work(id);
         });
 
     cli.help();
@@ -108,4 +144,5 @@ try {
 } catch (e) {
     Log.error(`pilot run error ${e}`);
     process.exit(0);
+
 }
