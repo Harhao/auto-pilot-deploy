@@ -1,7 +1,7 @@
 // 服务器密钥和git仓库密钥
 export interface IPilotCofig {
     // 服务器IP
-    address: string; 
+    address: string;
     // 用户名
     account: string;
     // 服务器密码
@@ -27,10 +27,29 @@ export interface IProjectCofig {
     type: string;
     // node服务部署命令
     deploy?: string;
+    // 回退节点commit 或者 git tag
+    rollNode?: string;
 }
 
-// 回退配置
-export interface IRollBackConfig {
-    // 回退类
-    rollNode: string;
+export interface INginxConfig {
+
+    //服务器域名
+    apiDomain: string;
+
+    // 接口域名前缀
+    apiPrefix?: string;
+
+    //部署服务的本地域名
+    apiHost?: string;
+
+    // 部署服务的本地端口号
+    apiPort?: number;
+
+}
+
+
+export interface IDeployConfig {
+    pilotCofig: IPilotCofig;
+    projectConfig: IProjectCofig;
+    nginxConfig: INginxConfig;
 }

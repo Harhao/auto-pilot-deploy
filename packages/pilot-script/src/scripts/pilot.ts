@@ -1,16 +1,29 @@
-import prompts from 'prompts';
-import { NodePlatform, ClientPlatform } from '../platform';
-import FileScript from '../common/file';
-import Pm2 from '../common/pm2';
-import { Log, catchError } from './utils';
-import { projectConfig, deployConfig, rollBackConfig } from '../config';
-import { EProjectType, IPilotCofig, IProjectCofig } from '../consts/index';
+import prompts from "prompts";
+import FileScript from "../common/file";
+import Pm2 from "../common/pm2";
 
+import {
+    deployConfig,
+    frontNginxConfig,
+    NodeNginxConfig,
+    projectConfig,
+    rollBackConfig,
+} from "../config";
+
+import {
+    EProjectType,
+    IDeployConfig,
+    INginxConfig,
+    IPilotCofig,
+    IProjectCofig,
+} from "../consts";
+
+import { ClientPlatform, NodePlatform } from "../platform";
+import { catchError, Log } from "./utils";
 
 export interface IPilotOptions {
     deployFolder: string;
 }
-
 
 type PilotPlatform = ClientPlatform | NodePlatform | undefined;
 export default class Pilot {
@@ -24,6 +37,18 @@ export default class Pilot {
         this.pilotConfigPath = this.file.getPilotConfigPath();
     }
 
+    @catchError()
+    public async getCommonConfig() {
+        const pilotCofig = (await this.initConfigure()) as IPilotCofig;
+        const projectConfig = (await this.initProject()) as IProjectCofig;
+        const nginxConfig = (await this.initNginx(projectConfig)) as INginxConfig;
+
+        return {
+            pilotCofig,
+            projectConfig,
+            nginxConfig,
+        };
+    }
 
     @catchError()
     public async initConfigure() {
@@ -43,31 +68,34 @@ export default class Pilot {
         return await prompts(projectConfig);
     }
 
-    // pilot-script 运行入口
+    @catchError()
+    public async initNginx(projectConfig: IProjectCofig) {
+        const nginxConfig =
+            projectConfig.type === EProjectType.FRONTEND
+                ? frontNginxConfig
+                : NodeNginxConfig;
+        return await prompts(nginxConfig);
+    }
+
+    // pilot-script 单独部署入口
     @catchError()
     public async startWork() {
-
-        const pilotCofig = (await this.initConfigure()) as IPilotCofig;
-        const projectConfig = await this.initProject() as IProjectCofig;
-        await this.startDeploy({ pilotCofig, projectConfig });
-
+        const commonConfig = await this.getCommonConfig();
+        await this.startDeploy(commonConfig);
     }
     // pilot-script 回滚入口
     @catchError()
     public async rollBackWork() {
-
-        const pilotCofig = (await this.initConfigure()) as IPilotCofig;
-        const projectConfig = await this.initProject() as IProjectCofig;
-        const config = (await prompts(rollBackConfig));
-        await this.startRollBackJob({ pilotCofig, projectConfig, rollBackConfig: config });
-
+        const commonConfig = await this.getCommonConfig();
+        const config = await prompts(rollBackConfig);
+        await this.startRollBackJob({ ...commonConfig, projectConfig: { ...commonConfig.projectConfig, ...config } });
     }
 
     //查询在跑服务
     @catchError()
     public async getServiceWorks() {
         const pilotCofig = (await this.initConfigure()) as IPilotCofig;
-        return (await this.getServiceList(pilotCofig));
+        return await this.getServiceList(pilotCofig);
     }
 
     @catchError()
@@ -76,9 +104,9 @@ export default class Pilot {
         return await pm2.getServiceList();
     }
 
+    // 部署服务
     @catchError()
-    public async startDeploy(config: { pilotCofig: IPilotCofig, projectConfig: IProjectCofig }) {
-
+    public async startDeploy(config: IDeployConfig) {
         switch (config.projectConfig.type) {
             case EProjectType.FRONTEND:
                 this.platform = new ClientPlatform();
@@ -86,18 +114,18 @@ export default class Pilot {
             case EProjectType.BACKEND:
                 this.platform = new NodePlatform();
                 break;
-            default: Log.warn('暂未支持其他服务类型项目');
+            default:
+                Log.warn("暂未支持其他服务类型项目");
         }
-        await this.platform?.execute(config.pilotCofig, config.projectConfig);
-        Log.success('部署成功～');
-
+        await this.platform?.execute(config);
+        Log.success("部署成功～");
     }
 
     // 开始回滚
     @catchError()
-    public async startRollBackJob(rollBackConfig: unknown) {
-
-        console.log(rollBackConfig);
-
+    public async startRollBackJob(config: IDeployConfig) {
+        if (config) {
+            await this.startDeploy(config);
+        }
     }
 }

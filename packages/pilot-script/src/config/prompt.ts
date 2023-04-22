@@ -9,7 +9,7 @@ const isFrontEndType = (answer: Record<string, unknown>) => {
     return answer?.type === EProjectType.FRONTEND;
 }
 
-export const deployConfig: promptType[]  = [
+export const deployConfig: promptType[] = [
     {
         type: 'text',
         name: 'address',
@@ -122,17 +122,27 @@ export const projectConfig: promptType[] = [
 ];
 
 
-export const nginxConfig: promptType[] = [
+export const NodeNginxConfig: promptType[] = [
     {
         type: "text",
+        name: "apiDomain",
+        message: "",
+        initial: 'api.oss-storage.top',
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入需要服务的域名");
+        }
+    },
+    {
+        type: 'text',
         name: "apiPrefix",
         message: "",
+        initial: '/api/v1/',
         onRender(kleur: any) {
             this.msg = kleur.green("输入需要服务的前缀名");
         }
     },
     {
-        type: "text",
+        type: 'text',
         name: "apiHost",
         message: "",
         initial: "http://127.0.0.1",
@@ -141,7 +151,7 @@ export const nginxConfig: promptType[] = [
         }
     },
     {
-        type: 'number',
+        type: 'text',
         name: 'apiPort',
         message: '',
         onRender(kleur: any) {
@@ -150,8 +160,19 @@ export const nginxConfig: promptType[] = [
     },
 ];
 
+export const frontNginxConfig: promptType[] = [
+    {
+        type: "text",
+        name: "apiDomain",
+        message: "",
+        initial: 'static.oss-storage.top',
+        onRender(kleur: any) {
+            this.msg = kleur.green("输入需要服务的域名");
+        }
+    },
+];
 
-export const rollBackConfig:promptType[] = [
+export const rollBackConfig: promptType[] = [
     {
         type: "text",
         name: "rollNode",

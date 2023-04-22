@@ -1,5 +1,5 @@
 import path from 'path';
-import { Log, catchError } from '../scripts/utils';
+import { Log, catchError, showLoading } from '../scripts/utils';
 import simpleGit, { SimpleGit } from 'simple-git';
 import FileScript from './file';
 
@@ -17,13 +17,14 @@ export default class GitScript {
                     this.file.deleteDirectory(gitFolder);
                 }
                 // 开启loading
+                const loadHandle = showLoading("下载git仓库中");
                 this.git.clone(repoUrl, gitFolder, ['--progress'], (e) => {
                     if (e) {
                         Log.error(`Error cloning repository: ${e}`);
                         resolve(null);
                         return;
                     }
-                    //TODO 关闭loading
+                    loadHandle.succeed();
                     this.git.cwd({ path: gitFolder, root: true });
                     resolve(gitFolder);
                 });
@@ -81,9 +82,16 @@ export default class GitScript {
         });
     }
 
-    public resetGitRepo() {
-        return new Promise((resolve, reject) => {
-            this.git.reset();
+    public resetGitRepo(resetHash: string) {
+        return new Promise((resolve) => {
+            Log.info(`resetHash is ${resetHash}`);
+            this.git.revert(resetHash, (err, result) => {
+                if (err) {
+                    Log.error(`reset error ${err}`);
+                    resolve(null);
+                };
+                resolve(result);
+            });
         });
     }
 }

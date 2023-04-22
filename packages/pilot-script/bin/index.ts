@@ -1,7 +1,7 @@
 import cac from 'cac';
 import Pilot from '../src/scripts/pilot';
 import pkg from '../package.json';
-import { Log, formatPmJSON, stdoutLogo } from '../src/scripts/utils';
+import { JsonParse, Log, formatPmJSON, stdoutLogo } from '../src/scripts/utils';
 import process from 'process';
 
 function main() {
@@ -21,15 +21,26 @@ function main() {
             '--projectConfig [projectConfig]',
             '[projectConfig] 提供项目配置，可参考readme.md'
         )
+        .option(
+            '--nginxConfig [nginxConfig]',
+            '[nginxConfig] 提供项目nginx配置，可参考readme.md'
+        )
         .action((options) => {
+
+            stdoutLogo('pilot');
+
             if (options?.pilotConfig && options?.projectConfig) {
-                const { pilotConfig, projectConfig } = options;
-                const pilotJson = JSON.parse(pilotConfig);
-                const projectJSon = JSON.parse(projectConfig);
+                       
+                const pilotJson = JsonParse(options.pilotConfig);
+                const projectJSon = JsonParse(options.projectConfig);
+                const nginxJson = JsonParse(options.nginxConfig);
+
                 pilot.startDeploy({
                     pilotCofig: pilotJson,
                     projectConfig: projectJSon,
+                    nginxConfig: nginxJson
                 });
+                
                 return;
             }
             pilot.startWork();
@@ -97,6 +108,4 @@ try {
 } catch (e) {
     Log.error(`pilot run error ${e}`);
     process.exit(0);
-} finally {
-    stdoutLogo('pilot');
 }

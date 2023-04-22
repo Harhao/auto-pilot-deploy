@@ -15,3 +15,7 @@ export function formatPmJSON(list: any[]) {
         };
     });
 }
+
+export function JsonParse(data: string) {
+    return JSON.parse(data);
+}

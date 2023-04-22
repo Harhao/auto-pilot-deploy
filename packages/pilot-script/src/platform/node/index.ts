@@ -1,11 +1,11 @@
 import path, { resolve } from 'path';
 import Base from '../../common/base';
-import { Log, catchError } from '../../scripts/utils';
-import prompts from 'prompts';
 import ejs from 'ejs';
 import fse from 'fs-extra';
-import { IProjectCofig, IPilotCofig } from '../../consts';
-import { BACKENDDIR, NGINXCONFIGPATH, nginxConfig } from '../../config/index';
+
+import { Log, catchError } from '../../scripts/utils';
+import { IProjectCofig, IPilotCofig, IDeployConfig, INginxConfig } from '../../consts';
+import { BACKENDDIR, NGINXCONFIGPATH } from '../../config/index';
 
 const options = {
     onStderr(chunk: Buffer) {
@@ -18,17 +18,18 @@ const options = {
 export class NodePlatform extends Base {
 
     @catchError()
-    public async execute(pilotCofig: IPilotCofig, projectConfig: IProjectCofig) {
+    public async execute(config: IDeployConfig) {
         Log.success('✨ 开始部署node服务脚本 ～✨');
+        const { projectConfig, pilotCofig, nginxConfig } = config;
         const localPath = await this.downloadRepo(projectConfig.gitUrl, pilotCofig);
         if (localPath) {
-            await this.deployJob(localPath, projectConfig, pilotCofig);
+            await this.deployJob(localPath, projectConfig, pilotCofig, nginxConfig);
         }
         this.client.dispose();
     }
 
     @catchError()
-    public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig) {
+    public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig, nginxConfig: INginxConfig) {
         const { branch, command, tool, dest, deploy } = projectConfig;
         const remoteRootFolder = (dest || this.git.getGitRepoName(projectConfig.gitUrl)) as string;
         const remoteDir = `${BACKENDDIR}/${remoteRootFolder}`;
@@ -39,23 +40,23 @@ export class NodePlatform extends Base {
                 ...options
             };
             await this.git.switchToBranch(branch);
+            !!projectConfig.rollNode && await this.git.resetGitRepo(projectConfig.rollNode);
             await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
             await this.client.execCommand(`${tool} install`, cmdConfig);
             await this.client.execCommand(`${tool} ${command}`, cmdConfig);
             await this.client.execCommand(`${tool} ${deploy}`, cmdConfig);
-            await this.configNginxConf(remoteRootFolder);
+            await this.configNginxConf(remoteRootFolder, nginxConfig);
         }
 
     }
 
     @catchError()
-    public async configNginxConf(remoteFolder: string) {
+    public async configNginxConf(remoteFolder: string, nginxConfig: INginxConfig) {
         
         const remoteConf = `${NGINXCONFIGPATH}/${remoteFolder}.conf`;
-        const answers = await prompts(nginxConfig);
         const nginxEjsPath = resolve(__dirname, '../../ejs/backend_nginx.ejs');
         const ejsContent = fse.readFileSync(nginxEjsPath, 'utf8');
-        const nginxConf = ejs.render(ejsContent, answers);
+        const nginxConf = ejs.render(ejsContent, nginxConfig);
         Log.info('create backend nginx.conf file start');
         await this.client.execCommand(`echo "${nginxConf}" > ${remoteConf}`, options);
         Log.info('restart nginx');

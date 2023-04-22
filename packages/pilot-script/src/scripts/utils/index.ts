@@ -1,4 +1,4 @@
 export * from './log';
-export * from './start';
+export * from './tool';
 export * from './decorator';
 export * from './format';
