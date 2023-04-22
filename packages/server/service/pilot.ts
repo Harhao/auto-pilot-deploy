@@ -5,7 +5,7 @@ import { CatchError } from "../decorator";
 import { CommonPilot, UpdatePilotDto } from "../dto";
 import { Inject, Injectable } from "../ioc";
 import { EResponseCodeMap } from "../consts";
-import { Document, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 @Injectable
 export default class PilotService {
