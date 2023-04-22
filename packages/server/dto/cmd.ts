@@ -1,8 +1,9 @@
 import { IsDefined, IsNumber } from "class-validator";
 
 export class CommonCmdDto {
-    @IsNumber()
+    
     @IsDefined()
+    @IsNumber()
     id: number;
 }
 

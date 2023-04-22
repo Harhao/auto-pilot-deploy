@@ -53,7 +53,16 @@ export default class CmdService {
     //  回滚服务
     public rollbackService(projectConfig: string, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
-            const child = spawn('pilot-script', ['rollback', '--pilotConfig', this.pilotConfig, '--projectConfig', projectConfig]);
+            const child = spawn(
+                'pilot-script',
+                [
+                    'rollback',
+                    '--pilotConfig',
+                    this.pilotConfig,
+                    '--projectConfig',
+                    projectConfig
+                ]
+            );
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });
@@ -69,7 +78,15 @@ export default class CmdService {
     //  停止服务
     public stopService(serviceId: number, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
-            const child = spawn('pilot-script', ['stopService', `${serviceId}`, '--pilotConfig', this.pilotConfig]);
+            const child = spawn(
+                'pilot-script', 
+                [
+                    'stopService', 
+                    `${serviceId}`,
+                    '--pilotConfig', 
+                    this.pilotConfig
+                ]
+            );
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });
@@ -85,7 +102,15 @@ export default class CmdService {
     //  开始服务
     public startService(serviceId: number, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
-            const child = spawn('pilot-script', ['startService', `${serviceId}`, '--pilotConfig', this.pilotConfig]);
+            const child = spawn(
+                'pilot-script',
+                [
+                    'startService', 
+                    `${serviceId}`, 
+                    '--pilotConfig', 
+                    this.pilotConfig
+                ]
+            );
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });

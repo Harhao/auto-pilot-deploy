@@ -46,4 +46,10 @@ export default class MongoDBService {
     const collection: Collection = this.db.collection(collectionName);
     return await collection.deleteOne(filter);
   }
+
+  @CatchError()
+  public close() {
+    this.client.close();
+    
+  }
 }

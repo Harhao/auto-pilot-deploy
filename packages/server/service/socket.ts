@@ -43,4 +43,8 @@ export default class SocketService {
     public removeSocketId() {
         this.socketId = null;
     }
+
+    public close() {
+        this.io.close();
+    }
 }

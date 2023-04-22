@@ -59,8 +59,8 @@ function main() {
             '<projectConfig> 提供项目配置，可参考readme.md'
         )
         .option(
-            '--rollback <projectConfig>',
-            '<projectConfig> 提供项目配置，可参考readme.md'
+            '--nginxConfig <nginxConfig>',
+            '<nginxConfig> 提供项目nginx配置，可参考readme.md'
         )
         .action((options) => {
 

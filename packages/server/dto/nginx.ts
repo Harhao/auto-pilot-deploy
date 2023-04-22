@@ -32,9 +32,6 @@ export class deleteNginxDto {
     @IsDefined()
     @IsNumber()
     nginxId: number;
-
-
-    @IsDefined()
     
 }
 

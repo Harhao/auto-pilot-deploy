@@ -73,5 +73,16 @@ export default class App {
       console.log(`服务器启动成功，端口监听在 ${this.port}`);
     });
 
+    this.socketServer.on("close",() => {
+      console.log("执行关闭逻辑")
+      const mongodbService = container.getInstance(MongoDBService);
+      const redisService = container.getInstance(RedisService);
+      const socketService = container.getInstance(SocketService);
+
+      mongodbService.close();
+      redisService.close();
+      socketService.close();
+      
+    });
   }
 }

@@ -81,4 +81,9 @@ export default class RedisService<T extends IEntity> {
             });
         });
     }
+
+    @CatchError() 
+    public close() {
+        this.redisClient.quit();
+    }
 }
