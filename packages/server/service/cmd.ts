@@ -25,7 +25,7 @@ export default class CmdService {
     //  获取服务列表
     public getServiceList() {
         return new Promise((resolve) => {
-            const child = spawn(`plts`, ['service', '--pilotConfig', this.pilotConfig]);
+            const child = spawn(`pilot-script`, ['service', '--pilotConfig', this.pilotConfig]);
             child.stdout.on('data', (data) => {
                 const jsonData = JSON.parse(data.toString('utf-8'));
                 resolve(jsonData);
@@ -36,7 +36,7 @@ export default class CmdService {
     // 部署服务
     public deployService(projectConfig: string, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
-            const child = spawn('plts', ['deploy', '--pilotConfig', this.pilotConfig, '--projectConfig', projectConfig]);
+            const child = spawn('pilot-script', ['deploy', '--pilotConfig', this.pilotConfig, '--projectConfig', projectConfig]);
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });
@@ -54,7 +54,7 @@ export default class CmdService {
     public rollbackService(projectConfig: string, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
             const child = spawn(
-                'plts',
+                'pilot-script',
                 [
                     'rollback',
                     '--pilotConfig',
@@ -78,15 +78,8 @@ export default class CmdService {
     //  停止服务
     public stopService(serviceId: number, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
-            const child = spawn(
-                'plts',
-                [
-                    'stopService',
-                    `${serviceId}`,
-                    '--pilotConfig',
-                    this.pilotConfig
-                ]
-            );
+            const child = spawn('pilot-script',['stopService',`${serviceId}`,'--pilotConfig', this.pilotConfig]);
+
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });
@@ -103,7 +96,7 @@ export default class CmdService {
     public startService(serviceId: number, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
             const child = spawn(
-                'plts',
+                'pilot-script',
                 [
                     'startService',
                     `${serviceId}`,

@@ -1,7 +1,7 @@
 import CmdService from '../service/cmd';
 import SocketService from '../service/socket';
 import { Context } from 'koa';
-import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth } from '../decorator';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response } from '../decorator';
 import { ProjectDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
 import { Inject } from '../ioc';
 
@@ -13,6 +13,7 @@ export default class CmdController {
 
 
     public onStdoutHandle = (data: Buffer) => {
+        console.log(data.toString());
         this.socketService.sendToSocketId(data.toString());
     }
 
@@ -20,6 +21,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     @ValidateDto(ProjectDto)
+    @Response
     public async deploy(ctx: Context) {
 
         const projectConfig = ctx.request.body;
@@ -30,7 +32,7 @@ export default class CmdController {
             this.onStdoutHandle
         );
 
-        ctx.body = {
+        return {
             code: 200,
             data: true,
             msg: 'success'
@@ -41,8 +43,9 @@ export default class CmdController {
     @Get('/stopProcess')
     @ValidateAuth()
     @CatchError()
+    @Response
     public async stopProcess(ctx: Context) {
-        ctx.body = {
+        return {
             code: 200,
             data: "stopRun function",
             msg: 'success'
@@ -53,6 +56,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     @ValidateDto(RollbackCmdDto)
+    @Response
     public async rollback(ctx: Context) {
 
         const projectConfig = ctx.request.body;
@@ -63,7 +67,7 @@ export default class CmdController {
             this.onStdoutHandle
         );
 
-        ctx.body = {
+        return {
             code: 200,
             data: true,
             msg: 'success'
@@ -74,6 +78,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     @ValidateDto(StopCmdDto)
+    @Response
     public async stopService(ctx: Context) {
         const { id } = ctx.request.body;
         this.cmdService.stopService(
@@ -81,7 +86,8 @@ export default class CmdController {
             this.onStdoutHandle,
             this.onStdoutHandle
         );
-        ctx.body = {
+
+        return {
             code: 200,
             data: true,
             msg: 'success'  
@@ -93,6 +99,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     @ValidateDto(StartCmdDto)
+    @Response
     public async startService(ctx: Context) {
         const { id } = ctx.request.body;
         this.cmdService.startService(
@@ -100,7 +107,7 @@ export default class CmdController {
             this.onStdoutHandle,
             this.onStdoutHandle
         );
-        ctx.body = {
+        return {
             code: 200,
             data: true,
             msg: 'success'  
@@ -112,9 +119,10 @@ export default class CmdController {
     @Get('/services')
     @ValidateAuth()
     @CatchError()
+    @Response
     public async getServices(ctx: Context) {
         const list = await this.cmdService.getServiceList();
-        ctx.body = {
+        return {
             code: 200,
             data: list,
             msg: 'success'

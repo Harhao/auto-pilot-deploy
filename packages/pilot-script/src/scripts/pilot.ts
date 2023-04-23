@@ -139,8 +139,7 @@ export default class Pilot {
     @catchError()
     public async stopPm2Service(pilotConfig: IPilotCofig, id: number) {
         const pm2 = new Pm2(pilotConfig);
-        const stdout =  await pm2.stopService(id);
-        Log.success(stdout);
+        await pm2.stopService(id);
     }
 
     @catchError()
@@ -153,7 +152,6 @@ export default class Pilot {
     @catchError()
     public async startPm2Service(pilotConfig: IPilotCofig, id: number) {
         const pm2 = new Pm2(pilotConfig);
-        const stdout = await pm2.startService(id);
-        Log.success(stdout);
+        await pm2.startService(id);
     }
 }

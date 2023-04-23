@@ -39,6 +39,17 @@ export function Controller(prefix: string): ClassDecorator {
     };
 }
 
+export function Response(target: any, key: string, descriptor: any) {
+    
+    const originalMethod = descriptor.value;
+    descriptor.value = async function (...args: any[]) {
+        const ctx = args[0];
+        const result = await originalMethod.apply(this, args);
+        ctx.body = result;
+    };
+    return descriptor;
+}
+
 function createMappingDecorator(method: HTTPMethod): (path: string, ...middlewares: Middleware[]) => MethodDecorator {
     return (path: string, ...middlewares: Middleware[]) => {
         return (target: any, key: string, decriptor: any) => {

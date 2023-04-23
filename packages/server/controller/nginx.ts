@@ -1,6 +1,6 @@
 import { Context } from "koa";
 import { CatchError, Controller, Post, ValidateDto } from "../decorator";
-import { LoginUserDto } from "../dto";
+import { CreateNginxDot, } from "../dto";
 import { Inject } from "../ioc";
 
 import NginxService from "../service/nginx";
@@ -12,7 +12,7 @@ export default class NginxController {
 
     @Post("/create")
     @CatchError()
-    @ValidateDto(LoginUserDto)
+    @ValidateDto(CreateNginxDot)
     public async create(ctx: Context) {
        
     }

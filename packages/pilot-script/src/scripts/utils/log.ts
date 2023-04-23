@@ -1,5 +1,6 @@
 import logSymbols from 'log-symbols';
 import chalk from 'chalk';
+
 const log = console.log;
 
 export class Log {

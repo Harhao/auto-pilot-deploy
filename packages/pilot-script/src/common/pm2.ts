@@ -35,22 +35,21 @@ export default class Pm2 {
     @RequireClient()
     public async stopService(pid: string | number) {
         const result = await this.client!.execCommand(`pm2 stop ${pid}`);
-        return result.stdout;
+        return result.code;
     }
 
     @catchError()
     @RequireClient()
     public async startService(pid: string | number) {
-
         const result = await this.client!.execCommand(`pm2 start ${pid}`);
-        return result.stdout;
+        return result.code;
     }
 
     @catchError()
     @RequireClient()
     public async stopAllService(pid?: PidType) {
         const result = await this.client!.execCommand('pm2 stop all');
-        return result.stdout;
+        return result.code;
 
     }
 }

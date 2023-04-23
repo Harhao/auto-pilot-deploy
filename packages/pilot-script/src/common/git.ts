@@ -51,7 +51,7 @@ export default class GitScript {
     @catchError()
     public async switchToBranch(branch: string): Promise<boolean> {
         const result = await this.git.checkout(branch);
-        console.log('分支已经切换到：', result);
+        Log.success(`分支已经切换到：${result}`);
         return true;
     }
 

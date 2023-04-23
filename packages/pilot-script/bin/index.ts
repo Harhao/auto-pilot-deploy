@@ -4,7 +4,7 @@ import pkg from '../package.json';
 import { JsonParse, Log, formatPmJSON, stdoutLogo } from '../src/scripts/utils';
 import process from 'process';
 
-function main() {
+async function main() {
 
     const cli = cac(`${pkg.name}`);
     const pilot = new Pilot();
@@ -25,9 +25,7 @@ function main() {
             '--nginxConfig [nginxConfig]',
             '[nginxConfig] 提供项目nginx配置，可参考readme.md'
         )
-        .action((options) => {
-
-            stdoutLogo('pilot');
+        .action(async (options) => {
 
             if (options?.pilotConfig && options?.projectConfig) {
 
@@ -35,7 +33,7 @@ function main() {
                 const projectJSon = JsonParse(options.projectConfig);
                 const nginxJson = JsonParse(options.nginxConfig);
 
-                pilot.startDeploy({
+                await pilot.startDeploy({
                     pilotCofig: pilotJson,
                     projectConfig: projectJSon,
                     nginxConfig: nginxJson
@@ -43,7 +41,7 @@ function main() {
 
                 return;
             }
-            pilot.starDeploytWork();
+            await pilot.starDeploytWork();
         });
 
     // 回滚命令
@@ -62,17 +60,15 @@ function main() {
             '--nginxConfig <nginxConfig>',
             '<nginxConfig> 提供项目nginx配置，可参考readme.md'
         )
-        .action((options) => {
-
-            stdoutLogo('pilot');
+        .action(async (options) => {
 
             if (options?.pilotConfig && options?.projectConfig) {
 
                 const pilotJson = JsonParse(options.pilotConfig);
                 const projectJSon = JsonParse(options.projectConfig);
-                const nginxJson = JsonParse(options.nginxConfig);
+                const nginxJson = JsonParse(options?.nginxConfig);
 
-                pilot.startRollBackJob({
+                await pilot.startRollBackJob({
                     pilotCofig: pilotJson,
                     projectConfig: projectJSon,
                     nginxConfig: nginxJson
@@ -80,7 +76,7 @@ function main() {
 
                 return;
             }
-            pilot.rollBackWork();
+            await pilot.rollBackWork();
         });
 
 
@@ -110,14 +106,15 @@ function main() {
         .alias('stps')
         .option(
             '--pilotConfig <pilotConfig>',
-            '<pilotConfig> 提供git仓库/服务器配置'
+            '<pilotConfig> 提供git仓库/服务器配置，可参考readme.md'
         )
         .action(async (id, options) => {
-
             if (options?.pilotConfig) {
-                pilot.stopPm2Service(options.pilotCofig, id);
+                const pilotJson = JsonParse(options.pilotConfig);
+                await pilot.stopPm2Service(pilotJson, id);
+                return;
             }
-            pilot.stopPm2Work(id);
+            await pilot.stopPm2Work(id);
         });
 
     cli
@@ -130,9 +127,11 @@ function main() {
         .action(async (id, options) => {
 
             if (options?.pilotConfig) {
-                pilot.startPm2Service(options.pilotCofig, id);
+                const pilotJson = JsonParse(options.pilotConfig);
+                await pilot.startPm2Service(pilotJson, id);
+                return;
             }
-            pilot.startPm2Work(id);
+            await pilot.startPm2Work(id);
         });
 
     cli.help();
@@ -144,5 +143,6 @@ try {
 } catch (e) {
     Log.error(`pilot run error ${e}`);
     process.exit(0);
-
 }
+
+

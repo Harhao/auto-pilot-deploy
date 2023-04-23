@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import boxen from 'boxen';
 
 import loading from 'loading-cli';
+import { Log } from './log';
 
 export const stdoutLogo = (logoText: string) => {
     // 使用 figlet 将文本转换为 ASCII 艺术字体
@@ -12,9 +13,7 @@ export const stdoutLogo = (logoText: string) => {
     // 使用 boxen 绘制带边框的框架
     const box = boxen(styledText, { padding: 0, align: 'center', borderColor: 'yellow' });
 
-    console.log(box);
-    // 打印图案和符号
-    console.log('\n');
+    Log.success(box);
 };
 
 
