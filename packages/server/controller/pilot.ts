@@ -1,5 +1,4 @@
-import { Context } from "koa";
-import { Body, CatchError, Controller, Get, Post, Put, Response, ValidateDto } from "../decorator";
+import { Body, CatchError, Controller, Get, Post, Put, Query, Response, ValidateDto } from "../decorator";
 import { CommonPilot, UpdatePilotDto, deletePilotDto, getPilotDto } from "../dto";
 import { Inject } from "../ioc";
 
@@ -30,7 +29,7 @@ export default class PilotController {
     @CatchError()
     @ValidateDto(getPilotDto)
     @Response
-    public async getPilot(@Body body: getPilotDto) {
+    public async getPilot(@Query body: getPilotDto) {
         const { id = null } = body;
         return await this.pilotService.getPilot(id);       
     }

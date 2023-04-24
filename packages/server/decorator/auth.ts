@@ -2,6 +2,7 @@ import Koa from 'koa';
 import container from '../ioc/container';
 import MongoDBService from '../service/mongo';
 import AuthService from '../service/auth';
+import { getContextArgs, getNextArgs } from './routes';
 
 
 function throwUnauthorized(ctx: Koa.Context, data: any = null) {
@@ -25,6 +26,7 @@ function validateJwt(): Koa.Middleware {
             }
             // 验证JWT token
             const payload = AuthService.verifyToken(token);
+
             const mongodbService = container.getInstance(MongoDBService);
 
             const userInfo = await mongodbService.findOne('users', { userName: payload.userName });
@@ -32,6 +34,7 @@ function validateJwt(): Koa.Middleware {
             if(userInfo.userName === payload.userName) {
                 ctx.state.user = payload;
                 await next();
+                return;
             }
             throwUnauthorized(ctx, "user is not exist");
         } catch (err) {
@@ -45,11 +48,15 @@ export function ValidateAuth() {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
 
         const originalMethod = descriptor.value;
-        descriptor.value = async function (ctx: Koa.Context, next: Koa.Next) {
+        descriptor.value = async function (...args: any[]) {
+            const ctx = getContextArgs(args);
+            const next = getNextArgs(args);
             await validateJwt()(ctx, next);
             if (ctx.state.user) {
-                await originalMethod.call(this, ctx, next);
+               const result =  await originalMethod.call(this, ...args);
+               return result;
             }
+            return null;
         };
 
         return descriptor;

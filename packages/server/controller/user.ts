@@ -22,7 +22,7 @@ export default class UserController {
     @CatchError()
     @ValidateDto(createUserDto)
     @Response
-    public async register(@Body userData: any) {
+    public async register(@Body userData: createUserDto) {
         return await this.userService.register(userData);     
     }
 }

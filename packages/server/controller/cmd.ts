@@ -1,6 +1,5 @@
 import CmdService from '../service/cmd';
 import SocketService from '../service/socket';
-import { Context } from 'koa';
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
 import { CommonProjectDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
 import { Inject } from '../ioc';
@@ -22,10 +21,10 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(CommonProjectDto)
     @Response
-    public async deploy(projectConfig: CommonProjectDto) {
-
+    public async deploy(@Body projectConfig: CommonProjectDto) {
         this.cmdService.deployService(
             JSON.stringify(projectConfig), 
+            JSON.stringify(projectConfig.nginxConfig),
             this.onStdoutHandle, 
             this.onStdoutHandle
         );
@@ -42,7 +41,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     @Response
-    public async stopProcess(ctx: Context) {
+    public async stopProcess() {
         return {
             code: 200,
             data: "stopRun function",
@@ -59,6 +58,7 @@ export default class CmdController {
 
         this.cmdService.rollbackService(
             JSON.stringify(projectConfig), 
+            JSON.stringify(projectConfig.nginxConfig),
             this.onStdoutHandle, 
             this.onStdoutHandle
         );
@@ -96,8 +96,8 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(StartCmdDto)
     @Response
-    public async startService(ctx: Context) {
-        const { id } = ctx.request.body;
+    public async startService(@Body body: StartCmdDto) {
+        const { id } = body;
         this.cmdService.startService(
             id,
             this.onStdoutHandle,
@@ -116,7 +116,7 @@ export default class CmdController {
     @ValidateAuth()
     @CatchError()
     @Response
-    public async getServices(ctx: Context) {
+    public async getServices() {
         const list = await this.cmdService.getServiceList();
         return {
             code: 200,

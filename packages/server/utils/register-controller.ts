@@ -51,9 +51,10 @@ export class ControllerLoader {
 
                 const inst = new controller();
 
+
                 if (params) {
                     const args = [];
-                    args[params.index] = params.fn(ctx);
+                    args[params.propertyIndex] = params.fn(ctx);
                     args.push(ctx, next);
                     return await inst[functionName](...args);
                 }

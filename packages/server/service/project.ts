@@ -1,14 +1,33 @@
+import MongoDBService from "./mongo";
+import { CommonProjectDto } from "../dto";
 import { Inject, Injectable } from "../ioc";
+import { EResponseCodeMap } from "../consts";
 
-import CmdService from "./cmd";
+
 
 
 
 @Injectable
 export default class ProjectService {
 
-    @Inject cmdService: CmdService;
+    public static tableName: string = 'project';
 
-    public async createProject() {}
+    @Inject mongoService:MongoDBService;
+
+    public async createProject(data: CommonProjectDto) {
+        const result = await this.mongoService.insertOne(ProjectService.tableName, data);
+        if(result?.acknowledged) {
+            return {
+                code:EResponseCodeMap.SUCCESS,
+                data: true,
+                msg: 'success'
+            };
+        } 
+        return {
+            code:EResponseCodeMap.NORMALERROR,
+            data: false,
+            msg: 'success'
+        };
+    }
 
 }

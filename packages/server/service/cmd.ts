@@ -34,9 +34,20 @@ export default class CmdService {
     }
 
     // 部署服务
-    public deployService(projectConfig: string, onData: Function, onErr: Function) {
+    public deployService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
-            const child = spawn('pilot-script', ['deploy', '--pilotConfig', this.pilotConfig, '--projectConfig', projectConfig]);
+            const child = spawn(
+                'pilot-script', 
+                [
+                    'deploy', 
+                    '--pilotConfig', 
+                    this.pilotConfig, 
+                    '--projectConfig', 
+                    projectConfig, 
+                    '--nginxConfig', 
+                    nginxConfig
+                ]
+            );
             child.stdout.on('data', (data) => {
                 onData?.(data);
             });
@@ -51,7 +62,7 @@ export default class CmdService {
 
 
     //  回滚服务
-    public rollbackService(projectConfig: string, onData: Function, onErr: Function) {
+    public rollbackService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script',
@@ -60,7 +71,9 @@ export default class CmdService {
                     '--pilotConfig',
                     this.pilotConfig,
                     '--projectConfig',
-                    projectConfig
+                    projectConfig,
+                    '--nginxConfig', 
+                    nginxConfig
                 ]
             );
             child.stdout.on('data', (data) => {

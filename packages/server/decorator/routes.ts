@@ -4,7 +4,7 @@ import Koa, { Context } from "koa";
 type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 
 interface Middleware {
-    (ctx: Koa.Context, next: () => Promise<any>): any;
+    (ctx: Koa.Context, next: () => Promise<void>): void;
 }
 
 interface IControllerRoute {
@@ -66,14 +66,14 @@ export function createMappingDecorator(method: HTTPMethod): (path: string, ...mi
 }
 
 export function InjectAttributeDecorator(fn: Function) {
-    return function (target: any, name: string, index: number) {
+    return function (target: any, name: string, propertyIndex: number) {
         const meta = Reflect.getMetadata(`route_param_${name}`, target) || [];
-        meta.push({ index, name, fn });
+        meta.push({ propertyIndex, name, fn });
         Reflect.defineMetadata(`route_param_${name}`, meta, target);
     };
 }
 
-export function Response(target: any, key: string, descriptor: any) {
+export function Response(target: any, key: string, descriptor: PropertyDescriptor) {
 
     const originalMethod = descriptor.value;   
     descriptor.value = async function (...args: any[]) {
@@ -89,13 +89,17 @@ export function getContextArgs(args: any[]) {
     return args.find(arg => !!arg?.request);
 }
 
+export function getNextArgs(args: any[]) {
+    return args.find(arg => typeof arg === 'function' );
+}
+
 export function CatchError() {
-    return function (target: any, propertyKey: string, descriptor: any) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
-        descriptor.value = function (...args: any[]) {
+        descriptor.value = async function (...args: any[]) {
             let result;
             try {
-                result = originalMethod.apply(this, args);
+                result = await originalMethod.apply(this, args);
             } catch (e) {
                 console.error(`${propertyKey} error ${e}`);
             }

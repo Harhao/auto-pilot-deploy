@@ -1,6 +1,5 @@
-import { Context } from 'koa';
-import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Put } from '../decorator';
-import { CommonCmdDto } from '../dto';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Put, Body, Query } from '../decorator';
+import { CommonCmdDto, CommonProjectDto } from '../dto';
 import { Inject } from '../ioc';
 import ProjectService from '../service/project';
 
@@ -12,10 +11,10 @@ export default class ProjectController {
     @Post('/create')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(CommonCmdDto)
+    @ValidateDto(CommonProjectDto)
     @Response
-    public async createProject(ctx: Context) {
-
+    public async createProject(@Body data: CommonProjectDto) {
+        return await this.projectService.createProject(data);
     }
 
 
@@ -24,7 +23,7 @@ export default class ProjectController {
     @CatchError()
     @ValidateDto(CommonCmdDto)
     @Response
-    public async updateProject(ctx: Context) {
+    public async updateProject(@Body data: CommonCmdDto) {
 
     }
 
@@ -33,7 +32,7 @@ export default class ProjectController {
     @CatchError()
     @ValidateDto(CommonCmdDto)
     @Response
-    public async getProjects(ctx: Context) {
+    public async getProjects(@Query data: CommonCmdDto) {
 
     }
 
@@ -42,7 +41,7 @@ export default class ProjectController {
     @CatchError()
     @ValidateDto(CommonCmdDto)
     @Response
-    public async deleteProject(ctx: Context) {
+    public async deleteProject(@Body data: CommonCmdDto) {
 
     }
 }
