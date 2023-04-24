@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { ClassConstructor, plainToClassFromExist } from 'class-transformer';
-import { getContextArgs } from './controller';
+import { getContextArgs } from './routes';
 
 
 export enum EValidateFields {

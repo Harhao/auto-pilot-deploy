@@ -42,7 +42,7 @@ export class ControllerLoader {
 
     private static registerRoutes(router: KoaRouter, controller: any) {
 
-        const controllerRoutes = Reflect.getMetadata('controllerInfo', controller);
+        const controllerRoutes = Reflect.getMetadata('classDecoratorData', controller);
 
         controllerRoutes.forEach((route: IControllerRoute) => {
             const { method, routePath, middlewares, functionName, params } = route;

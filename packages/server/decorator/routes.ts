@@ -45,7 +45,7 @@ export function Controller(prefix: string): ClassDecorator {
                 params: params
             });
         });
-        Reflect.defineMetadata('controllerInfo', controllers, target);
+        Reflect.defineMetadata('classDecoratorData', controllers, target);
     };
 }
 
@@ -75,7 +75,7 @@ export function InjectAttributeDecorator(fn: Function) {
 
 export function Response(target: any, key: string, descriptor: any) {
 
-    const originalMethod = descriptor.value;
+    const originalMethod = descriptor.value;   
     descriptor.value = async function (...args: any[]) {
         const ctx = getContextArgs(args);
         const result = await originalMethod.apply(this, args);
