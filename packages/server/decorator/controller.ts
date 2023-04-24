@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import Koa from "koa";
+import Koa, { Context } from "koa";
 
 type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
 
@@ -11,7 +11,8 @@ interface IControllerRoute {
     routePath: string;
     method: HTTPMethod;
     middlewares: Middleware[];
-    handler: (ctx: Koa.Context) => void;
+    functionName: string;
+    params: any;
 };
 
 export const Get = createMappingDecorator('get');
@@ -19,52 +20,73 @@ export const Post = createMappingDecorator('post');
 export const Put = createMappingDecorator('put');
 export const Delete = createMappingDecorator('del');
 
+export const Body = InjectAttributeDecorator((ctx: Context) => ctx.request.body);
+export const Query = InjectAttributeDecorator((ctx: Context) => ctx.request.query);
+export const Header = InjectAttributeDecorator((ctx: Context) => ctx.request.header);
+export const Cookie = InjectAttributeDecorator((ctx: Context) => ctx.cookie);
+export const State = InjectAttributeDecorator((ctx: Context) => ctx.state);
+
+
 export function Controller(prefix: string): ClassDecorator {
     return (target: any) => {
         const prefixPath = prefix || '';
         const routes = Reflect.getMetadata('routes', target.prototype) || [];
         const controllers: IControllerRoute[] = [];
         routes.forEach((route: any) => {
-            const { method, path } = route.options;
+            const { method, path, functionName } = route;
             const middlewares = [...(target.middlewares || []), ...(route.middlewares || [])];
-            const handler = route.handler.bind(new target());
+            const params = Reflect.getMetadata(`route_param_${functionName}`, target.prototype)?.[0] || null;
+
             controllers.push({
                 routePath: `${prefixPath}${path}`,
                 method: method,
                 middlewares: middlewares,
-                handler: handler,
+                functionName: functionName,
+                params: params
             });
         });
         Reflect.defineMetadata('controllerInfo', controllers, target);
     };
 }
 
-export function Response(target: any, key: string, descriptor: any) {
-    
-    const originalMethod = descriptor.value;
-    descriptor.value = async function (...args: any[]) {
-        const ctx = args[0];
-        const result = await originalMethod.apply(this, args);
-        ctx.body = result;
-    };
-    return descriptor;
-}
-
-function createMappingDecorator(method: HTTPMethod): (path: string, ...middlewares: Middleware[]) => MethodDecorator {
+export function createMappingDecorator(method: HTTPMethod): (path: string, ...middlewares: Middleware[]) => MethodDecorator {
     return (path: string, ...middlewares: Middleware[]) => {
         return (target: any, key: string, decriptor: any) => {
             const routes = Reflect.getMetadata('routes', target.constructor.prototype) || [];
             routes.push({
-                options: {
-                    method,
-                    path,
-                },
+                method,
+                path,
                 middlewares,
+                functionName: key,
                 handler: decriptor.value,
             });
             Reflect.defineMetadata('routes', routes, target.constructor.prototype);
         };
     };
+}
+
+export function InjectAttributeDecorator(fn: Function) {
+    return function (target: any, name: string, index: number) {
+        const meta = Reflect.getMetadata(`route_param_${name}`, target) || [];
+        meta.push({ index, name, fn });
+        Reflect.defineMetadata(`route_param_${name}`, meta, target);
+    };
+}
+
+export function Response(target: any, key: string, descriptor: any) {
+
+    const originalMethod = descriptor.value;
+    descriptor.value = async function (...args: any[]) {
+        const ctx = getContextArgs(args);
+        const result = await originalMethod.apply(this, args);
+        ctx.body = result;
+    };
+    
+    return descriptor;
+}
+
+export function getContextArgs(args: any[]) {
+    return args.find(arg => !!arg?.request);
 }
 
 export function CatchError() {

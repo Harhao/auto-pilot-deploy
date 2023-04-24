@@ -1,8 +1,8 @@
 import CmdService from '../service/cmd';
 import SocketService from '../service/socket';
 import { Context } from 'koa';
-import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response } from '../decorator';
-import { ProjectDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
+import { CommonProjectDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
 import { Inject } from '../ioc';
 
 @Controller('/cmd')
@@ -20,11 +20,9 @@ export default class CmdController {
     @Post('/deploy')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(ProjectDto)
+    @ValidateDto(CommonProjectDto)
     @Response
-    public async deploy(ctx: Context) {
-
-        const projectConfig = ctx.request.body;
+    public async deploy(projectConfig: CommonProjectDto) {
 
         this.cmdService.deployService(
             JSON.stringify(projectConfig), 
@@ -57,9 +55,7 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(RollbackCmdDto)
     @Response
-    public async rollback(ctx: Context) {
-
-        const projectConfig = ctx.request.body;
+    public async rollback(@Body projectConfig: RollbackCmdDto) {
 
         this.cmdService.rollbackService(
             JSON.stringify(projectConfig), 
@@ -79,8 +75,8 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(StopCmdDto)
     @Response
-    public async stopService(ctx: Context) {
-        const { id } = ctx.request.body;
+    public async stopService(@Body body: StopCmdDto) {
+        const { id } = body;
         this.cmdService.stopService(
             id,
             this.onStdoutHandle,

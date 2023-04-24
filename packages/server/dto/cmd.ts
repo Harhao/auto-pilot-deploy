@@ -1,5 +1,5 @@
 import { IsDefined, IsNumber, IsString } from "class-validator";
-import { ProjectDto } from "./project";
+import { CommonProjectDto } from "./project";
 
 export class CommonCmdDto {
     
@@ -8,7 +8,7 @@ export class CommonCmdDto {
     id: number;
 }
 
-export class RollbackCmdDto extends ProjectDto{
+export class RollbackCmdDto extends CommonProjectDto {
 
     @IsString()
     @IsDefined()

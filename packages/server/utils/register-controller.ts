@@ -1,7 +1,7 @@
 import KoaRouter from 'koa-router';
 import glob from 'glob';
 import path from 'path';
-import Koa from "koa";
+import Koa, { Next, Context } from "koa";
 import 'reflect-metadata';
 
 type HTTPMethod = 'get' | 'put' | 'del' | 'post' | 'patch';
@@ -13,8 +13,9 @@ interface Middleware {
 interface IControllerRoute {
     routePath: string;
     method: HTTPMethod;
+    functionName: string;
+    params: any;
     middlewares: Middleware[];
-    handler: (ctx: Koa.Context) => void;
 };
 
 export class ControllerLoader {
@@ -44,8 +45,20 @@ export class ControllerLoader {
         const controllerRoutes = Reflect.getMetadata('controllerInfo', controller);
 
         controllerRoutes.forEach((route: IControllerRoute) => {
-            const { method, routePath, middlewares, handler } = route;
-            router[method](routePath, ...middlewares, handler);
+            const { method, routePath, middlewares, functionName, params } = route;
+
+            router[method](routePath, ...middlewares, async (ctx: Context, next: Next) => {
+
+                const inst = new controller();
+
+                if (params) {
+                    const args = [];
+                    args[params.index] = params.fn(ctx);
+                    args.push(ctx, next);
+                    return await inst[functionName](...args);
+                }
+                return await inst[functionName](ctx, next);
+            });
         });
     }
 }

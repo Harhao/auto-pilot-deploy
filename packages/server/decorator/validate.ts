@@ -1,5 +1,6 @@
 import { validate } from 'class-validator';
 import { ClassConstructor, plainToClassFromExist } from 'class-transformer';
+import { getContextArgs } from './controller';
 
 
 export enum EValidateFields {
@@ -17,7 +18,9 @@ export function ValidateDto(dtoClass: ClassConstructor<any>, type: validateType 
 
         descriptor.value = async function (...args: any[]) {
             try {
-                const ctx = args[0];
+
+                const ctx = getContextArgs(args);
+                
                 const sourceData = type === EValidateFields.BODY ? ctx.request.body : ctx.request.query;
 
                 const dto = plainToClassFromExist(new dtoClass(), sourceData);

@@ -1,5 +1,4 @@
-import { Context } from "koa";
-import { CatchError, Controller, Post, Response, ValidateDto } from "../decorator";
+import { Body, CatchError, Controller, Post, Response, ValidateDto } from "../decorator";
 import { createUserDto, LoginUserDto } from "../dto";
 import { Inject } from "../ioc";
 
@@ -14,17 +13,16 @@ export default class UserController {
     @CatchError()
     @ValidateDto(LoginUserDto)
     @Response
-    public async login(ctx: Context) {
-        const loginDto: LoginUserDto = ctx.request.body;
+    public async login(@Body loginDto: LoginUserDto) {
         return await this.userService.login(loginDto); 
+        
     }
 
     @Post("/register")
     @CatchError()
     @ValidateDto(createUserDto)
     @Response
-    public async register(ctx: Context) {
-        const userData = ctx.request.body;
-        return await this.userService.register(userData);;       
+    public async register(@Body userData: any) {
+        return await this.userService.register(userData);     
     }
 }
