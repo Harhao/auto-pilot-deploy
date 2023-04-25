@@ -1,34 +1,5 @@
-import { IsString, IsDefined, Validate, ValidatorConstraint, ValidatorConstraintInterface, IsNumber, IsOptional } from 'class-validator';
-
-@ValidatorConstraint({ name: 'GitCheck', async: false })
-export class GitCheck implements ValidatorConstraintInterface {
-    validate(text: string): boolean {
-        const reg = /^.*?\/\/.*?\/([\w-]+)\/([\w-]+?)(\.git)?$/;
-        return reg.test(text);
-    }
-    defaultMessage(args?: any): string {
-        return 'git url is invalid';
-    }
-}
-
-class NginxConfig {
-
-    @IsString()
-    @IsDefined()
-    apiDomain: string;
-
-    @IsString()
-    @IsDefined()
-    apiHost?: string;
-
-    @IsString()
-    @IsDefined()
-    apiPrefix?: string;
-
-    @IsNumber()
-    @IsDefined()
-    apiPort?: number
-}
+import { IsString, IsDefined, Validate, IsOptional } from 'class-validator';
+import { GitCheck, NginxConfig } from './common';
 
 export class CommonProjectDto {
 
@@ -49,15 +20,17 @@ export class CommonProjectDto {
     @IsString()
     command: string;
 
-    @IsDefined()
+    @IsOptional()
     @IsString()
-    dest: string;
+    dest?: string;
 
     @IsDefined()
     @IsString()
+    // 项目类型
     type: string;
 
     @IsDefined()
+    // nginx配置
     nginxConfig: NginxConfig;
 }
 
@@ -66,18 +39,21 @@ export class UpdateProjectDto extends CommonProjectDto {
 
     @IsDefined()
     @IsString()
-    id: string;
+     // projectId
+     projectId: string;
 }
 
 export class GetProjectDto {
 
     @IsString()
     @IsOptional()
-    id: string;
+    // projectId
+    projectId: string;
 }
 
 export class DelProjectDto {
     @IsDefined()
     @IsString()
-    id: string;
+    // projectId
+    projectId: string;
 }

@@ -10,7 +10,7 @@ export default class LogsController {
     @Inject private logService: LogsService;
 
 
-    // 更新日志
+    // 创建日志
     @Post("/createLog")
     @CatchError()
     @ValidateDto(CreateLogDto)
@@ -37,9 +37,9 @@ export default class LogsController {
     @CatchError()
     @ValidateDto(GetLogsDto)
     @Response
-    public async getLogs(@Body logsData: GetLogsDto) {
+    public async getLogs(@Query logsData: GetLogsDto) {
+        console.log(logsData);
         return await this.logService.getLogs(logsData)
-
     }
 
     // 获取日志详情

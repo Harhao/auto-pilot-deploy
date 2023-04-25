@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 import { Inject, Injectable } from "../ioc";
-
+import simpleGit, { SimpleGit } from 'simple-git';
 import PilotService from "./pilot";
 
 
@@ -34,7 +34,7 @@ export default class CmdService {
     }
 
     // 部署服务
-    public deployService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function) {
+    public deployService(projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script', 
@@ -55,7 +55,7 @@ export default class CmdService {
                 onErr?.(data);
             });
             child.stdout.on('close', () => {
-                resolve(true);
+                onClose?.();
             });
         });
     }
@@ -128,4 +128,27 @@ export default class CmdService {
             });
         });
     }
+
+    public getRepoHeadHash(remoteUrl: string, branchName: string ): Promise<string> {
+        return new Promise((resolve) => {
+            const git = simpleGit();
+            git.listRemote(['--heads', remoteUrl], (err: any, refs: any) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+
+                // 遍历引用列表，找到指定分支的引用
+                let latestCommitHash;
+                refs.split('\n').forEach((ref: any) => {
+                    const [refHash, refName] = ref.split('\t');
+                    if (refName === `refs/heads/${branchName}`) {
+                        latestCommitHash = refHash;
+                    }
+                });
+                resolve(latestCommitHash);
+            });
+        });
+    }
+
 }

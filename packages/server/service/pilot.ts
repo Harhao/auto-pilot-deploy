@@ -48,7 +48,7 @@ export default class PilotService {
     @CatchError()
     public async updatePilot(data: UpdatePilotDto) {
 
-        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: new ObjectId(data.id) }, data);
+        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: new ObjectId(data.pilotId) }, data);
 
         if(result?.modifiedCount > 0) {
             return {
@@ -89,7 +89,6 @@ export default class PilotService {
     @CatchError()
     public async deletePilot(id: string) {
         const result: any = await this.mongodbService.deleteOne(PilotService.tableName, { _id: new ObjectId(id) });
-        console.log(result);
         if(result?.deletedCount > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,

@@ -30,8 +30,8 @@ export default class PilotController {
     @ValidateDto(getPilotDto)
     @Response
     public async getPilot(@Query body: getPilotDto) {
-        const { id = null } = body;
-        return await this.pilotService.getPilot(id);       
+        const { pilotId = null } = body;
+        return await this.pilotService.getPilot(pilotId);       
     }
 
     @Post("/delPilot")
@@ -39,7 +39,7 @@ export default class PilotController {
     @ValidateDto(deletePilotDto)
     @Response
     public async deletePilot(@Body body: deletePilotDto) {
-        const { id } = body;
-        return await this.pilotService.deletePilot(id);     
+        const { pilotId } = body;
+        return await this.pilotService.deletePilot(pilotId);     
     }
 }

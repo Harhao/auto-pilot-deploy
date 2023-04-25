@@ -13,20 +13,20 @@ export default class LogsService {
     @Inject mongoService: MongoDBService;
 
 
-    public async createLogs(data: CreateLogDto & { status: number }) {
+    public async createLogs(data: CreateLogDto) {
 
         const result = await this.mongoService.insertOne(LogsService.tableName, data);
 
-        if (result?.acknowledged) {
+        if (result.insertedId) {
             return {
                 code: EResponseCodeMap.SUCCESS,
-                data: true,
+                data: result.insertedId,
                 msg: 'success'
             };
         }
         return {
             code: EResponseCodeMap.NORMALERROR,
-            data: false,
+            data: null,
             msg: 'success'
         };
     }
@@ -35,10 +35,8 @@ export default class LogsService {
         const result = await this.mongoService.updateOne(
             LogsService.tableName,
             {
-                projectId: new ObjectId(data.projectId),
-                id: new ObjectId(data.id)
+                _id: new ObjectId(data.logId)
             }, data);
-
         if (result?.acknowledged) {
             return {
                 code: EResponseCodeMap.SUCCESS,
@@ -72,7 +70,7 @@ export default class LogsService {
     public async getLogsDetail(data: GetLogsDetailDto) {
         const result = await this.mongoService.findOne(LogsService.tableName, {
             projectId: new ObjectId(data.projectId),
-            id: new ObjectId(data.id)
+            id: new ObjectId(data.logId)
         });
         if (result?.acknowledged) {
             return {

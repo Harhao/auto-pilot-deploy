@@ -3,21 +3,19 @@ import SocketService from '../service/socket';
 import LogsService from '../service/logs';
 import RedisService from '../service/redis';
 
-import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
-import { DeployCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
 import { Inject } from '../ioc';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
+import { CommonCmdDto, DeployCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
+import { ELogsRunStatus } from '../consts';
+import { ObjectId } from 'mongodb';
 
 @Controller('/cmd')
 export default class CmdController {
 
     @Inject private cmdService: CmdService;
     @Inject private socketService: SocketService;
-    @Inject private redisService: RedisService<any>;
+    @Inject private redisService: RedisService;
     @Inject private logsService: LogsService;
-
-    // 执行命令的进程id
-    private processId: number | null = null;
-    private redisLogKey: string | null = null;
 
 
     public onStdoutHandle = (data: Buffer) => {
@@ -25,9 +23,17 @@ export default class CmdController {
         this.socketService.sendToSocketId(data.toString());
     }
 
-    private async createRunLog() {
-    //    const id = `projectId_commitHash`;
-    //    this.redisService.set();
+    private async createRunLog(data: CommonCmdDto, logName: string) {
+        // mongodb生成logs日志
+        const resp = await this.logsService.createLogs({
+            pid: process.pid,
+            projectId: data.projectId,
+            logName: logName,
+            commitMsg: data.commitMsg,
+            logList: [],
+            status: ELogsRunStatus.RUNNING,
+        });
+        return resp?.data;
     }
 
     @Post('/deploy')
@@ -35,17 +41,36 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(DeployCmdDto)
     @Response
-    public async deploy(@Body projectConfig: DeployCmdDto) {
+    public async deploy(@Body data: DeployCmdDto) {
 
-        this.processId = process.pid;
-
-        await this.createRunLog();
+        const commitHash = await this.cmdService.getRepoHeadHash(data.gitUrl, data.branch);
+        const logId = await this.createRunLog(data, commitHash);
+        const redisKey = `${commitHash}`;
 
         this.cmdService.deployService(
-            JSON.stringify(projectConfig),
-            JSON.stringify(projectConfig.nginxConfig),
-            this.onStdoutHandle,
-            this.onStdoutHandle
+            JSON.stringify(data),
+            JSON.stringify(data.nginxConfig),
+            async (datatBuffer: Buffer) => {
+                this.onStdoutHandle(datatBuffer);
+                await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
+            },
+            async (datatBuffer: Buffer) => {
+                this.onStdoutHandle(datatBuffer);
+                await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
+            },
+            async () => {
+                const stdout = await this.redisService.getList(`${redisKey}`);
+                await this.logsService.updateLogs({
+                    projectId: data.projectId,
+                    logId: logId.toString(), 
+                    logList: stdout,
+                    pid: process.pid,
+                    logName: commitHash,
+                    commitMsg: data.commitMsg,
+                    status: ELogsRunStatus.SUCCESS
+                });
+                await this.redisService.deleteKey(`${redisKey}`);
+            }
         );
 
         return {
@@ -61,19 +86,6 @@ export default class CmdController {
     @CatchError()
     @Response
     public async stopProcess() {
-        if (this.processId) {
-            process.kill(this.processId, 'SIGTERM');
-            return {
-                code: 200,
-                data: true,
-                msg: 'success'
-            }
-        }
-        return {
-            code: 200,
-            data: false,
-            msg: 'success'
-        }
     }
 
     @Post('/rollback')
@@ -81,15 +93,13 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(RollbackCmdDto)
     @Response
-    public async rollback(@Body projectConfig: RollbackCmdDto) {
+    public async rollback(@Body data: RollbackCmdDto) {
 
-        this.processId = process.pid;
-
-        await this.createRunLog();
+        // await this.createRunLog(data);
 
         this.cmdService.rollbackService(
-            JSON.stringify(projectConfig),
-            JSON.stringify(projectConfig.nginxConfig),
+            JSON.stringify(data),
+            JSON.stringify(data.nginxConfig),
             this.onStdoutHandle,
             this.onStdoutHandle
         );

@@ -14,6 +14,7 @@ export class createUserDto {
 }
 
 export class LoginUserDto {
+    
     @IsDefined()
     @IsString()
     userName: string;

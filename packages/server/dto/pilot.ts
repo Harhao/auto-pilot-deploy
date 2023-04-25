@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsDefined } from 'class-validator';
 export class CommonPilot {
     @IsString()
     address: string;
@@ -17,18 +17,20 @@ export class CommonPilot {
 }
 
 export class UpdatePilotDto extends CommonPilot {
+
+    @IsDefined()
     @IsString()
-    id: string;
+    pilotId: string;
 }
 
 export class getPilotDto {
 
     @IsOptional()
     @IsString()
-    id: number;
+    pilotId: number;
 }
 
 export class deletePilotDto {
     @IsString()
-    id: string;
+    pilotId: string;
 }

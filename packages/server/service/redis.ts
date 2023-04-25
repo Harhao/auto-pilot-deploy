@@ -1,13 +1,8 @@
 import redis, { RedisClient } from "redis";
-import { promisify } from "util";
 import { RedisConfig } from "../config";
 import { CatchError } from "../decorator";
 
-interface IEntity {
-    id: string;
-}
-
-export default class RedisService<T extends IEntity> {
+export default class RedisService {
     public redisClient: RedisClient;
     public prefix: string;
 
@@ -26,63 +21,121 @@ export default class RedisService<T extends IEntity> {
     }
 
     @CatchError()
-    async create(entity: T): Promise<T> {
-        await this.set(entity);
-        return entity;
-    }
-
-    @CatchError()
-    async findById(id: string): Promise<T | null> {
-        const entity = await this.get(id);
-        return entity ? JSON.parse(entity) : null;
-    }
-
-    @CatchError()
-    async findAll(): Promise<T[]> {
-        const keys = await this.keys();
-        const entities = await Promise.all(keys.map((key) => this.get(key)));
-        return entities
-            .filter((e) => !!e)
-            .map((e) => JSON.parse(e as string)) as T[];
-    }
-
-    @CatchError()
-    async update(entity: T): Promise<T> {
-        await this.set(entity);
-        return entity;
-    }
-
-    @CatchError()
-    async delete(id: string): Promise<void> {
-        await this.redisClient.del(`${this.prefix}:${id}`);
-    }
-
-    @CatchError()
-    private async set(entity: T): Promise<void> {
-        const key = `${this.prefix}:${entity.id}`;
-        await this.redisClient.set(key, JSON.stringify(entity));
-    }
-
-    @CatchError()
-    private async get(id: string): Promise<string | null> {
-        const key = `${this.prefix}:${id}`;
-        return promisify(this.redisClient.get).bind(this.redisClient)(key);
-    }
-
-    @CatchError()
-    private async keys(): Promise<string[]> {
+    public setString(key: string, value: string) {
         return new Promise((resolve, reject) => {
-            this.redisClient.keys(`${this.prefix}:*`, (err, keys) => {
+            this.redisClient.set(key, value, (err: Error, reply: "OK") => {
                 if (err) {
-                    reject(err);
-                } else {
-                    resolve(keys);
+                    reject(false);
+                    return;
                 }
+                resolve(true);
             });
         });
     }
 
+    @CatchError()
+    public getString(key: string) {
+        return new Promise((resolve) => {
+            this.redisClient.get(key, (err: Error, reply: string) => {
+                if (err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(reply);
+            });
+        });
+    }
+
+    @CatchError()
+    public setHashMap(key: string, data: Record<string, any>) {
+        return new Promise((resolve) => {
+            const args = [];
+            for (let [key, value] of Object.entries(data)) {
+                args.push(key, value);
+            }
+            this.redisClient.hmset([key, ...args]);
+        });
+    }
+
+    @CatchError()
+    public getHashMap(key: string) {
+        return new Promise((resolve) => {
+            this.redisClient.hmget(key, (err: Error, object:  Record<string, any>) => {
+                if (err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(object);
+            });
+        });
+    }
+
+    @CatchError()
+    public setList(key: string, data: string[] | string) {
+        return new Promise((resolve) => {
+           this.redisClient.rpush(key, data, (err, reply) => {
+                if(err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(true);
+           });
+        });
+    }
+
+    @CatchError()
+    public getList(key: string): Promise<string[] | null> {
+        return new Promise((resolve) => {
+           this.redisClient.lrange(key, 0, -1, (err, reply) => {
+                if(err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(reply);
+           });
+        });
+    }
+
+    @CatchError()
+    public setSets(key: string, data: string[] | string) {
+        return new Promise((resolve) => {
+           this.redisClient.sadd(key, data, (err, reply) => {
+                if(err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(true);
+           });
+        });
+    }
+
+    @CatchError()
+    public getSets(key: string) {
+        return new Promise((resolve) => {
+           this.redisClient.smembers(key, (err, reply) => {
+                if(err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(reply);
+           });
+        });
+    }
+
     @CatchError() 
+    public deleteKey(key: string) {
+        return new Promise((resolve) => {
+            this.redisClient.del(key, (err) => {
+                 if(err) {
+                     resolve(false);
+                     return;
+                 }
+                 resolve(true);
+            });
+         });
+    }
+
+    @CatchError()
     public close() {
         this.redisClient.quit();
     }

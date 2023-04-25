@@ -32,7 +32,8 @@
     "nodemailer": "^6.6.1",
     "qiniu": "7.3.2",
     "redis": "^2.8.0",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "simple-git": "^3.17.0"
   },
   "devDependencies": {
     "@types": "link:@types",
