@@ -5,3 +5,10 @@ export enum EResponseCodeMap {
     USEREXIST = 402,
     SERVERERROR = 500
 }
+
+export enum ELogsRunStatus {
+    RUNNING,
+    INTERRUPT,
+    ERROR,
+    SUCCESS,
+}

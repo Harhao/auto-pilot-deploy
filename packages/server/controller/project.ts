@@ -1,5 +1,5 @@
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Put, Body, Query } from '../decorator';
-import { CommonCmdDto, CommonProjectDto } from '../dto';
+import {CommonProjectDto, DelProjectDto, GetProjectDto, UpdateProjectDto } from '../dto';
 import { Inject } from '../ioc';
 import ProjectService from '../service/project';
 
@@ -21,27 +21,27 @@ export default class ProjectController {
     @Put('/update')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(CommonCmdDto)
+    @ValidateDto(UpdateProjectDto)
     @Response
-    public async updateProject(@Body data: CommonCmdDto) {
-
+    public async updateProject(@Body data: UpdateProjectDto) {
+        return await this.projectService.updateProject(data);
     }
 
     @Get('/getProject')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(CommonCmdDto)
+    @ValidateDto(GetProjectDto)
     @Response
-    public async getProjects(@Query data: CommonCmdDto) {
-
+    public async getProjects(@Query data: GetProjectDto) {
+        return await this.projectService.getProject(data);
     }
 
     @Post('/delProject')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(CommonCmdDto)
+    @ValidateDto(DelProjectDto)
     @Response
-    public async deleteProject(@Body data: CommonCmdDto) {
-
+    public async deleteProject(@Body data: DelProjectDto) {
+        return await this.projectService.delProject(data);
     }
 }

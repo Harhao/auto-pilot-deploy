@@ -36,6 +36,12 @@ export default class MongoDBService {
   }
 
   @CatchError()
+  public async find(collectionName: string, filter: object): Promise<Document> {
+    const collection: Collection = this.db.collection(collectionName);
+    return await collection.find(filter).toArray();
+  }
+
+  @CatchError()
   public async updateOne<T>(collectionName: string, filter: object, update: object): Promise<Document> {
     const collection: Collection = this.db.collection(collectionName);
     return await collection.updateOne(filter, { $set: update });

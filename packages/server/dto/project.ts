@@ -1,4 +1,4 @@
-import { IsString, IsDefined, Validate, ValidatorConstraint, ValidatorConstraintInterface, IsNumber } from 'class-validator';
+import { IsString, IsDefined, Validate, ValidatorConstraint, ValidatorConstraintInterface, IsNumber, IsOptional } from 'class-validator';
 
 @ValidatorConstraint({ name: 'GitCheck', async: false })
 export class GitCheck implements ValidatorConstraintInterface {
@@ -59,4 +59,25 @@ export class CommonProjectDto {
 
     @IsDefined()
     nginxConfig: NginxConfig;
+}
+
+
+export class UpdateProjectDto extends CommonProjectDto {
+
+    @IsDefined()
+    @IsString()
+    id: string;
+}
+
+export class GetProjectDto {
+
+    @IsString()
+    @IsOptional()
+    id: string;
+}
+
+export class DelProjectDto {
+    @IsDefined()
+    @IsString()
+    id: string;
 }
