@@ -320,3 +320,7 @@
 [2023-04-25T10:37:09.521] [INFO] default - ::1 - - "GET /project/getProject HTTP/1.1" 200 132 "" "PostmanRuntime/7.32.2"
 [2023-04-25T10:37:13.684] [INFO] default - ::1 - - "GET /project/getProject HTTP/1.1" 200 490 "" "PostmanRuntime/7.32.2"
 [2023-04-25T10:41:10.170] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-25T12:09:48.962] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 132 "" "PostmanRuntime/7.32.2"
+[2023-04-25T12:10:02.157] [INFO] default - ::1 - - "POST /user/login HTTP/1.1" 200 234 "" "PostmanRuntime/7.32.2"
+[2023-04-25T12:10:14.455] [INFO] default - ::1 - - "GET /cmd/services HTTP/1.1" 200 325 "" "PostmanRuntime/7.32.2"
+[2023-04-25T12:11:03.796] [INFO] default - ::1 - - "POST /project/create HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"

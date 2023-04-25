@@ -1,6 +1,10 @@
-import { IsDefined, IsString, IsArray } from "class-validator";
+import { IsDefined, IsString, IsArray, IsNumber, IsOptional } from "class-validator";
 
 class CommonLogDto {
+
+    @IsNumber()
+    @IsOptional()
+    pid: number;
 
     @IsString()
     @IsDefined()
@@ -9,6 +13,10 @@ class CommonLogDto {
     @IsString()
     @IsDefined()
     logName: string;
+
+    @IsString()
+    @IsDefined()
+    deployMsg: string;
 
     @IsArray()
     @IsDefined()

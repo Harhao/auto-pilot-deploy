@@ -4,7 +4,7 @@ import LogsService from '../service/logs';
 import RedisService from '../service/redis';
 
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
-import { CommonProjectDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
+import { DeployCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
 import { Inject } from '../ioc';
 
 @Controller('/cmd')
@@ -26,15 +26,16 @@ export default class CmdController {
     }
 
     private async createRunLog() {
-
+    //    const id = `projectId_commitHash`;
+    //    this.redisService.set();
     }
 
     @Post('/deploy')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(CommonProjectDto)
+    @ValidateDto(DeployCmdDto)
     @Response
-    public async deploy(@Body projectConfig: CommonProjectDto) {
+    public async deploy(@Body projectConfig: DeployCmdDto) {
 
         this.processId = process.pid;
 
@@ -106,9 +107,9 @@ export default class CmdController {
     @ValidateDto(StopCmdDto)
     @Response
     public async stopService(@Body body: StopCmdDto) {
-        const { id } = body;
+        const { serviceId } = body;
         this.cmdService.stopService(
-            id,
+            serviceId,
             this.onStdoutHandle,
             this.onStdoutHandle
         );
@@ -127,9 +128,9 @@ export default class CmdController {
     @ValidateDto(StartCmdDto)
     @Response
     public async startService(@Body body: StartCmdDto) {
-        const { id } = body;
+        const { serviceId } = body;
         this.cmdService.startService(
-            id,
+            serviceId,
             this.onStdoutHandle,
             this.onStdoutHandle
         );

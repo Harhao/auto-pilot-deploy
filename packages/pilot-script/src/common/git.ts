@@ -7,26 +7,27 @@ export default class GitScript {
 
     private git: SimpleGit = simpleGit();
     private file: FileScript = new FileScript();
+    private gitFolder: string = '';
 
     public async cloneRepo(repoUrl: string): Promise<string | null> {
         return new Promise((resolve, reject) => {
             try {
                 const folderName = this.getGitRepoName(repoUrl) as string;
-                const gitFolder = path.resolve(this.file.targetPath, folderName);
-                if (this.file.checkPathExists(gitFolder)) {
-                    this.file.deleteDirectory(gitFolder);
+                this.gitFolder = path.resolve(this.file.targetPath, folderName);
+                if (this.file.checkPathExists(this.gitFolder)) {
+                    this.file.deleteDirectory(this.gitFolder);
                 }
                 // 开启loading
                 const loadHandle = showLoading("下载git仓库中");
-                this.git.clone(repoUrl, gitFolder, ['--progress'], (e) => {
+                this.git.clone(repoUrl, this.gitFolder, ['--progress'], (e) => {
                     if (e) {
                         Log.error(`Error cloning repository: ${e}`);
                         resolve(null);
                         return;
                     }
                     loadHandle.succeed();
-                    this.git.cwd({ path: gitFolder, root: true });
-                    resolve(gitFolder);
+                    this.git.cwd({ path: this.gitFolder, root: true });
+                    resolve(this.gitFolder);
                 });
             } catch (e) {
                 Log.error(`download git repo error ${e}`);
@@ -91,6 +92,27 @@ export default class GitScript {
                     resolve(null);
                 };
                 resolve(result);
+            });
+        });
+    }
+
+    public getRepoHeadHash(data: { remoteUrl: string, branchName: string }) {
+        return new Promise((resolve) => {
+            this.git.listRemote(['--heads', data.remoteUrl], (err, refs) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+
+                // 遍历引用列表，找到指定分支的引用
+                let latestCommitHash;
+                refs.split('\n').forEach(ref => {
+                    const [refHash, refName] = ref.split('\t');
+                    if (refName === `refs/heads/${data.branchName}`) {
+                        latestCommitHash = refHash;
+                    }
+                });
+                resolve(latestCommitHash);
             });
         });
     }

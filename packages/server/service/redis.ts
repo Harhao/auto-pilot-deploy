@@ -11,8 +11,8 @@ export default class RedisService<T extends IEntity> {
     public redisClient: RedisClient;
     public prefix: string;
 
-    constructor(options: { prefix: string }) {
-        this.prefix = options?.prefix;
+    constructor() {
+        this.prefix = RedisConfig.redisprefix;
     }
 
     @CatchError()

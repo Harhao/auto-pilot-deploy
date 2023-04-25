@@ -1,10 +1,11 @@
+import fse from 'fs-extra';
+import ejs from 'ejs';
 import path, { resolve } from 'path';
 import Base from '../../common/base';
 import { Log, catchError } from '../../scripts/utils';
-import fse from 'fs-extra';
-import { IDeployConfig, INginxConfig, IPilotCofig, IProjectCofig } from '../../consts';
+import { IDeployConfig, INginxConfig } from '../../consts';
 import { FROMTENDDIR, NGINXCONFIGPATH, NPMREGISTRY } from '../../config';
-import ejs from 'ejs';
+
 
 export class ClientPlatform extends Base {
 

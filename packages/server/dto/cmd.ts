@@ -1,23 +1,31 @@
 import { IsDefined, IsNumber, IsString } from "class-validator";
-import { CommonProjectDto } from "./project";
+import { UpdateProjectDto } from "./project";
 
-export class CommonCmdDto {
-    
+export class DeployCmdDto extends UpdateProjectDto {
+
+    @IsString()
     @IsDefined()
-    @IsNumber()
-    id: number;
+    //部署额外信息
+    commitMsg: string;
 }
 
-export class RollbackCmdDto extends CommonProjectDto {
+export class RollbackCmdDto extends UpdateProjectDto {
 
     @IsString()
     @IsDefined()
     rollNode: string;
+}
 
+export class StopCmdDto extends UpdateProjectDto {
+    @IsDefined()
+    @IsNumber()
+    serviceId: number;
 }
 
 
-export class StopCmdDto extends CommonCmdDto {}
+export class StartCmdDto extends UpdateProjectDto {
 
-
-export class StartCmdDto extends CommonCmdDto {}
+    @IsDefined()
+    @IsNumber()
+    serviceId: number;
+}

@@ -28,7 +28,7 @@ export default class App {
   }
 
   async getRedisInstance() {
-    const redisClient = new RedisService({ prefix: 'autopilot' });
+    const redisClient = new RedisService();
     await redisClient.connect();
     return redisClient;
   }

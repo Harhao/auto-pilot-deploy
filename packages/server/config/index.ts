@@ -15,6 +15,7 @@ export const RedisConfig = {
     redisport: +process.env.REDISPORT,
     redispass: process.env.REDISPASS,
     redishost: process.env.REDISHOST,
+    redisprefix: process.env.REDISPREFIX,
 };
 
 // mongodb配置
