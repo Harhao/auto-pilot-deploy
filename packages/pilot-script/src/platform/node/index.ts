@@ -31,9 +31,10 @@ export class NodePlatform extends Base {
     @catchError()
     public async deployJob(localPath: string, projectConfig: IProjectCofig, pilotCofig: IPilotCofig, nginxConfig: INginxConfig) {
         const { branch, command, tool, dest } = projectConfig;
-        const remoteRootFolder = (dest || this.git.getGitRepoName(projectConfig.gitUrl)) as string;
+        const remoteRootFolder = this.git.getGitRepoName(projectConfig.gitUrl) as string;
         const remoteDir = `${BACKENDDIR}/${remoteRootFolder}`;
         const localDir = path.resolve(process.cwd(), localPath);
+        const deployDir = path.resolve(remoteDir, dest);
         if (localPath) {
             const cmdConfig = {
                 cwd: remoteDir,
@@ -44,8 +45,8 @@ export class NodePlatform extends Base {
             await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
             await this.client.execCommand(`${tool} install`, cmdConfig);
             await this.client.execCommand(`${tool} ${command}`, cmdConfig);
-            console.log(`pm2 start ${dest} --name="${remoteRootFolder}"`);
-            await this.client!.execCommand(`pm2 start ${dest} --name="${remoteRootFolder}" -f`, cmdConfig);
+            console.log(`pm2 start ${deployDir} --name="${remoteRootFolder}"`);
+            await this.client!.execCommand(`pm2 start ${deployDir} --name="${remoteRootFolder}" -f`, cmdConfig);
             await this.configNginxConf(remoteRootFolder, nginxConfig);
         }
 
