@@ -112,11 +112,11 @@ export const projectConfig: promptType[] = [
     },
     {
         type: (_, answer) => !isFrontEndType(answer) ? 'text' : null,
-        name: "deploy",
+        name: "dest",
         message: "",
         initial: '',
         onRender(kleur: any) {
-            this.msg = kleur.green("输入服务发布的构建脚本");
+            this.msg = kleur.green("请输入需要部署的目录相对路径，(如 ./dist/app.js 或者 ./build/index.js 等)");
         }
     },
 ];

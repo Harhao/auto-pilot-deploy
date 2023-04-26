@@ -1,8 +1,10 @@
 import MongoDBService from "./mongo";
+import LogsService from "./logs";
 import { CommonProjectDto, DelProjectDto, GetProjectDto, UpdateProjectDto, deletePilotDto } from "../dto";
 import { Inject, Injectable } from "../ioc";
 import { EResponseCodeMap } from "../consts";
 import { ObjectId } from "mongodb";
+
 
 
 @Injectable
@@ -11,6 +13,7 @@ export default class ProjectService {
     public static tableName: string = 'project';
 
     @Inject mongoService: MongoDBService;
+    @Inject logService: LogsService;
 
     public async createProject(data: CommonProjectDto) {
         const result = await this.mongoService.insertOne(ProjectService.tableName, data);
@@ -47,8 +50,8 @@ export default class ProjectService {
     }
 
     public async getProject(data: GetProjectDto) {
-        
-        const filter = data?.projectId ? { id: new ObjectId(data.projectId)} : {};
+
+        const filter = data?.projectId ? { id: new ObjectId(data.projectId) } : {};
         const result = await this.mongoService.find(ProjectService.tableName, filter);
         if (result) {
             return {
@@ -66,19 +69,14 @@ export default class ProjectService {
 
 
     public async delProject(data: DelProjectDto) {
+
         const result = await this.mongoService.deleteOne(ProjectService.tableName, {
-            _id: new ObjectId(data.projectId)
+            _id: new ObjectId(data.projectId),
         });
-        if (result.acknowledged) {
-            return {
-                code: EResponseCodeMap.SUCCESS,
-                data: true,
-                msg: 'success'
-            };
-        }
+        console.log(result)
         return {
             code: EResponseCodeMap.SUCCESS,
-            data: false,
+            data: !!result?.deletedCount,
             msg: 'success'
         };
     }

@@ -43,6 +43,10 @@ export class CommonCmdDto {
     @IsDefined()
     //部署额外信息
     commitMsg: string;
+
+    @IsOptional()
+    @IsString()
+    commitHash: string;
 }
 
 export class DeployCmdDto extends CommonCmdDto { }
@@ -64,4 +68,10 @@ export class StartCmdDto {
     @IsDefined()
     @IsNumber()
     serviceId: number;
+}
+
+export class GetCmdDto {
+    @IsOptional()
+    @IsString()
+    name: string;
 }

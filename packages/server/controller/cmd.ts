@@ -1,8 +1,8 @@
 import CmdService from '../service/cmd';
 
 import { Inject } from '../ioc';
-import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
-import { DeployCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body, EValidateFields, Query } from '../decorator';
+import { DeployCmdDto, GetCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
 
 @Controller('/cmd')
 export default class CmdController {
@@ -88,12 +88,19 @@ export default class CmdController {
     @Get('/services')
     @ValidateAuth()
     @CatchError()
+    @ValidateDto(GetCmdDto, EValidateFields.QUERY)
     @Response
-    public async getServices() {
-        const list = await this.cmdService.getServiceList();
+    public async getServices(@Query data: GetCmdDto) {
+        let resp = [];
+        const list = (await this.cmdService.getServiceList()) as any;
+        if(data?.name) {
+            resp = list.filter((item: any) => item.name === data.name);
+        } else {
+            resp = list;
+        }
         return {
             code: 200,
-            data: list,
+            data: resp,
             msg: 'success'
         }
     }

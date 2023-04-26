@@ -176,7 +176,7 @@ export default class CmdService {
     }
 
     public async runDeployJob(data: DeployCmdDto | RollbackCmdDto) {
-        const commitHash = await this.getRepoHeadHash(data.gitUrl, data.branch);
+        const commitHash = data?.commitHash ? data.commitHash :await this.getRepoHeadHash(data.gitUrl, data.branch);
         const logId = await this.createRunLog(data, commitHash);
         const redisKey = `${commitHash}`;
 

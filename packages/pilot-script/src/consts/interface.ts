@@ -25,8 +25,6 @@ export interface IProjectCofig {
     dest: string;
     // 部署类型， node/html静态资源
     type: string;
-    // node服务部署命令
-    deploy?: string;
     // 回退节点commit 或者 git tag
     rollNode?: string;
 }
