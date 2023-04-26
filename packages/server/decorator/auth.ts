@@ -53,8 +53,7 @@ export function ValidateAuth() {
             const next = getNextArgs(args);
             await validateJwt()(ctx, next);
             if (ctx.state.user) {
-               const result =  await originalMethod.call(this, ...args);
-               return result;
+               return await originalMethod.call(this, ...args);;
             }
             return null;
         };

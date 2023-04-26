@@ -108,3 +108,8 @@
 [2023-04-26T10:34:59.281] [INFO] default - ::1 - - "GET /project/getProject HTTP/1.1" 200 567 "" "PostmanRuntime/7.32.2"
 [2023-04-26T10:35:06.488] [INFO] default - ::1 - - "POST /cmd/rollback HTTP/1.1" 200 87 "" "PostmanRuntime/7.32.2"
 [2023-04-26T10:35:33.494] [INFO] default - ::1 - - "POST /cmd/rollback HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-26T10:48:28.116] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-26T10:50:06.823] [INFO] default - ::1 - - "POST /cmd/rollback HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-26T10:57:57.022] [INFO] default - ::1 - - "POST /cmd/rollback HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-26T10:59:11.516] [INFO] default - ::1 - - "GET /logs/getlogs?projectId=64468235cfaecc9d4c3878cc HTTP/1.1" 200 1159 "" "PostmanRuntime/7.32.2"
+[2023-04-26T10:59:44.805] [INFO] default - ::1 - - "GET /logs/getLogDetail?logId=64489334571d0efe4a2d5960 HTTP/1.1" 200 3401 "" "PostmanRuntime/7.32.2"
