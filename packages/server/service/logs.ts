@@ -1,8 +1,9 @@
 import MongoDBService from "./mongo";
 import { Inject, Injectable } from "../ioc";
-import { ELogsRunStatus, EResponseCodeMap } from "../consts";
+import { EResponseCodeMap } from "../consts";
 import { ObjectId } from "mongodb";
 import { CreateLogDto, GetLogsDetailDto, GetLogsDto, UpdateLogDto } from "../dto";
+import RedisService from "./redis";
 
 
 @Injectable
@@ -11,6 +12,7 @@ export default class LogsService {
     public static tableName: string = 'logs';
 
     @Inject mongoService: MongoDBService;
+    @Inject redisService: RedisService;
 
 
     public async createLogs(data: CreateLogDto) {
@@ -83,18 +85,22 @@ export default class LogsService {
     }
 
     public async getLogsDetail(data: GetLogsDetailDto) {
-        const result = await this.mongoService.findOne(LogsService.tableName, {
-            _id: new ObjectId(data.logId)
-        }, { projection: { logList: 1 }});
-
-
-        if (result?._id) {
+        const result = await this.mongoService.findOne(
+            LogsService.tableName, {
+                _id: new ObjectId(data.logId)
+            }, 
+            { projection: { logList: 1, logName: 1 }
+        });
+        
+        // 如果logList有数据说明已经跑完
+        if (result?.logName) {
+            const list = result?.logList.length > 0 ? result.logList : (await this.redisService.getList(`${result.logName}`));
             return {
                 code: EResponseCodeMap.SUCCESS,
-                data: result,
+                data: list,
                 msg: 'success'
             };
-        }
+        }      
         return {
             code: EResponseCodeMap.NORMALERROR,
             data: null,

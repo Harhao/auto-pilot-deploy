@@ -1,7 +1,4 @@
 import CmdService from '../service/cmd';
-import SocketService from '../service/socket';
-import LogsService from '../service/logs';
-import RedisService from '../service/redis';
 
 import { Inject } from '../ioc';
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body } from '../decorator';
@@ -20,7 +17,7 @@ export default class CmdController {
     public async deploy(@Body data: DeployCmdDto) {
 
         await this.cmdService.runDeployJob(data);
-
+        
         return {
             code: 200,
             data: true,

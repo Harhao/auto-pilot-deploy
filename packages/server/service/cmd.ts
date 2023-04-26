@@ -16,9 +16,9 @@ export default class CmdService {
     public pilotConfig: string;
 
     @Inject pilotService: PilotService;
-    @Inject private redisService: RedisService;
-    @Inject private logsService: LogsService;
-    @Inject private socketService: SocketService;
+    @Inject redisService: RedisService;
+    @Inject logsService: LogsService;
+    @Inject socketService: SocketService;
 
     constructor() {
         this.initPilotService();
@@ -45,14 +45,14 @@ export default class CmdService {
     public deployService(projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
-                'pilot-script', 
+                'pilot-script',
                 [
-                    'deploy', 
-                    '--pilotConfig', 
-                    this.pilotConfig, 
-                    '--projectConfig', 
-                    projectConfig, 
-                    '--nginxConfig', 
+                    'deploy',
+                    '--pilotConfig',
+                    this.pilotConfig,
+                    '--projectConfig',
+                    projectConfig,
+                    '--nginxConfig',
                     nginxConfig
                 ]
             );
@@ -70,7 +70,7 @@ export default class CmdService {
 
 
     //  回滚服务
-    public rollbackService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function,onClose?: Function) {
+    public rollbackService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function, onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script',
@@ -80,7 +80,7 @@ export default class CmdService {
                     this.pilotConfig,
                     '--projectConfig',
                     projectConfig,
-                    '--nginxConfig', 
+                    '--nginxConfig',
                     nginxConfig
                 ]
             );
@@ -99,10 +99,10 @@ export default class CmdService {
     //  停止服务
     public stopService(serviceId: number) {
         return new Promise((resolve) => {
-            const child = spawn('pilot-script',['stopService',`${serviceId}`,'--pilotConfig', this.pilotConfig]);
+            const child = spawn('pilot-script', ['stopService', `${serviceId}`, '--pilotConfig', this.pilotConfig]);
 
             child.stdout.on('data', (data) => {
-               this.onStdoutHandle(data);
+                this.onStdoutHandle(data);
             });
             child.stderr.on('data', (data) => {
                 this.onStdoutHandle(data);
@@ -137,7 +137,7 @@ export default class CmdService {
         });
     }
 
-    public getRepoHeadHash(remoteUrl: string, branchName: string ): Promise<string> {
+    public getRepoHeadHash(remoteUrl: string, branchName: string): Promise<string> {
         return new Promise((resolve) => {
             const git = simpleGit();
             git.listRemote(['--heads', remoteUrl], (err: any, refs: any) => {
@@ -166,7 +166,6 @@ export default class CmdService {
     private async createRunLog(data: CommonCmdDto, logName: string) {
         // mongodb生成logs日志
         const resp = await this.logsService.createLogs({
-            pid: process.pid,
             projectId: data.projectId,
             logName: logName,
             commitMsg: data.commitMsg,
@@ -196,9 +195,8 @@ export default class CmdService {
                 const stdout = await this.redisService.getList(`${redisKey}`);
                 await this.logsService.updateLogs({
                     projectId: data.projectId,
-                    logId: logId.toString(), 
+                    logId: logId.toString(),
                     logList: stdout,
-                    pid: process.pid,
                     logName: commitHash,
                     commitMsg: data.commitMsg,
                     status: ELogsRunStatus.SUCCESS

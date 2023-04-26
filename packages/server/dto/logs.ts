@@ -2,11 +2,6 @@ import { IsDefined, IsString, IsArray, IsNumber, IsOptional } from "class-valida
 
 class CommonLogDto {
 
-    @IsNumber()
-    @IsOptional()
-    // task的进程id
-    pid: number;
-
     @IsString()
     @IsDefined()
     // 归属的projectid
