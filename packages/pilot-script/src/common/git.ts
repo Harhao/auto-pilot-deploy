@@ -95,25 +95,4 @@ export default class GitScript {
             });
         });
     }
-
-    public getRepoHeadHash(data: { remoteUrl: string, branchName: string }) {
-        return new Promise((resolve) => {
-            this.git.listRemote(['--heads', data.remoteUrl], (err, refs) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-
-                // 遍历引用列表，找到指定分支的引用
-                let latestCommitHash;
-                refs.split('\n').forEach(ref => {
-                    const [refHash, refName] = ref.split('\t');
-                    if (refName === `refs/heads/${data.branchName}`) {
-                        latestCommitHash = refHash;
-                    }
-                });
-                resolve(latestCommitHash);
-            });
-        });
-    }
 }

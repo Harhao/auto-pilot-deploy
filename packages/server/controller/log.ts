@@ -1,5 +1,5 @@
 import LogsService from "../service/logs";
-import { Body, CatchError, Controller, Get, Post, Query, Response, ValidateDto } from "../decorator";
+import { Body, CatchError, Controller, EValidateFields, Get, Post, Query, Response, ValidateDto } from "../decorator";
 import { CreateLogDto, GetLogsDetailDto, GetLogsDto, UpdateLogDto } from "../dto";
 import { Inject } from "../ioc";
 import { ELogsRunStatus } from "../consts";
@@ -35,17 +35,16 @@ export default class LogsController {
     // 获取运行日志列表
     @Get("/getlogs")
     @CatchError()
-    @ValidateDto(GetLogsDto)
+    @ValidateDto(GetLogsDto, EValidateFields.QUERY)
     @Response
     public async getLogs(@Query logsData: GetLogsDto) {
-        console.log(logsData);
         return await this.logService.getLogs(logsData)
     }
 
     // 获取日志详情
     @Get('/getLogDetail')
     @CatchError()
-    @ValidateDto(GetLogsDetailDto)
+    @ValidateDto(GetLogsDetailDto,EValidateFields.QUERY)
     @Response
     public async getLogDetail(@Query logsData: GetLogsDetailDto) {
         return await this.logService.getLogsDetail(logsData);

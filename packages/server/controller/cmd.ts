@@ -19,7 +19,6 @@ export default class CmdController {
 
 
     public onStdoutHandle = (data: Buffer) => {
-        console.log(data.toString());
         this.socketService.sendToSocketId(data.toString());
     }
 
@@ -95,13 +94,34 @@ export default class CmdController {
     @Response
     public async rollback(@Body data: RollbackCmdDto) {
 
-        // await this.createRunLog(data);
+        const commitHash = await this.cmdService.getRepoHeadHash(data.gitUrl, data.branch);
+        const logId = await this.createRunLog(data, commitHash);
+        const redisKey = `${commitHash}`;
 
         this.cmdService.rollbackService(
             JSON.stringify(data),
             JSON.stringify(data.nginxConfig),
-            this.onStdoutHandle,
-            this.onStdoutHandle
+            async (datatBuffer: Buffer) => {
+                this.onStdoutHandle(datatBuffer);
+                await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
+            },
+            async (datatBuffer: Buffer) => {
+                this.onStdoutHandle(datatBuffer);
+                await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
+            },
+            async () => {
+                const stdout = await this.redisService.getList(`${redisKey}`);
+                await this.logsService.updateLogs({
+                    projectId: data.projectId,
+                    logId: logId.toString(), 
+                    logList: stdout,
+                    pid: process.pid,
+                    logName: commitHash,
+                    commitMsg: data.commitMsg,
+                    status: ELogsRunStatus.SUCCESS
+                });
+                await this.redisService.deleteKey(`${redisKey}`);
+            }
         );
 
         return {

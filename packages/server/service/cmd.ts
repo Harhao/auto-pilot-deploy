@@ -62,7 +62,7 @@ export default class CmdService {
 
 
     //  回滚服务
-    public rollbackService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function) {
+    public rollbackService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function,onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script',
@@ -83,7 +83,7 @@ export default class CmdService {
                 onErr?.(data);
             });
             child.stdout.on('close', () => {
-                resolve(true);
+                onClose?.();
             });
         });
     }

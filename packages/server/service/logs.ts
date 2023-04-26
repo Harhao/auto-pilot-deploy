@@ -15,7 +15,10 @@ export default class LogsService {
 
     public async createLogs(data: CreateLogDto) {
 
-        const result = await this.mongoService.insertOne(LogsService.tableName, data);
+        const result = await this.mongoService.insertOne(LogsService.tableName, {
+            ...data,
+            projectId: new ObjectId(data.projectId)
+        });
 
         if (result.insertedId) {
             return {
@@ -36,7 +39,10 @@ export default class LogsService {
             LogsService.tableName,
             {
                 _id: new ObjectId(data.logId)
-            }, data);
+            }, {
+                ...data,
+                projectId: new ObjectId(data.projectId)
+            });
         if (result?.acknowledged) {
             return {
                 code: EResponseCodeMap.SUCCESS,
@@ -52,8 +58,17 @@ export default class LogsService {
     }
 
     public async getLogs(data: GetLogsDto) {
-        const result = await this.mongoService.find(LogsService.tableName, data);
-        if (result?.acknowledged) {
+        const result = await this.mongoService.find(
+            LogsService.tableName,
+            {
+                projectId: new ObjectId(data.projectId),
+            },
+            {
+                projection: { logList: 0 }
+            }
+        );
+
+        if (result.length > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: result,
@@ -69,10 +84,11 @@ export default class LogsService {
 
     public async getLogsDetail(data: GetLogsDetailDto) {
         const result = await this.mongoService.findOne(LogsService.tableName, {
-            projectId: new ObjectId(data.projectId),
-            id: new ObjectId(data.logId)
-        });
-        if (result?.acknowledged) {
+            _id: new ObjectId(data.logId)
+        }, { projection: { logList: 1 }});
+
+
+        if (result?._id) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: result,

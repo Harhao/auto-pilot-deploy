@@ -23,16 +23,16 @@ export default class MongoDBService {
   }
 
   @CatchError()
-  public async findOne(collectionName: string, filter: object): Promise<Document> {
+  public async findOne(collectionName: string, match: object, filter?:object): Promise<Document> {
     const collection: Collection = this.db.collection(collectionName);
-    const result = await collection.findOne(filter);
+    const result = await collection.findOne(match, filter);
     return result;
   }
 
   @CatchError()
-  public async find(collectionName: string, filter: object): Promise<Document> {
+  public async find(collectionName: string, match: object, filter?: object): Promise<Document> {
     const collection: Collection = this.db.collection(collectionName);
-    return await collection.find(filter).toArray();
+    return await collection.find(match, filter).toArray();
   }
 
   @CatchError()

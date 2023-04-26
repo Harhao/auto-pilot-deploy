@@ -56,11 +56,6 @@ export class GetLogsDto {
 
 export class GetLogsDetailDto {
 
-    @IsString()
-    @IsDefined()
-    //归属projectId
-    projectId: string;
-
     @IsDefined()
     @IsString()
     //日志logId

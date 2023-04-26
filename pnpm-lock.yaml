@@ -292,6 +292,9 @@ importers:
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.13
+      simple-git:
+        specifier: ^3.17.0
+        version: 3.17.0
     devDependencies:
       '@types':
         specifier: link:@types
