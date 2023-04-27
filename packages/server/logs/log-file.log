@@ -1,0 +1,3 @@
+[2023-04-27T09:38:48.767] [INFO] default - ::1 - - "POST /user/login HTTP/1.1" 200 234 "" "PostmanRuntime/7.32.2"
+[2023-04-27T09:39:02.744] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"
+[2023-04-27T09:39:56.117] [INFO] default - ::1 - - "POST /cmd/deploy HTTP/1.1" 200 40 "" "PostmanRuntime/7.32.2"

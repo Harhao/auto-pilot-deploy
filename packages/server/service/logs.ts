@@ -42,9 +42,9 @@ export default class LogsService {
             {
                 _id: new ObjectId(data.logId)
             }, {
-                ...data,
-                projectId: new ObjectId(data.projectId)
-            });
+            ...data,
+            projectId: new ObjectId(data.projectId)
+        });
         if (result?.acknowledged) {
             return {
                 code: EResponseCodeMap.SUCCESS,
@@ -87,20 +87,24 @@ export default class LogsService {
     public async getLogsDetail(data: GetLogsDetailDto) {
         const result = await this.mongoService.findOne(
             LogsService.tableName, {
-                _id: new ObjectId(data.logId)
-            }, 
-            { projection: { logList: 1, logName: 1 }
-        });
-        
+            _id: new ObjectId(data.logId)
+        },
+            {
+                projection: { logList: 1, logName: 1 }
+            });
+
         // 如果logList有数据说明已经跑完
         if (result?.logName) {
             const list = result?.logList.length > 0 ? result.logList : (await this.redisService.getList(`${result.logName}`));
             return {
                 code: EResponseCodeMap.SUCCESS,
-                data: list,
+                data: {
+                    isDone: result?.logList.length > 0,
+                    list,
+                },
                 msg: 'success'
             };
-        }      
+        }
         return {
             code: EResponseCodeMap.NORMALERROR,
             data: null,
