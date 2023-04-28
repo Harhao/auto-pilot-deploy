@@ -1,5 +1,9 @@
 import React from "react";
+import animation from '@/component/animation';
 
-export default function Setting() {
+const Setting = () => {
     return <div>setting</div>
 }
+
+
+export default animation(Setting);

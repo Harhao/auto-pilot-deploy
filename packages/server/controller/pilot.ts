@@ -1,4 +1,4 @@
-import { Body, CatchError, Controller, Get, Post, Put, Query, Response, ValidateDto } from "../decorator";
+import { Body, CatchError, Controller, Get, Post, Put, Query, Response, ValidateAuth, ValidateDto } from "../decorator";
 import { CommonPilot, UpdatePilotDto, deletePilotDto, getPilotDto } from "../dto";
 import { Inject } from "../ioc";
 
@@ -10,6 +10,7 @@ export default class PilotController {
     @Inject private pilotService: PilotService;
 
     @Post("/createPilot")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(CommonPilot)
     @Response
@@ -18,6 +19,7 @@ export default class PilotController {
     }
 
     @Put("/updatePilot")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(UpdatePilotDto)
     @Response
@@ -26,6 +28,7 @@ export default class PilotController {
     }
 
     @Get("/getPilot")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(getPilotDto)
     @Response
@@ -35,6 +38,7 @@ export default class PilotController {
     }
 
     @Post("/delPilot")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(deletePilotDto)
     @Response

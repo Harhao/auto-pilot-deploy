@@ -1,5 +1,7 @@
-import React, { lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import Layout from "../layout/index";
+import Loading from "@/component/loading";
+
 import {
     HomeOutlined,
     ProjectOutlined,
@@ -7,10 +9,13 @@ import {
 } from '@ant-design/icons';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+
 const Home = lazy(() => import('@/pages/home'));
 const Project = lazy(() => import('@/pages/project'));
 const NoMatch = lazy(() => import('@/pages/404'));
 const Setting = lazy(() => import('@/pages/setting'));
+const Login = lazy(() => import('@/pages/login'));
+const Logs  = lazy(() => import("@/pages/logs"));
 
 
 export const privateRoutes =
@@ -30,16 +35,6 @@ export const privateRoutes =
             icon: <ProjectOutlined />,
             label: '项目列表',
             element: <Project />,
-            children: [
-                // {
-                //     path: 'detail/:logId',
-                //     element: <ProjectDetail />
-                // },
-                // {
-                //     path: 'logs/:projectId',
-                //     element: <ProjectDetail />
-                // },
-            ]
         },
         {
             path: 'setting',
@@ -47,28 +42,38 @@ export const privateRoutes =
             label: '权限配置',
             element: <Setting />
         },
+        {
+            path: "logs/:id",
+            icon: null,
+            label: '运行日志',
+            element: <Logs />
+        },
     ],
 };
 
 const routes = [
     privateRoutes,
     {
+        path: "/login",
+        icon: null,
+        label: '登陆页',
+        element: <Login />
+    },
+    {
         path: "*",
-        icon: <SettingFilled />,
+        icon: null,
         label: '错误',
         element: <NoMatch />
     },
 ];
 
-function Fallback() {
-    return <p>Performing initial data load</p>;
-}
+export default function PilotRouter() { 
 
-export default function PilotRouter() {
     return (
-        <RouterProvider
-            router={createBrowserRouter(routes)}
-            fallbackElement={<Fallback />}
-        />
+        <Suspense fallback={<Loading />}>
+            <RouterProvider
+                router={createBrowserRouter(routes)}
+            />
+        </Suspense>
     );
 }

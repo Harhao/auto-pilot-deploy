@@ -1,5 +1,5 @@
 import LogsService from "../service/logs";
-import { Body, CatchError, Controller, EValidateFields, Get, Post, Query, Response, ValidateDto } from "../decorator";
+import { Body, CatchError, Controller, EValidateFields, Get, Post, Query, Response, ValidateAuth, ValidateDto } from "../decorator";
 import { CreateLogDto, GetLogsDetailDto, GetLogsDto, UpdateLogDto } from "../dto";
 import { Inject } from "../ioc";
 import { ELogsRunStatus } from "../consts";
@@ -12,6 +12,7 @@ export default class LogsController {
 
     // 创建日志
     @Post("/createLog")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(CreateLogDto)
     @Response
@@ -25,6 +26,7 @@ export default class LogsController {
 
     // 更新日志
     @Post("/updateLog")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(UpdateLogDto)
     @Response
@@ -34,6 +36,7 @@ export default class LogsController {
 
     // 获取运行日志列表
     @Get("/getlogs")
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(GetLogsDto, EValidateFields.QUERY)
     @Response
@@ -43,6 +46,7 @@ export default class LogsController {
 
     // 获取日志详情
     @Get('/getLogDetail')
+    @ValidateAuth()
     @CatchError()
     @ValidateDto(GetLogsDetailDto,EValidateFields.QUERY)
     @Response
