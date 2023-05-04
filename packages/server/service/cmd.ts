@@ -163,7 +163,8 @@ export default class CmdService {
         this.socketService.sendToSocketId(data.toString());
     }
 
-    private async createRunLog(data: CommonCmdDto, logName: string) {
+    public async createRunLog(data: CommonCmdDto, logName: string) {
+        const commitHash = data?.commitHash ? data.commitHash :await this.getRepoHeadHash(data.gitUrl, data.branch);
         // mongodb生成logs日志
         const resp = await this.logsService.createLogs({
             projectId: data.projectId,
@@ -175,19 +176,20 @@ export default class CmdService {
         return resp?.data;
     }
 
-    public async runDeployJob(data: DeployCmdDto | RollbackCmdDto) {
-        const commitHash = data?.commitHash ? data.commitHash :await this.getRepoHeadHash(data.gitUrl, data.branch);
-        const logId = await this.createRunLog(data, commitHash);
+    public async runDeployJob(data: any, logId: string, commitHash: string) {
+       
         const redisKey = `${commitHash}`;
 
         this.deployService(
             JSON.stringify(data),
             JSON.stringify(data.nginxConfig),
             async (datatBuffer: Buffer) => {
+                console.log(datatBuffer.toString())
                 this.onStdoutHandle(datatBuffer);
                 await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
             },
             async (datatBuffer: Buffer) => {
+                console.log(datatBuffer.toString())
                 this.onStdoutHandle(datatBuffer);
                 await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
             },
@@ -204,6 +206,8 @@ export default class CmdService {
                 await this.redisService.deleteKey(`${redisKey}`);
             }
         );
+
+        return logId;
     }
 
 }

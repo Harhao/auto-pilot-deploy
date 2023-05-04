@@ -71,7 +71,7 @@ const Project: React.FC = () => {
             <Button type="primary">运行</Button>
             <Button danger type="primary">删除</Button>
             <Button type="primary" onClick={() => navigate(`/admin/logs/${data._id}`)}>日志</Button>
-            <Button type="primary">部署</Button>
+            <Button type="primary" onClick={() => navigate(`/admin/logsDetail/${data._id}`)}>部署</Button>
           </Space>
         )
       }

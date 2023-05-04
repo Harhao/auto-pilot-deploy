@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import Layout from "../layout/index";
 import Loading from "@/component/loading";
-
+import RequireAuth from "@/component/auth";
 import {
     HomeOutlined,
     ProjectOutlined,
@@ -15,13 +15,14 @@ const Project = lazy(() => import('@/pages/project'));
 const NoMatch = lazy(() => import('@/pages/404'));
 const Setting = lazy(() => import('@/pages/setting'));
 const Login = lazy(() => import('@/pages/login'));
-const Logs  = lazy(() => import("@/pages/logs"));
+const Logs = lazy(() => import("@/pages/logs"));
+const LogsDetail = lazy(() => import("@/pages/logs/detail"));
 
 
 export const privateRoutes =
 {
     path: '/admin',
-    element: <Layout />,
+    element: <RequireAuth><Layout /></RequireAuth>,
     children: [
         {
             index: true,
@@ -48,6 +49,12 @@ export const privateRoutes =
             label: '运行日志',
             element: <Logs />
         },
+        {
+            path: "logsDetail/:projectId/:id?",
+            icon: null,
+            label: '日志详情',
+            element: <LogsDetail />
+        },
     ],
 };
 
@@ -67,7 +74,7 @@ const routes = [
     },
 ];
 
-export default function PilotRouter() { 
+export default function PilotRouter() {
 
     return (
         <Suspense fallback={<Loading />}>

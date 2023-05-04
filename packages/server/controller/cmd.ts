@@ -1,4 +1,5 @@
 import CmdService from '../service/cmd';
+import ProjectService from '../service/project';
 
 import { Inject } from '../ioc';
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body, EValidateFields, Query } from '../decorator';
@@ -8,6 +9,7 @@ import { DeployCmdDto, GetCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from
 export default class CmdController {
 
     @Inject private cmdService: CmdService;
+    @Inject private projectService: ProjectService;
 
     @Post('/deploy')
     @ValidateAuth()
@@ -15,13 +17,15 @@ export default class CmdController {
     @ValidateDto(DeployCmdDto)
     @Response
     public async deploy(@Body data: DeployCmdDto) {
+        const config: any = await this.projectService.getProject({ projectId: data.projectId});
+        const data: any = config?.data?.[0];
+        const logId = await this.cmdService.createRunLog(data, commitHash);
+        this.cmdService.runDeployJob(data, logId);
 
-        await this.cmdService.runDeployJob(data);
-        
         return {
             code: 200,
-            data: true,
-            msg: 'success'
+            data: logId,
+            msg: 'success'  
         }
 
     }

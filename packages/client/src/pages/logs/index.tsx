@@ -1,15 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { getLogsList } from "@/api";
 import animation from "@/component/animation";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, Space, Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import "./index.scss";
 
-function Logs() {
-    const params = useParams();
 
+interface DataType {
+    _id: string;
+    commitMsg: string;
+    logName: string;
+    status: number;
+  }
+
+function Logs() {
+    const [list, setList] = useState<any[]>([]);
+    const params = useParams();
+    const navigate = useNavigate();
     const getLogList = async () => {
         const resp = await getLogsList({ projectId: params.id });
         console.log(resp);
+        setList(resp.data);
     }
 
     useEffect(() => {
@@ -17,8 +29,43 @@ function Logs() {
             getLogList();
         }
     }, []);
-
-    return <div>logs</div>
+  
+    const columns: ColumnsType<DataType> = [
+      {
+        title: '日志id',
+        dataIndex: '_id',
+        key: '_id',
+      },
+      {
+        title: 'Git地址',
+        dataIndex: 'commitMsg',
+        key: 'commitMsg',
+      },
+      {
+        title: '提交commit',
+        dataIndex: 'logName',
+        key: 'logName',
+      },
+      {
+        title: '构建状态',
+        dataIndex: 'status',
+        key: 'status',
+      },
+      {
+        title: '操作',
+        key: 'action',
+        render: (_, data) => {
+          return (
+            <Space size="middle">
+              <Button danger type="primary" onClick={() => navigate(`/admin/logsDetail/${params.id}/${data._id}`)}>详情</Button>
+              <Button type="primary">回滚</Button>
+            </Space>
+          )
+        }
+      },
+    ];
+  
+    return <Table columns={columns} dataSource={list} />
 }
 
 

@@ -49,11 +49,23 @@ export class CommonCmdDto {
     commitHash: string;
 }
 
-export class DeployCmdDto extends CommonCmdDto { }
+export class DeployCmdDto { 
 
-export class RollbackCmdDto extends CommonCmdDto {
-    @IsString()
     @IsDefined()
+    @IsString()
+    // 项目id
+    projectId: string;
+}
+
+export class RollbackCmdDto {
+
+    @IsDefined()
+    @IsString()
+    // 项目id
+    projectId: string;
+
+    @IsString()
+    @IsOptional()
     rollNode: string;
 }
 

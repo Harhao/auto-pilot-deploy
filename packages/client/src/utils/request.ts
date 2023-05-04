@@ -1,3 +1,5 @@
+import { EResponseMap } from "@/const";
+import { authExpireHandle } from "@/hooks/auth";
 import axios, { AxiosInstance } from "axios";
 
 class PilotRequest {
@@ -27,6 +29,9 @@ class PilotRequest {
 
         instance.interceptors.response.use(
             (response) => {
+                if (response.data.code === EResponseMap.EXPIRES) {
+                    authExpireHandle();
+                }
                 // 处理请求成功的响应
                 return response.data;
             },
@@ -45,21 +50,15 @@ class PilotRequest {
     }
 
     public async post(url: string, params?: Record<string, any>) {
-        return await this.request.post(url, {
-            data: params,
-        });
+        return await this.request.post(url, params);
     }
 
     public async put(url: string, params?: Record<string, any>) {
-        return await this.request.post(url, {
-            data: params,
-        });
+        return await this.request.post(url, params);
     }
 
     public async delete(url: string, params?: Record<string, any>) {
-        return await this.request.post(url, {
-            data: params,
-        });
+        return await this.request.post(url, params);
     }
 }
 

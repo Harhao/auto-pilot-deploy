@@ -50,8 +50,7 @@ export default class ProjectService {
     }
 
     public async getProject(data: GetProjectDto) {
-
-        const filter = data?.projectId ? { id: new ObjectId(data.projectId) } : {};
+        const filter = data?.projectId ? { _id: new ObjectId(data.projectId) } : {};
         const result = await this.mongoService.find(ProjectService.tableName, filter);
         if (result) {
             return {
