@@ -1,0 +1,22 @@
+.no-match-wrapper {
+    width: 100%;
+    height: 100%;
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .no-match-icon {
+        position: relative;
+        .no-match-text {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translate(-50%, 0);
+            font-size: 50px;
+            font-weight: bold;
+            color: rgb(239, 131, 0);
+            text-align: center;
+        }
+    }
+}
