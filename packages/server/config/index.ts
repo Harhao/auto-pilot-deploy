@@ -41,7 +41,7 @@ export const ServerConfig = {
     cryptoRandom: process.env.CRYPTORANDOM,
     serverCors: {
         origin: '*',
-        maxAge: 5,
+        maxAge: 86400,
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
         credentials: true

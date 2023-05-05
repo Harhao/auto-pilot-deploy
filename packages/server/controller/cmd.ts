@@ -18,16 +18,16 @@ export default class CmdController {
     @Response
     public async deploy(@Body data: DeployCmdDto) {
         const config: any = await this.projectService.getProject({ projectId: data.projectId});
-        const data: any = config?.data?.[0];
-        const logId = await this.cmdService.createRunLog(data, commitHash);
-        this.cmdService.runDeployJob(data, logId);
+        const logConfig: any = config?.data?.[0];
+        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, projectId: data.projectId});
+
+        this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
 
         return {
             code: 200,
-            data: logId,
+            data: { logId },
             msg: 'success'  
         }
-
     }
 
     @Get('/stopProcess')
@@ -44,11 +44,15 @@ export default class CmdController {
     @Response
     public async rollback(@Body data: RollbackCmdDto) {
 
-        await this.cmdService.runDeployJob(data);
+        const config: any = await this.projectService.getProject({ projectId: data.projectId});
+        const logConfig: any = config?.data?.[0];
+        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, projectId: data.projectId});
+
+        this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
 
         return {
             code: 200,
-            data: true,
+            data: { logId },
             msg: 'success'
         }
     }

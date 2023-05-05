@@ -163,17 +163,17 @@ export default class CmdService {
         this.socketService.sendToSocketId(data.toString());
     }
 
-    public async createRunLog(data: CommonCmdDto, logName: string) {
+    public async createRunLog(data: CommonCmdDto) {
         const commitHash = data?.commitHash ? data.commitHash :await this.getRepoHeadHash(data.gitUrl, data.branch);
         // mongodb生成logs日志
         const resp = await this.logsService.createLogs({
             projectId: data.projectId,
-            logName: logName,
+            logName: commitHash,
             commitMsg: data.commitMsg,
             logList: [],
             status: ELogsRunStatus.RUNNING,
         });
-        return resp?.data;
+        return { logId: resp?.data, commitHash };
     }
 
     public async runDeployJob(data: any, logId: string, commitHash: string) {
@@ -206,8 +206,6 @@ export default class CmdService {
                 await this.redisService.deleteKey(`${redisKey}`);
             }
         );
-
-        return logId;
     }
 
 }

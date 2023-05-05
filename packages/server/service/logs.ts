@@ -70,6 +70,10 @@ export default class LogsService {
             }
         );
 
+        console.log(     {
+            projectId: new ObjectId(data.projectId),
+        });
+
         if (result.length > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
