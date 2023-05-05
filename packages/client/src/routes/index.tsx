@@ -1,13 +1,13 @@
-import React, { Suspense, lazy } from "react";
-import Layout from "../layout/index";
-import Loading from "@/component/loading";
-import RequireAuth from "@/component/auth";
+import React, { Suspense, lazy } from 'react';
+import Layout from '../layout/index';
+import Loading from '@/component/loading';
+import RequireAuth from '@/component/auth';
 import {
     HomeOutlined,
     ProjectOutlined,
     SettingFilled,
 } from '@ant-design/icons';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 
 const Home = lazy(() => import('@/pages/home'));
@@ -15,8 +15,8 @@ const Project = lazy(() => import('@/pages/project'));
 const NoMatch = lazy(() => import('@/pages/404'));
 const Setting = lazy(() => import('@/pages/setting'));
 const Login = lazy(() => import('@/pages/login'));
-const Logs = lazy(() => import("@/pages/logs"));
-const LogsDetail = lazy(() => import("@/pages/logs/detail"));
+const Logs = lazy(() => import('@/pages/logs'));
+const LogsDetail = lazy(() => import('@/pages/logs/detail'));
 
 
 export const privateRoutes =
@@ -44,13 +44,13 @@ export const privateRoutes =
             element: <Setting />
         },
         {
-            path: "logs/:id",
+            path: 'logs/:id',
             icon: null,
             label: '运行日志',
             element: <Logs />
         },
         {
-            path: "logsDetail/:projectId/:id?",
+            path: 'logsDetail/:projectId/:logId?',
             icon: null,
             label: '日志详情',
             element: <LogsDetail />
@@ -61,13 +61,13 @@ export const privateRoutes =
 const routes = [
     privateRoutes,
     {
-        path: "/login",
+        path: '/login',
         icon: null,
         label: '登陆页',
         element: <Login />
     },
     {
-        path: "*",
+        path: '*',
         icon: null,
         label: '错误',
         element: <NoMatch />

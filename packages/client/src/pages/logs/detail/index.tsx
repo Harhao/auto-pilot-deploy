@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import animation from "@/component/animation";
-import { deployProject, getLogsDetail } from "@/api";
-import { useParams } from "react-router-dom";
-import "./index.scss";
+import React, { useEffect, useState } from 'react';
+import animation from '@/component/animation';
+import { deployProject, getLogsDetail } from '@/api';
+import { useParams } from 'react-router-dom';
+import './index.scss';
 
 function LogDetail() {
 
     const [list, setList] = useState<any[]>([]);
     const params = useParams();
-    let interval: number = 0;
+    let interval = 0;
 
     const getLogDetail = async (logId: string) => {
         const resp = await getLogsDetail({ logId });
         setList(resp.data.list);
         return resp;
-    }
+    };
 
     const getLogsPoll = async (logId: string) => {
         interval = setInterval(async () => {
@@ -28,7 +28,7 @@ function LogDetail() {
             }
         }, 3000);
 
-    }
+    };
 
     const deployHandle = async (projectId: string) => {
         const resp: any = await deployProject({ projectId });
@@ -36,11 +36,15 @@ function LogDetail() {
             const { logId } = resp.data;
             getLogsPoll(logId);
         }
-    }
+    };
 
     useEffect(() => {
-        if( params.projectId)  {
-            deployHandle(params.projectId);
+        if(params.projectId)  {
+            if(params.logId) {
+                getLogsPoll(params.logId);
+                return;
+            } 
+            deployHandle(params.projectId);        
         }
         
     }, []);
@@ -51,7 +55,7 @@ function LogDetail() {
                 className="log-detail-content">
                 {
                     list.map((log: string, index: number) => {
-                        return <div key={index}>{log}</div>
+                        return <div key={index}>{log}</div>;
                     })
                 }
             </div>
