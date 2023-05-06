@@ -46,9 +46,10 @@ function LogDetail() {
             if (params.logId) {
                 getLogsPoll(params.logId);
                 return;
+            } else {
+                // 未部署
+                deployHandle(params.projectId);
             }
-            // 未部署
-            deployHandle(params.projectId);
         }
     }, []);
 

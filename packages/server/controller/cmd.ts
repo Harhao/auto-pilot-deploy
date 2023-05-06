@@ -20,7 +20,7 @@ export default class CmdController {
         const config: any = await this.projectService.getProject({ projectId: data.projectId});
         const logConfig: any = config?.data?.[0];
         const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, projectId: data.projectId});
-
+        
         this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
 
         return {

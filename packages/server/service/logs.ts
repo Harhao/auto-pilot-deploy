@@ -60,6 +60,7 @@ export default class LogsService {
     }
 
     public async getLogs(data: GetLogsDto) {
+
         const result = await this.mongoService.find(
             LogsService.tableName,
             {

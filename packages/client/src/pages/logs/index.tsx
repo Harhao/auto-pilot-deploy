@@ -36,7 +36,7 @@ function Logs() {
         key: '_id',
       },
       {
-        title: 'Git地址',
+        title: '提交备注',
         dataIndex: 'commitMsg',
         key: 'commitMsg',
       },

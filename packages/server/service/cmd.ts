@@ -6,7 +6,7 @@ import RedisService from "./redis";
 import LogsService from "./logs";
 import SocketService from "./socket";
 import { ELogsRunStatus } from "../consts";
-import { CommonCmdDto, DeployCmdDto, RollbackCmdDto } from "../dto";
+import { CommonCmdDto } from "../dto";
 
 
 
@@ -196,8 +196,8 @@ export default class CmdService {
             async () => {
                 const stdout = await this.redisService.getList(`${redisKey}`);
                 await this.logsService.updateLogs({
-                    projectId: data.projectId,
-                    logId: logId.toString(),
+                    projectId: data._id,
+                    logId: logId,
                     logList: stdout,
                     logName: commitHash,
                     commitMsg: data.commitMsg,

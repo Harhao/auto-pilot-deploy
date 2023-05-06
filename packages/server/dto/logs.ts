@@ -3,7 +3,7 @@ import { IsDefined, IsString, IsArray, IsNumber, IsOptional } from "class-valida
 class CommonLogDto {
 
     @IsString()
-    @IsDefined()
+    @IsOptional()
     // 归属的projectid
     projectId: string;
 
