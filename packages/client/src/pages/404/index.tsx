@@ -3,7 +3,6 @@ import "./index.scss";
 
 export default function NoMatch() {
     return <div className="no-match-wrapper">
-
         <div className="no-match-icon">
         <div className="no-match-text">404</div>
         <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 2685 1024" p-id="6997" width="500" height="500">

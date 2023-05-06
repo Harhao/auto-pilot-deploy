@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button, theme } from "antd";
+import { Layout, Menu, Button } from "antd";
 import { Outlet, Link } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { privateRoutes } from "@/routes";

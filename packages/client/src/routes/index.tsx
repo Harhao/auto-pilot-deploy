@@ -1,5 +1,4 @@
 import React, { Suspense, lazy } from 'react';
-import Layout from '../layout/index';
 import Loading from '@/component/loading';
 import RequireAuth from '@/component/auth';
 import {
@@ -7,8 +6,10 @@ import {
     ProjectOutlined,
     SettingFilled,
 } from '@ant-design/icons';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-
+import { 
+    createBrowserRouter, 
+    RouterProvider 
+} from 'react-router-dom';
 
 const Home = lazy(() => import('@/pages/home'));
 const Project = lazy(() => import('@/pages/project'));
@@ -17,7 +18,7 @@ const Setting = lazy(() => import('@/pages/setting'));
 const Login = lazy(() => import('@/pages/login'));
 const Logs = lazy(() => import('@/pages/logs'));
 const LogsDetail = lazy(() => import('@/pages/logs/detail'));
-
+const Layout = lazy(() => import('@/layout'));
 
 export const privateRoutes =
 {

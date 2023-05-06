@@ -1,4 +1,4 @@
-import { EResponseMap } from "@/const";
+import { EResponseMap, IResponse } from "@/const";
 import { authExpireHandle } from "@/hooks/auth";
 import axios, { AxiosInstance } from "axios";
 
@@ -43,21 +43,21 @@ class PilotRequest {
         return instance;
     }
 
-    public async get(url: string, params?: Record<string, any>) {
+    public async get(url: string, params?: Record<string, any>): Promise<IResponse> {
         return await this.request.get(url, {
             params: params,
         });
     }
 
-    public async post(url: string, params?: Record<string, any>) {
+    public async post(url: string, params?: Record<string, any>) : Promise<IResponse>{
         return await this.request.post(url, params);
     }
 
-    public async put(url: string, params?: Record<string, any>) {
+    public async put(url: string, params?: Record<string, any>): Promise<IResponse> {
         return await this.request.post(url, params);
     }
 
-    public async delete(url: string, params?: Record<string, any>) {
+    public async delete(url: string, params?: Record<string, any>): Promise<IResponse> {
         return await this.request.post(url, params);
     }
 }

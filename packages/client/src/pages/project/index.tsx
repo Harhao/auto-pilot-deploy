@@ -20,7 +20,7 @@ const Project: React.FC = () => {
   const navigate = useNavigate();
 
   const onGetProjects = async () => {
-    const res: any = await getProjectList({});
+    const res: any = await getProjectList();
     if (res.code === EResponseMap.SUCCESS) {
       setList(res.data);
     }

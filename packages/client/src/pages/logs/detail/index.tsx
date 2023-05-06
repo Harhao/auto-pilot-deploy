@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import animation from '@/component/animation';
 import { deployProject, getLogsDetail } from '@/api';
 import { useParams } from 'react-router-dom';
+import { EResponseMap } from '@/const';
+
 import './index.scss';
 
 function LogDetail() {
@@ -16,37 +18,38 @@ function LogDetail() {
         return resp;
     };
 
-    const getLogsPoll = async (logId: string) => {
+    const getLogsPoll = (logId: string) => {
         interval = setInterval(async () => {
             const res = await getLogDetail(logId);
-            if (res.code === 200) {
+            if (res.code === EResponseMap.SUCCESS) {
                 const { isDone } = res.data;
                 if (isDone) {
                     clearInterval(interval);
                     return;
                 }
             }
-        }, 3000);
+        }, 2000);
 
     };
 
     const deployHandle = async (projectId: string) => {
-        const resp: any = await deployProject({ projectId });
-        if (resp.code === 200) {
+        const resp = await deployProject({ projectId });
+        if (resp.code === EResponseMap.SUCCESS) {
             const { logId } = resp.data;
             getLogsPoll(logId);
         }
     };
 
     useEffect(() => {
-        if(params.projectId)  {
-            if(params.logId) {
+        if (params.projectId) {
+            // 如果已有logId，证明已有点击部署
+            if (params.logId) {
                 getLogsPoll(params.logId);
                 return;
-            } 
-            deployHandle(params.projectId);        
+            }
+            // 未部署
+            deployHandle(params.projectId);
         }
-        
     }, []);
 
     return (

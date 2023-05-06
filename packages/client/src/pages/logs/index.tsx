@@ -20,13 +20,12 @@ function Logs() {
     const navigate = useNavigate();
     const getLogList = async () => {
         const resp = await getLogsList({ projectId: params.id });
-        console.log(resp);
         setList(resp.data);
     }
 
     useEffect(() => {
         if (params.id) {
-            getLogList();
+          getLogList();
         }
     }, []);
   

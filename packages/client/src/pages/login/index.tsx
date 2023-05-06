@@ -10,7 +10,8 @@ import "./index.scss";
 const loginContainer = () => {
     const navigate = useNavigate();
     const auth = useAuth();
-    const onFinish = async (values: any) => {
+
+    const onFinish = async (values: { userName: string, password: string }) => {
         const res: any = await login({ ...values });
         if (res.code == EResponseMap.SUCCESS) {
             auth.signin(res.data, () => {
@@ -18,6 +19,7 @@ const loginContainer = () => {
             })
         }
     };
+
     return (
         <div className="login-container">
             <div className="login-content">
