@@ -18,6 +18,7 @@ const Setting = lazy(() => import('@/pages/setting'));
 const Login = lazy(() => import('@/pages/login'));
 const Logs = lazy(() => import('@/pages/logs'));
 const LogsDetail = lazy(() => import('@/pages/logs/detail'));
+const Service = lazy(() => import('@/pages/service'));
 const Layout = lazy(() => import('@/layout'));
 
 export const privateRoutes =
@@ -43,6 +44,12 @@ export const privateRoutes =
             icon: <SettingFilled />,
             label: '权限配置',
             element: <Setting />
+        },
+        {
+            path: 'service/:name',
+            icon:  null,
+            label: 'node服务',
+            element: <Service />
         },
         {
             path: 'logs/:id',

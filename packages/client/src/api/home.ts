@@ -1,5 +1,5 @@
-import { IResponse } from "@/const";
-import { request } from "@/utils";
+import { IResponse } from '@/const';
+import { request } from '@/utils';
 
 
 export async function getProjectList(): Promise<IResponse> {
@@ -8,5 +8,9 @@ export async function getProjectList(): Promise<IResponse> {
 
 export async function deployProject(params: { projectId: string }): Promise<IResponse> {
     return await request.post('/cmd/deploy', params);
+}
+
+export async function getServiceList(params: { name?: string }): Promise<IResponse> {
+    return await request.get('/cmd/services', params);
 }
 
