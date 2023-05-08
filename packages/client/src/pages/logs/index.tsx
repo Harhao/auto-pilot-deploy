@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { getLogsList } from '@/api';
 import animation from '@/component/animation';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Space, Table } from 'antd';
+import { Button, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import './index.scss';
+import { ELogsRunStatus, deployStatus } from '@/const';
 
 
 interface DataType {
@@ -49,6 +50,11 @@ function Logs() {
         title: '构建状态',
         dataIndex: 'status',
         key: 'status',
+        render: (_, data) => {
+          const status: number = data.status;
+          const { color, msg } = deployStatus[status];
+          return <Tag color={color}>{msg}</Tag>;
+        }
       },
       {
         title: '操作',

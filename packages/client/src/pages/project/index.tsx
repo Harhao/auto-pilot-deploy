@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import animation from '@/component/animation';
-import { Button, Space, Table, Tag } from 'antd';
+import { Button, Space, Table, Tag, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { getProjectList, getServiceList } from '@/api';
 import { EResponseMap } from '@/const';
@@ -48,38 +48,45 @@ const Project: React.FC = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: '项目id',
+      title: '项目名称',
       dataIndex: '_id',
       key: '_id',
+      align: 'center'
     },
     {
       title: 'Git地址',
       dataIndex: 'gitUrl',
       key: 'gitUrl',
+      align: 'center'
     },
     {
       title: '分支',
       dataIndex: 'branch',
       key: 'branch',
+      align: 'center'
     },
     {
       title: '部署目录',
       dataIndex: 'dest',
       key: 'dest',
+      align: 'center'
     },
     {
       title: '项目类型',
       dataIndex: 'type',
       key: 'type',
+      align: 'center'
     },
     {
       title: '构建工具',
       dataIndex: 'tool',
       key: 'tool',
+      align: 'center'
     },
     {
       title: '服务',
       key: 'status',
+      align: 'center',
       render: (_, data) => {
         const name = getRepoName(data.gitUrl);
         const service = serviceList.find(item => item.name === name);
@@ -95,6 +102,7 @@ const Project: React.FC = () => {
     {
       title: '操作',
       key: 'action',
+      align: 'center',
       render: (_, data) => {
         const name = getRepoName(data.gitUrl);
         return (
@@ -108,7 +116,7 @@ const Project: React.FC = () => {
     },
   ];
 
-  return <Table columns={columns} dataSource={list} />;
+  return <Table  bordered columns={columns} dataSource={list} />;
 };
 
 export default animation(Project);

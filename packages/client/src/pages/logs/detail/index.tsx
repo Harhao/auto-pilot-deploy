@@ -10,7 +10,7 @@ function LogDetail() {
 
     const [list, setList] = useState<any[]>([]);
     const params = useParams();
-    let interval = 0;
+    let interval: number | null = null;
 
     const getLogDetail = async (logId: string) => {
         const resp = await getLogsDetail({ logId });
@@ -24,11 +24,14 @@ function LogDetail() {
             if (res.code === EResponseMap.SUCCESS) {
                 const { isDone } = res.data;
                 if (isDone) {
-                    clearInterval(interval);
+                    if(interval) {
+                        clearInterval(interval);
+                        interval = null;
+                    }
                     return;
                 }
             }
-        }, 2000);
+        }, 3000);
 
     };
 
@@ -51,6 +54,9 @@ function LogDetail() {
                 deployHandle(params.projectId);
             }
         }
+        return () => {
+            interval && clearInterval(interval);
+        };
     }, []);
 
     return (
