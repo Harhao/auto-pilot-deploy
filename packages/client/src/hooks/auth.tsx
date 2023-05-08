@@ -36,5 +36,6 @@ export function useAuth() {
 }
 
 export function authExpireHandle() {
-    useAuth()?.signout();
+   const auth = useAuth();
+   auth.signout();
 }

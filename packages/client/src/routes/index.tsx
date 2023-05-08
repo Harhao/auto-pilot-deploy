@@ -8,7 +8,8 @@ import {
 } from '@ant-design/icons';
 import { 
     createBrowserRouter, 
-    RouterProvider 
+    RouterProvider,
+    Navigate 
 } from 'react-router-dom';
 
 const Home = lazy(() => import('@/pages/home'));
@@ -67,8 +68,12 @@ export const privateRoutes =
 };
 
 const routes = [
-    privateRoutes,
     {
+        path: '/',
+        element: <Navigate to='/login' />,
+    },
+    {
+        index: true,
         path: '/login',
         icon: null,
         label: '登陆页',
@@ -80,6 +85,7 @@ const routes = [
         label: '错误',
         element: <NoMatch />
     },
+    privateRoutes,
 ];
 
 export default function PilotRouter() {

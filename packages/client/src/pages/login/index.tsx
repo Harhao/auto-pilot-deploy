@@ -1,28 +1,44 @@
 import React from "react";
 import { login } from "@/api";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { EResponseMap } from "@/const";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/auth";
 import "./index.scss";
+import { animated, useSpring } from "@react-spring/web";
 
 const loginContainer = () => {
     const navigate = useNavigate();
     const auth = useAuth();
+    const [animation, api] = useSpring(
+        () => ({
+            from: { transform: "translateX(100%)" },
+            to: { transform: "translateX(0%)"},
+        }),
+        []
+    )
 
     const onFinish = async (values: { userName: string, password: string }) => {
         const res: any = await login({ ...values });
         if (res.code == EResponseMap.SUCCESS) {
             auth.signin(res.data, () => {
                 navigate('/admin/project');
-            })
+                message.open({ type: 'success', content: '登录成功'})
+            });
+            return;
         }
+        message.open({ type: 'error', content: '帐号密码不正确'})
     };
 
     return (
-        <div className="login-container">
+        <animated.div 
+            className="login-container"
+            style={animation} 
+        >    
+            <div className="login-bg"></div>   
             <div className="login-content">
+                <div className="login-title">自动部署平台</div>
                 <Form
                     name="normal_login"
                     className="login-form"
@@ -62,7 +78,7 @@ const loginContainer = () => {
                     </Form.Item>
                 </Form>
             </div>
-        </div>
+        </animated.div>
     );
 };
 

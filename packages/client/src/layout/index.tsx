@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button } from "antd";
+import { Layout, Menu, Button, Dropdown, Avatar, Space } from "antd";
 import { Outlet, Link } from "react-router-dom";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
 import { privateRoutes } from "@/routes";
 import "./index.scss";
 
@@ -32,12 +32,26 @@ const LayoutContainer: React.FC = () => {
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: '#ffffff' }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            className="layout-collapsed_btn"
-          />
+          <Space className="layout-header-wrapper">
+            <Button
+              type="text"
+              icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+              onClick={() => setCollapsed(!collapsed)}
+              className="layout-collapsed_btn"
+            />
+            <Dropdown menu={{
+              items: [{
+                key: '1',
+                label: (
+                  <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+                    退出登录
+                  </a>
+                ),
+              },]
+            }} placement="bottom" arrow>
+              <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} size="small" />
+            </Dropdown>
+          </Space>
         </Header>
         <Content
           className="layout-main-container"

@@ -1,5 +1,5 @@
 import { EResponseMap, IResponse } from "@/const";
-import { authExpireHandle } from "@/hooks/auth";
+import { AuthProvider, authExpireHandle } from "@/hooks/auth";
 import axios, { AxiosInstance } from "axios";
 
 class PilotRequest {
@@ -30,7 +30,7 @@ class PilotRequest {
         instance.interceptors.response.use(
             (response) => {
                 if (response.data.code === EResponseMap.EXPIRES) {
-                    authExpireHandle();
+                   localStorage.removeItem('token');
                 }
                 // 处理请求成功的响应
                 return response.data;
