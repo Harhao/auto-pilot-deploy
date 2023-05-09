@@ -19,7 +19,7 @@ export default class CmdController {
     public async deploy(@Body data: DeployCmdDto) {
         const config: any = await this.projectService.getProject({ projectId: data.projectId});
         const logConfig: any = config?.data?.[0];
-        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, projectId: data.projectId});
+        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, ...data });
         
         this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
 
@@ -46,7 +46,7 @@ export default class CmdController {
 
         const config: any = await this.projectService.getProject({ projectId: data.projectId});
         const logConfig: any = config?.data?.[0];
-        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, projectId: data.projectId});
+        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, ...data });
 
         this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
 

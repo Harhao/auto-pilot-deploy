@@ -11,7 +11,7 @@ let AuthContext = React.createContext<AuthContextType>(null!);
 // 提供给退出处理
 export function AuthProvider(props: { children: React.ReactNode }) {
 
-    const initialVal =localStorage.getItem('token') ?? null;
+    const initialVal = localStorage.getItem('token') ?? null;
     const [token, setToken] = useState<string | null>(initialVal);
 
     const signin = (token: string, callback?: Function) => {
@@ -33,9 +33,4 @@ export function AuthProvider(props: { children: React.ReactNode }) {
 
 export function useAuth() {
     return React.useContext(AuthContext);
-}
-
-export function authExpireHandle() {
-   const auth = useAuth();
-   auth.signout();
 }

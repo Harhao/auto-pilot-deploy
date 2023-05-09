@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { getLogsList } from '@/api';
 import animation from '@/component/animation';
+import React, { useEffect, useState } from 'react';
+
+import { getLogsList } from '@/api';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Space, Table, Tag } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { deployStatus } from '@/const';
+
 import './index.scss';
-import { ELogsRunStatus, deployStatus } from '@/const';
 
 
 interface DataType {

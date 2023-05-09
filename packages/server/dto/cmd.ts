@@ -55,6 +55,10 @@ export class DeployCmdDto {
     @IsString()
     // 项目id
     projectId: string;
+
+    @IsString()
+    @IsOptional()
+    commitMsg: string;
 }
 
 export class RollbackCmdDto {
@@ -66,7 +70,11 @@ export class RollbackCmdDto {
 
     @IsString()
     @IsOptional()
-    rollNode: string;
+    commitHash: string;
+
+    @IsString()
+    @IsOptional()
+    commitMsg: string;
 }
 
 export class StopCmdDto {

@@ -1,14 +1,28 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button, Dropdown, Avatar, Space } from "antd";
-import { Outlet, Link } from "react-router-dom";
+import { Layout, Menu, Button, Dropdown, Avatar, Space, message } from "antd";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
 import { privateRoutes } from "@/routes";
+import { useAuth } from "@/hooks/auth";
+
 import "./index.scss";
 
 const { Header, Sider, Content } = Layout;
 
 const LayoutContainer: React.FC = () => {
+
+  const auth = useAuth();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  const logOutHandle = () => {
+    auth.signout(() => {
+      message.success({
+        content: '退出登录'
+      });
+      navigate('/login', { replace: true });
+    });
+  }
 
   return (
     <Layout rootClassName="layout-container">
@@ -42,11 +56,8 @@ const LayoutContainer: React.FC = () => {
             <Dropdown menu={{
               items: [{
                 key: '1',
-                label: (
-                  <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                    退出登录
-                  </a>
-                ),
+                label: <span>退出登录</span>,
+                onClick: logOutHandle,
               },]
             }} placement="bottom" arrow>
               <Avatar style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} size="small" />

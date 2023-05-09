@@ -169,7 +169,7 @@ export default class CmdService {
         const resp = await this.logsService.createLogs({
             projectId: data.projectId,
             logName: commitHash,
-            commitMsg: data.commitMsg,
+            commitMsg: data?.commitMsg ?? '未填写commit备注',
             logList: [],
             status: ELogsRunStatus.RUNNING,
         });
@@ -178,7 +178,8 @@ export default class CmdService {
 
     public async runDeployJob(data: any, logId: string, commitHash: string) {
        
-        const redisKey = `${commitHash}`;
+        // 使用logId作为redis key，防止重复冲突
+        const redisKey = `${logId}`;
 
         this.deployService(
             JSON.stringify(data),
