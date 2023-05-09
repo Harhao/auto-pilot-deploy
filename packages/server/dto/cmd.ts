@@ -95,3 +95,9 @@ export class GetCmdDto {
     @IsString()
     name: string;
 }
+
+export class StopRunnerDto {
+    @IsDefined()
+    @IsNumber()
+    pid: number
+}

@@ -3,7 +3,7 @@ import ProjectService from '../service/project';
 
 import { Inject } from '../ioc';
 import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Body, EValidateFields, Query } from '../decorator';
-import { DeployCmdDto, GetCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto } from '../dto';
+import { DeployCmdDto, GetCmdDto, RollbackCmdDto, StartCmdDto, StopCmdDto, StopRunnerDto } from '../dto';
 
 @Controller('/cmd')
 export default class CmdController {
@@ -21,7 +21,7 @@ export default class CmdController {
         const logConfig: any = config?.data?.[0];
         const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, ...data });
         
-        this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
+        this.cmdService.runDeployJob('deploy',logConfig, logId.toString(), commitHash);
 
         return {
             code: 200,
@@ -30,11 +30,13 @@ export default class CmdController {
         }
     }
 
-    @Get('/stopProcess')
+    @Get('/stopRunner')
     @ValidateAuth()
     @CatchError()
+    @ValidateDto(StopRunnerDto)
     @Response
-    public async stopProcess() {
+    public async stopProcess(@Query data:StopRunnerDto) {
+        return  await this.cmdService.stopRunner(data.pid);
     }
 
     @Post('/rollback')
@@ -48,7 +50,7 @@ export default class CmdController {
         const logConfig: any = config?.data?.[0];
         const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, ...data });
 
-        this.cmdService.runDeployJob(logConfig, logId.toString(), commitHash);
+        this.cmdService.runDeployJob('rollback', logConfig, logId.toString(), commitHash);
 
         return {
             code: 200,

@@ -5,10 +5,9 @@ import PilotService from "./pilot";
 import RedisService from "./redis";
 import LogsService from "./logs";
 import SocketService from "./socket";
+import ProcessService from "./process";
 import { ELogsRunStatus } from "../consts";
 import { CommonCmdDto } from "../dto";
-
-
 
 @Injectable
 export default class CmdService {
@@ -19,6 +18,7 @@ export default class CmdService {
     @Inject redisService: RedisService;
     @Inject logsService: LogsService;
     @Inject socketService: SocketService;
+    @Inject processService: ProcessService
 
     constructor() {
         this.initPilotService();
@@ -42,12 +42,12 @@ export default class CmdService {
     }
 
     // 部署服务
-    public deployService(projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
+    public startRunner(scriptName: string, projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script',
                 [
-                    'deploy',
+                    `${scriptName}`,
                     '--pilotConfig',
                     this.pilotConfig,
                     '--projectConfig',
@@ -63,36 +63,10 @@ export default class CmdService {
                 onErr?.(data);
             });
             child.stdout.on('close', () => {
+                this.processService.deleteProcess(child.pid);
                 onClose?.();
             });
-        });
-    }
-
-
-    //  回滚服务
-    public rollbackService(projectConfig: string, nginxConfig: string, onData: Function, onErr: Function, onClose?: Function) {
-        return new Promise((resolve) => {
-            const child = spawn(
-                'pilot-script',
-                [
-                    'rollback',
-                    '--pilotConfig',
-                    this.pilotConfig,
-                    '--projectConfig',
-                    projectConfig,
-                    '--nginxConfig',
-                    nginxConfig
-                ]
-            );
-            child.stdout.on('data', (data) => {
-                onData?.(data);
-            });
-            child.stderr.on('data', (data) => {
-                onErr?.(data);
-            });
-            child.stdout.on('close', () => {
-                onClose?.();
-            });
+            this.processService.saveProcess(child.pid);
         });
     }
 
@@ -176,25 +150,24 @@ export default class CmdService {
         return { logId: resp?.data, commitHash };
     }
 
-    public async runDeployJob(data: any, logId: string, commitHash: string) {
+    public async runDeployJob(scriptName: string, data: any, logId: string, commitHash: string) {
        
         // 使用logId作为redis key，防止重复冲突
         const redisKey = `${logId}`;
 
-        this.deployService(
+        this.startRunner(
+            scriptName,
             JSON.stringify(data),
             JSON.stringify(data.nginxConfig),
             async (datatBuffer: Buffer) => {
-                console.log(datatBuffer.toString())
                 this.onStdoutHandle(datatBuffer);
                 await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
             },
             async (datatBuffer: Buffer) => {
-                console.log(datatBuffer.toString())
                 this.onStdoutHandle(datatBuffer);
                 await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
             },
-            async () => {
+            async (status: number ) => {
                 const stdout = await this.redisService.getList(`${redisKey}`);
                 await this.logsService.updateLogs({
                     projectId: data._id,
@@ -202,11 +175,23 @@ export default class CmdService {
                     logList: stdout,
                     logName: commitHash,
                     commitMsg: data.commitMsg,
-                    status: ELogsRunStatus.SUCCESS
+                    status: !status ?  ELogsRunStatus.SUCCESS: ELogsRunStatus.ERROR,
                 });
                 await this.redisService.deleteKey(`${redisKey}`);
             }
         );
+    }
+
+    public async stopRunner(pid: number) {
+        let isStopDone = false;
+        const isExist = await this.processService.existProcess(pid);
+        if(isExist) {
+            process.kill(pid, 'SIGINT');
+            isStopDone = await this.processService.deleteProcess(pid);
+        }
+        return {
+            isStop: isStopDone
+        };
     }
 
 }

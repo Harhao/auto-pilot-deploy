@@ -10,6 +10,10 @@ export async function deployProject(params: { projectId: string }): Promise<IRes
     return await request.post('/cmd/deploy', params);
 }
 
+export async function rollBack(params: { projectId: string, commitMsg: string}): Promise<IResponse> {
+    return await request.post('/cmd/rollBack', params);
+}
+
 export async function getServiceList(params: { name?: string }): Promise<IResponse> {
     return await request.get('/cmd/services', params);
 }

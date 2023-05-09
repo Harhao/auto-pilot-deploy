@@ -71,7 +71,7 @@ export default class RedisService {
     }
 
     @CatchError()
-    public setList(key: string, data: string[] | string) {
+    public setList(key: string, data: any) {
         return new Promise((resolve) => {
            this.redisClient.rpush(key, data, (err, reply) => {
                 if(err) {
@@ -79,6 +79,32 @@ export default class RedisService {
                     return;
                 }
                 resolve(true);
+           });
+        });
+    }
+
+    @CatchError()
+    public delListKey(key: string, data: any): Promise<boolean> {
+        return new Promise((resolve) => {
+           this.redisClient.lrem(key, 0, data, (err, numRemoved) => {
+                if(err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(numRemoved > 0);
+           });
+        });
+    }
+
+    @CatchError()
+    public existKeyVal(key: string, data: any): Promise<boolean> {
+        return new Promise((resolve) => {
+           this.redisClient.lrange(key, 0, -1, (err, values) => {
+                if(err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(values.includes(data));
            });
         });
     }
