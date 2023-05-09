@@ -18,7 +18,8 @@ function LogDetail() {
         return resp;
     };
 
-    const getLogsPoll = (logId: string) => {
+    const getLogsPoll =  (logId: string) => {
+        getLogDetail(logId);
         interval = setInterval(async () => {
             const res = await getLogDetail(logId);
             if (res.code === EResponseMap.SUCCESS) {

@@ -100,7 +100,7 @@ export default class LogsService {
 
         // 如果logList有数据说明已经跑完
         if (result?.logName) {
-            const list = result?.logList.length > 0 ? result.logList : (await this.redisService.getList(`${result.logName}`));
+            const list = result?.logList.length > 0 ? result.logList : (await this.redisService.getList(`${data.logId}`));
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: {

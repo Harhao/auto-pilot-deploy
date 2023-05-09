@@ -17,26 +17,26 @@ export default class CmdController {
     @ValidateDto(DeployCmdDto)
     @Response
     public async deploy(@Body data: DeployCmdDto) {
-        const config: any = await this.projectService.getProject({ projectId: data.projectId});
+        const config: any = await this.projectService.getProject({ projectId: data.projectId });
         const logConfig: any = config?.data?.[0];
-        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, ...data });
-        
-        this.cmdService.runDeployJob('deploy',logConfig, logId.toString(), commitHash);
+        const { logId, commitHash } = await this.cmdService.createRunLog({ ...logConfig, ...data });
+
+        this.cmdService.runDeployJob('deploy', logConfig, logId.toString(), commitHash);
 
         return {
             code: 200,
             data: { logId },
-            msg: 'success'  
+            msg: 'success'
         }
     }
 
     @Get('/stopRunner')
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(StopRunnerDto)
+    @ValidateDto(StopRunnerDto, EValidateFields.QUERY)
     @Response
-    public async stopProcess(@Query data:StopRunnerDto) {
-        return  await this.cmdService.stopRunner(data.pid);
+    public async stopProcess(@Query data: StopRunnerDto) {
+        return await this.cmdService.stopRunner(data.pid);
     }
 
     @Post('/rollback')
@@ -46,11 +46,11 @@ export default class CmdController {
     @Response
     public async rollback(@Body data: RollbackCmdDto) {
 
-        const config: any = await this.projectService.getProject({ projectId: data.projectId});
+        const config: any = await this.projectService.getProject({ projectId: data.projectId });
         const logConfig: any = config?.data?.[0];
-        const { logId, commitHash  } = await this.cmdService.createRunLog({ ...logConfig, ...data });
+        const { logId, commitHash } = await this.cmdService.createRunLog({ ...logConfig, ...data });
 
-        this.cmdService.runDeployJob('rollback', logConfig, logId.toString(), commitHash);
+        this.cmdService.runDeployJob('rollback', { ...logConfig, ...data }, logId.toString(), commitHash);
 
         return {
             code: 200,
@@ -103,7 +103,7 @@ export default class CmdController {
     public async getServices(@Query data: GetCmdDto) {
         let resp = [];
         const list = (await this.cmdService.getServiceList()) as any;
-        if(data?.name) {
+        if (data?.name) {
             resp = list.filter((item: any) => item.name === data.name);
         } else {
             resp = list;

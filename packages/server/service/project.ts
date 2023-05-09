@@ -72,7 +72,6 @@ export default class ProjectService {
         const result = await this.mongoService.deleteOne(ProjectService.tableName, {
             _id: new ObjectId(data.projectId),
         });
-        console.log(result)
         return {
             code: EResponseCodeMap.SUCCESS,
             data: !!result?.deletedCount,

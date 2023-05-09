@@ -45,7 +45,6 @@ export class NodePlatform extends Base {
             await this.uploadFileToServer(pilotCofig, localDir, remoteDir);
             await this.client.execCommand(`${tool} install`, cmdConfig);
             await this.client.execCommand(`${tool} ${command}`, cmdConfig);
-            console.log(`pm2 start ${deployDir} --name="${remoteRootFolder}"`);
             await this.client!.execCommand(`pm2 start ${deployDir} --name="${remoteRootFolder}" -f`, cmdConfig);
             await this.configNginxConf(remoteRootFolder, nginxConfig);
         }
