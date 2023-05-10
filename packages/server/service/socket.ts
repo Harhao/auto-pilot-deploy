@@ -39,7 +39,6 @@ export default class SocketService {
     }
 
     public sendToSocketId(data: string) {
-        console.log(this.socketId);
         this.io.to(this.socketId).emit(ESocketMsgType.SINGLECHANNEL, data);
     }
 

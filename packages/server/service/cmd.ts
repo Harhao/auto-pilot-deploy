@@ -42,7 +42,7 @@ export default class CmdService {
     }
 
     // 部署服务
-    public startRunner(scriptName: string, logId:string,projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
+    public startRunner(scriptName: string, logId: string, projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script',
@@ -62,11 +62,11 @@ export default class CmdService {
             child.stderr.on('data', (data) => {
                 onErr?.(data);
             });
-            child.stdout.on('close', () => {
+            child.on('close', (code: any, signal: any) => {
                 this.processService.deleteProcess(logId);
-                onClose?.();
+                onClose?.(code, signal);
             });
-            this.processService.saveProcess({ [logId]: child.pid});
+            this.processService.saveProcess({ [logId]: child.pid });
         });
     }
 
@@ -138,7 +138,7 @@ export default class CmdService {
     }
 
     public async createRunLog(data: CommonCmdDto) {
-        const commitHash = data?.commitHash ? data.commitHash :await this.getRepoHeadHash(data.gitUrl, data.branch);
+        const commitHash = data?.commitHash ? data.commitHash : await this.getRepoHeadHash(data.gitUrl, data.branch);
         // mongodb生成logs日志
         const resp = await this.logsService.createLogs({
             projectId: data.projectId,
@@ -151,7 +151,7 @@ export default class CmdService {
     }
 
     public async runDeployJob(scriptName: string, data: any, logId: string, commitHash: string) {
-       
+
         // 使用logId作为redis key，防止重复冲突
         const redisKey = `${logId}`;
 
@@ -168,7 +168,7 @@ export default class CmdService {
                 this.onStdoutHandle(datatBuffer);
                 await this.redisService.setList(`${redisKey}`, datatBuffer.toString());
             },
-            async (status: number ) => {
+            async (code: number, signal: any) => {
                 const stdout = await this.redisService.getList(`${redisKey}`);
                 await this.logsService.updateLogs({
                     projectId: data._id,
@@ -176,7 +176,7 @@ export default class CmdService {
                     logList: stdout,
                     logName: commitHash,
                     commitMsg: data.commitMsg,
-                    status: !status ?  ELogsRunStatus.SUCCESS: ELogsRunStatus.ERROR,
+                    status: this.getRunnerStatus(code, signal),
                 });
                 await this.redisService.deleteKey(`${redisKey}`);
             }
@@ -186,13 +186,23 @@ export default class CmdService {
     public async stopRunner(logId: string) {
         let isStopDone = false;
         const pid: number = await this.processService.existProcess(logId);
-        if(pid) {
-            process.kill(pid, 'SIGINT');
-            isStopDone = await this.processService.deleteProcess(logId);
+        if (pid) {
+            isStopDone = process.kill(pid, 'SIGINT');
+            await this.processService.deleteProcess(logId);
         }
         return {
-            isStop: isStopDone
+            isStop: isStopDone,
+            pid
         };
     }
 
+    private getRunnerStatus(code: any, signal: any) {
+        if (code === null && signal === 'SIGINT') {
+            return ELogsRunStatus.INTERRUPT;
+        } else if (code === 0 && signal === null) {
+            return ELogsRunStatus.SUCCESS;
+        } else {
+            return ELogsRunStatus.ERROR;
+        }
+    }
 }
