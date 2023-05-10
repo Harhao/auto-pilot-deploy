@@ -1,31 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import animation from '@/component/animation';
-import { deployProject, getLogsDetail } from '@/api';
+import { cancelDeploy, deployProject, getLogsDetail } from '@/api';
 import { useParams } from 'react-router-dom';
 import { EResponseMap } from '@/const';
+import { Button, Space, message } from 'antd';
 
 import './index.scss';
 
 function LogDetail() {
 
-    const [list, setList] = useState<any[]>([]);
     const params = useParams();
+    const [logData, setLogData] = useState<{ list: string[]; status: number }>({
+        list: [],
+        status: -1,
+    });
+    const [logId, setLogId] = useState<string>('');
+
     let interval: number | null = null;
 
     const getLogDetail = async (logId: string) => {
         const resp = await getLogsDetail({ logId });
-        setList(resp.data.list);
+        const { list, status } = resp.data;
+        setLogData({
+            list,
+            status
+        });
         return resp;
     };
 
-    const getLogsPoll =  (logId: string) => {
+    const cancelRuningJob = async () => {
+        const res = await cancelDeploy({ logId });
+        if (res.code === EResponseMap.SUCCESS) {
+            message.success({
+                content: '取消成功'
+            });
+        }
+    };
+
+    const getLogsPoll = (logId: string) => {
         getLogDetail(logId);
         interval = setInterval(async () => {
             const res = await getLogDetail(logId);
             if (res.code === EResponseMap.SUCCESS) {
                 const { isDone } = res.data;
                 if (isDone) {
-                    if(interval) {
+                    if (interval) {
                         clearInterval(interval);
                         interval = null;
                     }
@@ -40,20 +59,16 @@ function LogDetail() {
         const resp = await deployProject({ projectId });
         if (resp.code === EResponseMap.SUCCESS) {
             const { logId } = resp.data;
+            setLogId(logId);
             getLogsPoll(logId);
         }
     };
 
     useEffect(() => {
-        if (params.projectId) {
+        const { projectId = null , logId = null } = params;
+        if (projectId) {
             // 如果已有logId，证明已有点击部署
-            if (params.logId) {
-                getLogsPoll(params.logId);
-                return;
-            } else {
-                // 未部署
-                deployHandle(params.projectId);
-            }
+            logId ? getLogsPoll(logId): deployHandle(projectId);
         }
         return () => {
             interval && clearInterval(interval);
@@ -62,10 +77,13 @@ function LogDetail() {
 
     return (
         <div className="log-detail-container">
+            <Space className='log-detail-header'>
+                <Button onClick={cancelRuningJob}>取消部署</Button>
+            </Space>
             <div
                 className="log-detail-content">
                 {
-                    list.map((log: string, index: number) => {
+                    logData.list.map((log: string, index: number) => {
                         return <div key={index}>{log}</div>;
                     })
                 }

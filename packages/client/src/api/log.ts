@@ -9,3 +9,7 @@ export async function getLogsList(params: { projectId: string | undefined }): Pr
 export async function getLogsDetail(params: { logId: string }): Promise<IResponse> {
     return await request.get('/logs/getLogDetail', params);
 }
+
+export async function cancelDeploy(params: { logId: string }): Promise<IResponse> {
+    return await request.get('/cmd/stopRunner', params);
+}

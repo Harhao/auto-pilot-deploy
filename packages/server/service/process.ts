@@ -11,17 +11,17 @@ export default class ProcessService {
 
 
     @CatchError()
-    public async saveProcess(pid: number) {
-       return await this.redisService.setList(`${RedisConfig.redisdeployList}`, pid);
+    public async saveProcess(data: Record<string, any>) {
+       return await this.redisService.setHashMap(`${RedisConfig.redisPidMap}`, data);
     }
 
     @CatchError()
-    public async deleteProcess(pid: number): Promise<boolean> {
-        return await this.redisService.delListKey(`${RedisConfig.redisdeployList}`, pid);
+    public async deleteProcess(logId: string): Promise<boolean> {
+        return await this.redisService.deleteHashMapVal(`${RedisConfig.redisPidMap}`, logId);
     }
 
     @CatchError()
-    public async existProcess(pid: number):Promise<boolean> {
-        return await this.redisService.existKeyVal(RedisConfig.redisdeployList, pid);
+    public async existProcess(logId: string):Promise<number> {
+        return await this.redisService.getHashMap(RedisConfig.redisPidMap, logId);
     }
 }

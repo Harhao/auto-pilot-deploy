@@ -98,6 +98,6 @@ export class GetCmdDto {
 
 export class StopRunnerDto {
     @IsDefined()
-    @IsNumber()
-    pid: number
+    @IsString()
+    logId: string;
 }

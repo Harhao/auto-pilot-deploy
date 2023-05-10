@@ -1,6 +1,6 @@
 import MongoDBService from "./mongo";
 import { Inject, Injectable } from "../ioc";
-import { EResponseCodeMap } from "../consts";
+import { ELogsRunStatus, EResponseCodeMap } from "../consts";
 import { ObjectId } from "mongodb";
 import { CreateLogDto, GetLogsDetailDto, GetLogsDto, UpdateLogDto } from "../dto";
 import RedisService from "./redis";
@@ -95,16 +95,20 @@ export default class LogsService {
             _id: new ObjectId(data.logId)
         },
             {
-                projection: { logList: 1, logName: 1 }
+                projection: { logList: 1, logName: 1, status: 1 }
             });
 
         // 如果logList有数据说明已经跑完
         if (result?.logName) {
-            const list = result?.logList.length > 0 ? result.logList : (await this.redisService.getList(`${data.logId}`));
+            const isDone = result?.logList.length > 0;
+            const list = isDone ? result.logList : (await this.redisService.getList(`${data.logId}`));
+            const status = isDone ? result.status: ELogsRunStatus.RUNNING;
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: {
-                    isDone: result?.logList.length > 0,
+                    logId: data.logId,
+                    isDone,
+                    status,
                     list,
                 },
                 msg: 'success'

@@ -47,25 +47,37 @@ export default class RedisService {
     }
 
     @CatchError()
-    public setHashMap(key: string, data: Record<string, any>) {
+    public setHashMap(mapName: string, data: Record<string, any>) {
         return new Promise((resolve) => {
             const args = [];
             for (let [key, value] of Object.entries(data)) {
                 args.push(key, value);
             }
-            this.redisClient.hmset([key, ...args]);
+            this.redisClient.hmset(mapName, ...args);
         });
     }
 
     @CatchError()
-    public getHashMap(key: string) {
+    public getHashMap(mapName: string, key: string): Promise<any> {
         return new Promise((resolve) => {
-            this.redisClient.hmget(key, (err: Error, object:  Record<string, any>) => {
+            this.redisClient.hget(mapName, key, (err, reply) => {
                 if (err) {
                     resolve(null);
                     return;
                 }
-                resolve(object);
+                resolve(reply);
+              });
+        });
+    }
+    @CatchError()
+    public deleteHashMapVal(mapName: string, key: string): Promise<any> {
+        return new Promise((resolve) => {
+            this.redisClient.hdel(mapName, key, (err, reply) => {
+                if (err) {
+                    resolve(null);
+                    return;
+                }
+                resolve(reply);
             });
         });
     }

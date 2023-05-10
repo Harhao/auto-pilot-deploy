@@ -42,7 +42,7 @@ export default class CmdService {
     }
 
     // 部署服务
-    public startRunner(scriptName: string, projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
+    public startRunner(scriptName: string, logId:string,projectConfig: string, nginxConfig: string, onData?: Function, onErr?: Function, onClose?: Function) {
         return new Promise((resolve) => {
             const child = spawn(
                 'pilot-script',
@@ -63,10 +63,10 @@ export default class CmdService {
                 onErr?.(data);
             });
             child.stdout.on('close', () => {
-                this.processService.deleteProcess(child.pid);
+                this.processService.deleteProcess(logId);
                 onClose?.();
             });
-            this.processService.saveProcess(child.pid);
+            this.processService.saveProcess({ [logId]: child.pid});
         });
     }
 
@@ -157,6 +157,7 @@ export default class CmdService {
 
         this.startRunner(
             scriptName,
+            logId,
             JSON.stringify(data),
             JSON.stringify(data.nginxConfig),
             async (datatBuffer: Buffer) => {
@@ -182,12 +183,12 @@ export default class CmdService {
         );
     }
 
-    public async stopRunner(pid: number) {
+    public async stopRunner(logId: string) {
         let isStopDone = false;
-        const isExist = await this.processService.existProcess(pid);
-        if(isExist) {
+        const pid: number = await this.processService.existProcess(logId);
+        if(pid) {
             process.kill(pid, 'SIGINT');
-            isStopDone = await this.processService.deleteProcess(pid);
+            isStopDone = await this.processService.deleteProcess(logId);
         }
         return {
             isStop: isStopDone

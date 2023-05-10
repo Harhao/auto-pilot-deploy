@@ -36,7 +36,7 @@ export default class CmdController {
     @ValidateDto(StopRunnerDto, EValidateFields.QUERY)
     @Response
     public async stopProcess(@Query data: StopRunnerDto) {
-        return await this.cmdService.stopRunner(data.pid);
+        return await this.cmdService.stopRunner(data.logId);
     }
 
     @Post('/rollback')
