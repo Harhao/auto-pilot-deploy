@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.scss";
+import "./index.less";
 
 export default function NoMatch() {
     return <div className="no-match-wrapper">

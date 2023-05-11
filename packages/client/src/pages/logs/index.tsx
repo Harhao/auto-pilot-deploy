@@ -8,7 +8,7 @@ import { Button, Input, Modal, Space, Table, Tag } from "antd";
 import { EResponseMap, deployStatus } from "@/const";
 import { useDebounceFn, useMount } from "ahooks";
 
-import "./index.scss";
+import "./index.less";
 
 
 interface DataType {

@@ -1,6 +1,6 @@
 import React from "react";
 import animation from "@/component/animation";
-import "./index.scss";
+import "./index.less";
 
 const Home = () => {
 

@@ -5,8 +5,9 @@ import { Button, Form, Input, message } from "antd";
 import { EResponseMap } from "@/const";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/auth";
-import "./index.scss";
 import { animated, useSpring } from "@react-spring/web";
+
+import "./index.less";
 
 const loginContainer = () => {
     const navigate = useNavigate();

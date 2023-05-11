@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSpring, animated } from '@react-spring/web';
-import './index.scss';
+import './index.less';
 
 export default function animation(WrappedComponent: React.FunctionComponent) {
     return function DecoratorComponent(props: any) {

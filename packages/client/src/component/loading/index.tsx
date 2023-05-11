@@ -1,6 +1,6 @@
 import React from 'react';
 import { Spin } from "antd";
-import "./index.scss";
+import "./index.less";
 
 
 const Loading = () => {

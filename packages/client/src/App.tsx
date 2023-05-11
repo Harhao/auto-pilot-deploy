@@ -1,7 +1,7 @@
 import React from "react";
 import RouteElement from '@/routes'
 import { AuthProvider } from "./hooks/auth";
-import './App.scss'
+import './App.less'
 
 export default function App() {
   return (

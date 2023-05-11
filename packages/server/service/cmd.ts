@@ -81,8 +81,9 @@ export default class CmdService {
             child.stderr.on('data', (data) => {
                 this.onStdoutHandle(data);
             });
-            child.stdout.on('close', () => {
-                resolve(true);
+            child.on('close', (code: any, signal: any) => {
+                const isSuccess = code === 0 && !signal; 
+                resolve(isSuccess);
             });
         });
     }
@@ -105,8 +106,9 @@ export default class CmdService {
             child.stderr.on('data', (data) => {
                 this.onStdoutHandle(data);
             });
-            child.stdout.on('close', () => {
-                resolve(true);
+            child.on('close', (code: any, signal: any) => {
+                const isSuccess = code === 0 && !signal; 
+                resolve(isSuccess);
             });
         });
     }

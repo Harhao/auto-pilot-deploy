@@ -8,8 +8,8 @@ const devConfig = merge(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.s?css$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
+        test: /\.(css|less)$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'],
       },
     ],
   },

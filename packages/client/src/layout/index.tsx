@@ -5,7 +5,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/
 import { privateRoutes } from "@/routes";
 import { useAuth } from "@/hooks/auth";
 
-import "./index.scss";
+import "./index.less";
 
 const { Header, Sider, Content } = Layout;
 

@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import animation from '@/component/animation';
 import { cancelDeploy, deployProject, getLogsDetail } from '@/api';
 import { useParams } from 'react-router-dom';
-import { EResponseMap } from '@/const';
-import { Button, Space, message } from 'antd';
+import { ELogsRunStatus, EResponseMap } from '@/const';
+import { Button, message } from 'antd';
+import RunningStatus from '@/component/status';
 
-import './index.scss';
+import './index.less';
+
 
 function LogDetail() {
 
@@ -65,10 +67,10 @@ function LogDetail() {
     };
 
     useEffect(() => {
-        const { projectId = null , logId = null } = params;
+        const { projectId = null, logId = null } = params;
         if (projectId) {
             // 如果已有logId，证明已有点击部署
-            logId ? getLogsPoll(logId): deployHandle(projectId);
+            logId ? getLogsPoll(logId) : deployHandle(projectId);
         }
         return () => {
             interval && clearInterval(interval);
@@ -77,9 +79,13 @@ function LogDetail() {
 
     return (
         <div className="log-detail-container">
-            <Space className='log-detail-header'>
-                <Button onClick={cancelRuningJob}>取消部署</Button>
-            </Space>
+            <div className='log-detail-header'>
+                <RunningStatus status={logData.status} />
+                {logData.status === ELogsRunStatus.RUNNING ? <Button onClick={cancelRuningJob}>取消部署</Button> : null}
+            </div>
+            <div className='log-detail-header'>
+               
+            </div>
             <div
                 className="log-detail-content">
                 {

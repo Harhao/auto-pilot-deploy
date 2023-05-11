@@ -12,14 +12,14 @@ module.exports = merge(baseConfig, {
   module: {
     rules: [
       {
-        test: /\.s?css$/,
+        test: /\.(css|less)$/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
           },
           "css-loader",
           "postcss-loader",
-          "sass-loader",
+          "less-loader",
         ],
         exclude: /node_modules/,
       },
