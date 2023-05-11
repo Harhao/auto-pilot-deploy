@@ -8,7 +8,8 @@ module.exports = {
     entry: {
         [dllName]: [
             "react", 
-            "react-dom"
+            "react-dom",
+            "react-router-dom",
         ]
     },
     output: {

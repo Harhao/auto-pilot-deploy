@@ -1,4 +1,4 @@
-const { checkDll, isProduction, uploadSourceMap } = require("./utils");
+const { checkDll, isProduction } = require("./utils");
 const log = require("./log");
 const webpack = require("webpack");
 const webpackDevServer = require("webpack-dev-server");
@@ -49,7 +49,6 @@ async function main() {
       process.exit(1);
     }
     log.success("✨✨ 构建项目完成 ✨✨");
-    uploadSourceMap();
   });
 }
 

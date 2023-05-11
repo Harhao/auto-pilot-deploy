@@ -1,12 +1,21 @@
 import { EResponseMap, IResponse } from "@/const";
 import axios, { AxiosInstance } from "axios";
+import store from "@/store";
+import { clearAuthToken } from "@/store/reducers/auth";
 
 class PilotRequest {
 
     private request: AxiosInstance;
+    private static singleInstance: PilotRequest | null = null;
 
     constructor() {
         this.request = this.initAxiosInstance();
+    }
+    public static getInstance() {
+        if(!this.singleInstance) {
+            this.singleInstance = new PilotRequest();
+        }
+        return this.singleInstance;
     }
 
     private initAxiosInstance(): AxiosInstance {
@@ -29,8 +38,7 @@ class PilotRequest {
         instance.interceptors.response.use(
             (response) => {
                 if (response.data.code === EResponseMap.EXPIRES) {
-                  localStorage.removeItem('token');
-                  window.location.reload();
+                    store.dispatch(clearAuthToken());
                 }
                 // 处理请求成功的响应
                 return response.data;
@@ -62,4 +70,4 @@ class PilotRequest {
     }
 }
 
-export const request = new PilotRequest();
+export const request = PilotRequest.getInstance();

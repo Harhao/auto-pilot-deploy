@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react';
-import Loading from '@/component/loading';
-import RequireAuth from '@/component/auth';
+import Loading from '@/component/Loading';
+
 import {
     HomeOutlined,
     ProjectOutlined,
@@ -9,23 +9,22 @@ import {
 import { 
     createBrowserRouter, 
     RouterProvider,
-    Navigate 
 } from 'react-router-dom';
 
-const Home = lazy(() => import('@/pages/home'));
-const Project = lazy(() => import('@/pages/project'));
-const NoMatch = lazy(() => import('@/pages/404'));
-const Setting = lazy(() => import('@/pages/setting'));
-const Login = lazy(() => import('@/pages/login'));
-const Logs = lazy(() => import('@/pages/logs'));
-const LogsDetail = lazy(() => import('@/pages/logs/detail'));
-const Service = lazy(() => import('@/pages/service'));
-const Layout = lazy(() => import('@/layout'));
+const Home = lazy(() => import('@/views/home'));
+const Project = lazy(() => import('@/views/project'));
+const NoMatch = lazy(() => import('@/views/NoMatch'));
+const Setting = lazy(() => import('@/views/setting'));
+const Login = lazy(() => import('@/views/login'));
+const Logs = lazy(() => import('@/views/logs'));
+const LogsDetail = lazy(() => import('@/views/logs/detail'));
+const Service = lazy(() => import('@/views/service'));
+const RequireAuthLayout = lazy(() => import('@/component/AuthLayout'));
 
 export const privateRoutes =
 {
-    path: '/admin',
-    element: <RequireAuth><Layout /></RequireAuth>,
+    path: '/dashboard',
+    element: <RequireAuthLayout />,
     children: [
         {
             index: true,
@@ -70,10 +69,9 @@ export const privateRoutes =
 const routes = [
     {
         path: '/',
-        element: <Navigate to='/login' />,
+        element: <RequireAuthLayout />,
     },
     {
-        index: true,
         path: '/login',
         icon: null,
         label: '登陆页',

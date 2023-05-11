@@ -4,14 +4,15 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, message } from "antd";
 import { EResponseMap } from "@/const";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/auth";
 import { animated, useSpring } from "@react-spring/web";
+import { useDispatch } from 'react-redux';
+import { setAuthToken } from "@/store/reducers/auth";
 
 import "./index.less";
 
 const loginContainer = () => {
     const navigate = useNavigate();
-    const auth = useAuth();
+    const dispatch = useDispatch();
     const [animation, api] = useSpring(
         () => ({
             from: { transform: "translateX(100%)" },
@@ -23,10 +24,10 @@ const loginContainer = () => {
     const onFinish = async (values: { userName: string, password: string }) => {
         const res: any = await login({ ...values });
         if (res.code == EResponseMap.SUCCESS) {
-            auth.signin(res.data, () => {
-                navigate('/admin/project');
-                message.open({ type: 'success', content: '登录成功'})
-            });
+            const token = res.data;
+            dispatch(setAuthToken(token));
+            navigate('/dashboard');
+            message.open({ type: 'success', content: '登录成功'});
             return;
         }
         message.open({ type: 'error', content: '帐号密码不正确'})

@@ -1,4 +1,4 @@
-const { checkDll, uploadSourceMap } = require("./utils");
+const { checkDll } = require("./utils");
 const log = require("./log");
 const webpack = require("webpack");
 const getEnv = require("./getEnv");
@@ -30,7 +30,6 @@ async function main() {
       process.exit(1);
     }
     log.success("✨✨ 构建项目完成 ✨✨");
-    uploadSourceMap();
   });
 }
 

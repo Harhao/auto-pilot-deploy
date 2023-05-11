@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import animation from '@/component/animation';
+import animation from '@/component/Animation';
 import { cancelDeploy, deployProject, getLogsDetail } from '@/api';
 import { useParams } from 'react-router-dom';
 import { ELogsRunStatus, EResponseMap } from '@/const';
 import { Button, message } from 'antd';
-import RunningStatus from '@/component/status';
+import RunningStatus from '@/component/Status';
 
 import './index.less';
 

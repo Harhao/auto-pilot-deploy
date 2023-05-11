@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import animation from '@/component/animation';
+import animation from '@/component/Animation';
 import {
     Button,
     Checkbox,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import animation from '@/component/animation';
+import animation from '@/component/Animation';
 import { Button, Space, Table, Tag, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { getProjectList, getServiceList } from '@/api';
@@ -107,9 +107,9 @@ const Project: React.FC = () => {
         const name = getRepoName(data.gitUrl);
         return (
           <Space size="small">
-            <Button type="primary" size="small" onClick={() => navigate(`/admin/service/${name}`)}>服务</Button>
-            <Button type="primary" size="small" onClick={() => navigate(`/admin/logs/${data._id}`)}>日志</Button>
-            <Button type="primary" size="small" onClick={() => navigate(`/admin/logsDetail/${data._id}`)}>部署</Button>
+            <Button type="primary" size="small" onClick={() => navigate(`/dashboard/service/${name}`)}>服务</Button>
+            <Button type="primary" size="small" onClick={() => navigate(`/dashboard/logs/${data._id}`)}>日志</Button>
+            <Button type="primary" size="small" onClick={() => navigate(`/dashboard/logsDetail/${data._id}`)}>部署</Button>
           </Space>
         );
       }

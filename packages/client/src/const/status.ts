@@ -5,8 +5,6 @@ export enum ELogsRunStatus {
     SUCCESS,
 }
 
-
-
 export const deployStatus: Record<number, { msg: string, color: string }> = {
     [ELogsRunStatus.RUNNING]: { msg: '运行中', color: 'processing' },
     [ELogsRunStatus.INTERRUPT]: { msg: '已取消', color: 'default' },

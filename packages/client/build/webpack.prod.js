@@ -3,8 +3,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
-// const SentryWebpackPlugin = require("@sentry/webpack-plugin");
-// const sentryConfig = require("../config/sentry.config");
+const SentryWebpackPlugin = require("@sentry/webpack-plugin");
+const sentryConfig = require("../config/sentry.config");
 const { merge } = require("webpack-merge");
 
 module.exports = merge(baseConfig, {
@@ -46,7 +46,7 @@ module.exports = merge(baseConfig, {
     minimizer: [
       new UglifyJsPlugin({
         test: /\.js(\?.*)?$/i,
-        sourceMap: true, // 开启 sourcemap 功能
+        sourceMap: false, // 开启 sourcemap 功能
         uglifyOptions: {
           compress: {
             drop_console: false,

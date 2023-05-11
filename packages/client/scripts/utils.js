@@ -54,21 +54,6 @@ function downloadDll() {
   });
 }
 
-function uploadSourceMap() {
-  return new Promise((resolve, reject) => {
-    const spinner = ora(`开始上传sourcemap...`);
-    spinner.start();
-    try {
-      execScript(`npm run build:upload`);
-      spinner.succeed("✨✨ 已成功上传sourcemap...");
-      resolve();
-    } catch (err) {
-      spinner.fail();
-      reject(err);
-    }
-  });
-}
-
 function getNpmParam() {
   const env = process.env.NODE_ENV;
   return env;
@@ -83,5 +68,4 @@ module.exports = {
   checkDll,
   getNpmParam,
   isProduction,
-  uploadSourceMap
 };

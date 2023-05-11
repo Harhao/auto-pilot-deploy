@@ -1,4 +1,4 @@
-import animation from "@/component/animation";
+import animation from "@/component/Animation";
 import React, {useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 
@@ -100,7 +100,7 @@ function Logs() {
               type="primary"
               size="small"
               onClick={() =>
-                navigate(`/admin/logsDetail/${params.id}/${data._id}`)
+                navigate(`/dashboard/logsDetail/${params.id}/${data._id}`)
               }
             >
               详情

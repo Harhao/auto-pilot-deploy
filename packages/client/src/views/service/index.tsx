@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { getServiceList } from '@/api';
-import animation from '@/component/animation';
+import animation from '@/component/Animation';
 import { useParams } from 'react-router-dom';
 import { Space, Table } from 'antd';
 import { useMount } from 'ahooks';

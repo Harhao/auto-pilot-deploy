@@ -3,7 +3,8 @@ import { Layout, Menu, Button, Dropdown, Avatar, Space, message } from "antd";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 import { MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
 import { privateRoutes } from "@/routes";
-import { useAuth } from "@/hooks/auth";
+import { useDispatch } from 'react-redux';
+import { clearAuthToken } from "@/store/reducers/auth";
 
 import "./index.less";
 
@@ -11,17 +12,16 @@ const { Header, Sider, Content } = Layout;
 
 const LayoutContainer: React.FC = () => {
 
-  const auth = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
   const logOutHandle = () => {
-    auth.signout(() => {
-      message.success({
-        content: '退出登录'
-      });
-      navigate('/login', { replace: true });
+    dispatch(clearAuthToken());
+    message.success({
+      content: '退出登录'
     });
+    navigate('/login', { replace: true });
   }
 
   return (
@@ -35,10 +35,9 @@ const LayoutContainer: React.FC = () => {
         <div className="layout-logo_container">Pilot</div>
         <Menu theme="dark" mode="inline">
           {privateRoutes.children.map((route) => {
-
             return (
               route.icon ? <Menu.Item key={route.path} icon={route.icon}>
-                <Link to={route.path}>{route.label}</Link>
+                <Link to={`${privateRoutes.path}/${route.path}`}>{route.label}</Link>
               </Menu.Item> : null
             );
           })}

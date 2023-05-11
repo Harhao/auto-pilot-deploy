@@ -1,5 +1,5 @@
 import React from "react";
-import animation from "@/component/animation";
+import animation from "@/component/Animation";
 import "./index.less";
 
 const Home = () => {
