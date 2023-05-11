@@ -24,13 +24,14 @@ const RequireAuthLayout = lazy(() => import('@/component/AuthLayout'));
 export const privateRoutes =
 {
     path: '/dashboard',
+    label: '主页',
     element: <RequireAuthLayout />,
     children: [
         {
             index: true,
             path: 'home',
             icon: <HomeOutlined />,
-            label: '主页',
+            label: '项目介绍',
             element: <Home />
         },
         {
@@ -58,7 +59,7 @@ export const privateRoutes =
             element: <Logs />
         },
         {
-            path: 'logsDetail/:projectId/:logId?',
+            path: 'logsDetail/:projectId/:logId',
             icon: null,
             label: '日志详情',
             element: <LogsDetail />
@@ -66,9 +67,11 @@ export const privateRoutes =
     ],
 };
 
-const routes = [
+export const routes = [
     {
         path: '/',
+        icon: null,
+        label: '首页',
         element: <RequireAuthLayout />,
     },
     {

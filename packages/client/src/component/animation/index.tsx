@@ -7,11 +7,11 @@ export default function animation(WrappedComponent: React.FunctionComponent) {
         
         const [animation, api] = useSpring(
             () => ({
-                from: { transform: "translateX(100%)" },
-                to: { transform: "translateX(0%)"},
+                from: { transform: 'scale(0.9)', opacity: 0.9 },
+                to: { transform: 'scale(1.0)', opacity: 1.0},
             }),
             []
-        )
+        );
 
         return (
             <animated.div 
