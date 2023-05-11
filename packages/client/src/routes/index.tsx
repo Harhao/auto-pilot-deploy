@@ -11,14 +11,14 @@ import {
     RouterProvider,
 } from 'react-router-dom';
 
-const Home = lazy(() => import('@/views/home'));
-const Project = lazy(() => import('@/views/project'));
+const Home = lazy(() => import('@/views/Home'));
+const Project = lazy(() => import('@/views/Project'));
 const NoMatch = lazy(() => import('@/views/NoMatch'));
-const Setting = lazy(() => import('@/views/setting'));
-const Login = lazy(() => import('@/views/login'));
-const Logs = lazy(() => import('@/views/logs'));
-const LogsDetail = lazy(() => import('@/views/logs/detail'));
-const Service = lazy(() => import('@/views/service'));
+const Setting = lazy(() => import('@/views/Setting'));
+const Login = lazy(() => import('@/views/Login'));
+const Logs = lazy(() => import('@/views/Logs'));
+const LogsDetail = lazy(() => import('@/views/Logs/Detail'));
+const Service = lazy(() => import('@/views/Service'));
 const RequireAuthLayout = lazy(() => import('@/component/AuthLayout'));
 
 export const privateRoutes =

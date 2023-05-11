@@ -6,11 +6,11 @@ export async function getProjectList(): Promise<IResponse> {
     return await request.get('/project/getProject');
 }
 
-export async function deployProject(params: { projectId: string }): Promise<IResponse> {
+export async function deployProject(params: { projectId: string, commitMsg: string }): Promise<IResponse> {
     return await request.post('/cmd/deploy', params);
 }
 
-export async function rollBack(params: { projectId: string, commitMsg: string}): Promise<IResponse> {
+export async function rollBack(params: { projectId: string, commitMsg: string }): Promise<IResponse> {
     return await request.post('/cmd/rollBack', params);
 }
 

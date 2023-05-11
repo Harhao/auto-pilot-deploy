@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import animation from '@/component/Animation';
-import { cancelDeploy, deployProject, getLogsDetail } from '@/api';
-import { useParams } from 'react-router-dom';
-import { ELogsRunStatus, EResponseMap } from '@/const';
-import { Button, message } from 'antd';
 import RunningStatus from '@/component/Status';
+
+import { useMount } from 'ahooks';
+import { useParams } from 'react-router-dom';
+import { Button, message } from 'antd';
+import { cancelDeploy, getLogsDetail } from '@/api';
+import { ELogsRunStatus, EResponseMap } from '@/const';
 
 import './index.less';
 
@@ -16,22 +18,12 @@ function LogDetail() {
         list: [],
         status: -1,
     });
-    const [logId, setLogId] = useState<string>('');
 
     let interval: number | null = null;
 
-    const getLogDetail = async (logId: string) => {
-        const resp = await getLogsDetail({ logId });
-        const { list, status } = resp.data;
-        setLogData({
-            list,
-            status
-        });
-        return resp;
-    };
-
+    // 取消部署job
     const cancelRuningJob = async () => {
-        const res = await cancelDeploy({ logId });
+        const res = await cancelDeploy({ logId: params.logId as string });
         if (res.code === EResponseMap.SUCCESS) {
             message.success({
                 content: '取消成功'
@@ -39,52 +31,49 @@ function LogDetail() {
         }
     };
 
-    const getLogsPoll = (logId: string) => {
-        getLogDetail(logId);
-        interval = setInterval(async () => {
-            const res = await getLogDetail(logId);
-            if (res.code === EResponseMap.SUCCESS) {
-                const { isDone } = res.data;
-                if (isDone) {
-                    if (interval) {
-                        clearInterval(interval);
-                        interval = null;
-                    }
-                    return;
-                }
-            }
-        }, 3000);
-
+    // 获取日志详情
+    const getLogDetail = async (logId: string) => {
+        const res = await getLogsDetail({ logId });
+        if (res.code === EResponseMap.SUCCESS) {
+            const { list, status, isDone } = res.data;
+            setLogData({
+                list,
+                status
+            });
+            return isDone;
+        }
+        return true;
     };
 
-    const deployHandle = async (projectId: string) => {
-        const resp = await deployProject({ projectId });
-        if (resp.code === EResponseMap.SUCCESS) {
-            const { logId } = resp.data;
-            setLogId(logId);
-            getLogsPoll(logId);
+    // 轮训获取日志详情
+    const getLogsPoll = async (logId: string) => {
+        const isDone = await getLogDetail(logId);
+        if(!isDone) {
+            interval = setInterval(async () => {
+                const needCancel = await getLogDetail(logId);
+                if(needCancel && interval) {
+                    clearInterval(interval);
+                    interval = null;
+                }
+            }, 3000);
         }
     };
 
-    useEffect(() => {
-        const { projectId = null, logId = null } = params;
-        if (projectId) {
-            // 如果已有logId，证明已有点击部署
-            logId ? getLogsPoll(logId) : deployHandle(projectId);
+
+    useMount(() => {
+        if (params.logId) {
+            getLogsPoll(params.logId);
         }
         return () => {
             interval && clearInterval(interval);
         };
-    }, []);
+    });
 
     return (
         <div className="log-detail-container">
             <div className='log-detail-header'>
                 <RunningStatus status={logData.status} />
                 {logData.status === ELogsRunStatus.RUNNING ? <Button onClick={cancelRuningJob}>取消部署</Button> : null}
-            </div>
-            <div className='log-detail-header'>
-               
             </div>
             <div
                 className="log-detail-content">

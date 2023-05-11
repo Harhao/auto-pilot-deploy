@@ -2,7 +2,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import Layout from '@/layout';
+import Layout from '@/component/Layout';
 
 export default function RequireAuthLayout() {
     const location = useLocation();

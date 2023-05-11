@@ -1,5 +1,5 @@
 import animation from "@/component/Animation";
-import React, {useState } from "react";
+import React, { useState } from "react";
 import type { ColumnsType } from "antd/es/table";
 
 import { getLogsList, rollBack } from "@/api";
@@ -25,22 +25,22 @@ function Logs() {
 
   const getLogList = async () => {
     const resp = await getLogsList({ projectId: params.id });
-    if(resp.code === EResponseMap.SUCCESS) {
+    if (resp.code === EResponseMap.SUCCESS) {
       setList(resp.data);
     }
   };
 
   const rollBackHandle = async (commitMsg: string) => {
-    const data = {projectId: params.id!, commitMsg: commitMsg ?? ''};
-    const resp =  await rollBack(data);
-    if(resp.code === EResponseMap.SUCCESS) {
+    const data = { projectId: params.id!, commitMsg: commitMsg ?? '' };
+    const resp = await rollBack(data);
+    if (resp.code === EResponseMap.SUCCESS) {
       console.log(resp);
     }
   }
 
   const { run } = useDebounceFn(
     () => {
-      let commitMsg: string  = '';
+      let commitMsg: string = '';
       Modal.confirm({
         centered: true,
         title: "输入备注",

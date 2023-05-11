@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import animation from '@/component/Animation';
-import { Button, Space, Table, Tag, Modal } from 'antd';
+import { Button, Space, Table, Tag, Modal, Input, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { getProjectList, getServiceList } from '@/api';
+import { deployProject, getProjectList, getServiceList } from '@/api';
 import { EResponseMap } from '@/const';
 import { useNavigate } from 'react-router-dom';
+import { useMount } from 'ahooks';
 
 interface DataType {
   _id: string;
@@ -40,10 +41,33 @@ const Project: React.FC = () => {
     }
   };
 
-  useEffect(() => {
+  const onConfirmDeploy = (data: DataType) => {
+    let commitMsg: string = '';
+    Modal.confirm({
+      centered: true,
+      title: "输入备注",
+      content: (
+        <Input
+          placeholder="请输入部署备注"
+          onChange={(e) => (commitMsg = e.target.value)}
+        />
+      ),
+      onOk: async () => {
+        const resp = await deployProject({ projectId: data._id, commitMsg });
+        if (resp.code === EResponseMap.SUCCESS) {
+          const { logId } = resp.data;
+          navigate(`/dashboard/logsDetail/${data._id}/${logId}`);
+          message.open({ type: 'success', content: '开始部署' });
+        }
+      },
+    });
+
+  }
+
+  useMount(() => {
     onGetServices();
     onGetProjects();
-  }, []);
+  });
 
 
   const columns: ColumnsType<DataType> = [
@@ -90,11 +114,11 @@ const Project: React.FC = () => {
       render: (_, data) => {
         const name = getRepoName(data.gitUrl);
         const service = serviceList.find(item => item.name === name);
-        const color = service?.status === 'online' ? 'green': 'red';
+        const color = service?.status === 'online' ? 'green' : 'red';
 
         return (
           <Space size="small">
-            { service ? <Tag color={color}>{service?.status}</Tag>: <span>/</span>}
+            {service ? <Tag color={color}>{service?.status}</Tag> : <span>/</span>}
           </Space>
         );
       }
@@ -109,14 +133,14 @@ const Project: React.FC = () => {
           <Space size="small">
             <Button type="primary" size="small" onClick={() => navigate(`/dashboard/service/${name}`)}>服务</Button>
             <Button type="primary" size="small" onClick={() => navigate(`/dashboard/logs/${data._id}`)}>日志</Button>
-            <Button type="primary" size="small" onClick={() => navigate(`/dashboard/logsDetail/${data._id}`)}>部署</Button>
+            <Button type="primary" size="small" onClick={() => onConfirmDeploy(data)}>部署</Button>
           </Space>
         );
       }
     },
   ];
 
-  return <Table  bordered columns={columns} dataSource={list} />;
+  return <Table bordered columns={columns} dataSource={list} />;
 };
 
 export default animation(Project);
