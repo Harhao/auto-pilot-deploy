@@ -81,6 +81,9 @@ export default class CmdService {
             child.stderr.on('data', (data) => {
                 this.onStdoutHandle(data);
             });
+            child.on('error', (error) => {
+                resolve(false);
+            });
             child.on('close', (code: any, signal: any) => {
                 const isSuccess = code === 0 && !signal; 
                 resolve(isSuccess);
@@ -106,10 +109,14 @@ export default class CmdService {
             child.stderr.on('data', (data) => {
                 this.onStdoutHandle(data);
             });
-            child.on('close', (code: any, signal: any) => {
-                const isSuccess = code === 0 && !signal; 
-                resolve(isSuccess);
+            child.on('error', (error) => {
+                resolve(false);
             });
+            // child.on('close', (code: any, signal: any) => {
+            //     const isSuccess = code === 0 && !signal; 
+            //     resolve(isSuccess);
+            // });
+            resolve(true);
         });
     }
 

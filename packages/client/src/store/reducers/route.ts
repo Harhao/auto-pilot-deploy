@@ -1,32 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { routes } from '@/routes';
 
-
-const list: { key: string; value: string; }[] = [];
-
 const getBreadCrumbNameMap = (routes: any[], routePrefix = '') => {
+    const map: { key: string; value: any; }[] = [];
+
     routes.forEach((route) => {
         const routeName =
             route.path.indexOf('/') === 0
                 ? `${routePrefix}${route.path}`
                 : `${routePrefix}/${route.path}`;
-        list.push({ key: routeName, value: route.label });
+        map.push({ key: routeName, value: route.label });
         if (route?.children?.length > 0) {
-            getBreadCrumbNameMap(route.children, route.path);
+            map.push(...getBreadCrumbNameMap(route.children, route.path));
         }
     });
+
+    return map;
 };
 
-const getInitalState = () => {
-    getBreadCrumbNameMap(routes);
-    return list;
+const getInitialState = () => {
+    return getBreadCrumbNameMap(routes);
 };
-
 
 const routeSlice = createSlice({
     name: 'routeList',
-    initialState: getInitalState(),
-    reducers: {}
+    initialState: getInitialState(),
+    reducers: {},
 });
 
 export default routeSlice.reducer;

@@ -12,9 +12,9 @@ import { privateRoutes } from '@/routes';
 import { useDispatch } from 'react-redux';
 import { clearAuthToken } from '@/store/reducers/auth';
 
-import './index.less';
-
 const { Header, Sider, Content } = Layout;
+
+import './index.less';
 
 
 // 侧边栏

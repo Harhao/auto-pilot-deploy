@@ -73,8 +73,8 @@ function LogDetail() {
         <div className="log-detail-container">
             <div className='log-detail-header'>
                 <RunningStatus status={logData.status} />
-                {logData.status === ELogsRunStatus.RUNNING ? <Button onClick={cancelRuningJob}>取消部署</Button> : null}
             </div>
+            <div>{logData.status === ELogsRunStatus.RUNNING ? <Button onClick={cancelRuningJob}>取消部署</Button> : null}</div>
             <div
                 className="log-detail-content">
                 {

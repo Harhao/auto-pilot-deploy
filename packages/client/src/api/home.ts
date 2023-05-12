@@ -18,3 +18,11 @@ export async function getServiceList(params: { name?: string }): Promise<IRespon
     return await request.get('/cmd/services', params);
 }
 
+export async function stopService(params: { serviceId: number }): Promise<IResponse> {
+    return await request.post('/cmd/stopService', params);
+}
+
+export async function startService(params: { serviceId: number }): Promise<IResponse> {
+    return await request.post('/cmd/startService', params);
+}
+

@@ -41,7 +41,7 @@ export default class Pm2 {
     @catchError()
     @RequireClient()
     public async startService(pid: string | number) {
-        const result = await this.client!.execCommand(`pm2 start ${pid}`);
+        const result = await this.client!.execCommand(`pm2 restart ${pid}`);
         return result.code;
     }
 

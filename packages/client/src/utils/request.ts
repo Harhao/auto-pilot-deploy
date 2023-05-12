@@ -2,6 +2,7 @@ import { EResponseMap, IResponse } from "@/const";
 import axios, { AxiosInstance } from "axios";
 import store from "@/store";
 import { clearAuthToken } from "@/store/reducers/auth";
+import { message } from 'antd';
 
 class PilotRequest {
 
@@ -45,7 +46,7 @@ class PilotRequest {
             },
             (error) => {
                 //TODO 处理请求失败的响应
-                console.log(error);
+                message.error(error.desc);
             }
         );
         return instance;

@@ -30,6 +30,10 @@ export class CommonProjectDto {
     type: string;
 
     @IsDefined()
+    @IsString()
+    name: string;
+
+    @IsDefined()
     // nginx配置
     nginxConfig: NginxConfig;
 }

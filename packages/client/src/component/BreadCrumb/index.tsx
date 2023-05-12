@@ -12,32 +12,29 @@ export default function PBreadCrumb() {
 
     const getBreadCrumbItems = () => {
         const pathSnippets = location.pathname.split('/').filter((i) => i);
-        const items: { key: string; title: JSX.Element; }[] = [];
-        pathSnippets.forEach((_, index) => {
+        const items = pathSnippets.map((_, index) => {
             const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-            const name = getRouteTitle(url);
-            if(name) {
-                items.push({
-                    key: url,
-                    title: <Link to={url}>{name}</Link>,
-                });
-            }
-            
-        });
+            const title = getRouteTitle(url);
+            return title ? { key: url, title: <Link to={url}>{title}</Link> } : null;
+        }).filter(Boolean);
         setBreadCrumbItems(items);
     };
 
+
     const getRouteTitle = (url: string) => {
+        const segments = url.split('/').filter((i) => i);
         const result = list.find((route: { key: string; }) => {
-            const regexStr = route.key.replace(/:[^/]+/g, '([^/]+)');
-            const regex = new RegExp(`^${regexStr}$`);
-            const match = regex.test(url);
-            if (match) {
-                return route;
+            const routeSegments = route.key.split('/').filter((i) => i);
+            if (segments.length !== routeSegments.length) {
+                return false;
             }
+            return segments.every((segment, index) => {
+                return segment === routeSegments[index] || routeSegments[index].startsWith(':');
+            });
         });
         return result ? result.value : null;
     };
+
 
     useEffect(() => {
         if (list.length > 0) {
@@ -45,5 +42,5 @@ export default function PBreadCrumb() {
         }
     }, [location]);
 
-    return <Breadcrumb items={breadCrumbItems} className="breadcrumb-container"/>;
+    return <Breadcrumb items={breadCrumbItems} className="breadcrumb-container" />;
 }

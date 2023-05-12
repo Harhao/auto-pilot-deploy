@@ -69,13 +69,13 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(StopCmdDto)
     @Response
-    public async stopService(@Body body: StopCmdDto) {
-        const { serviceId } = body;
-        this.cmdService.stopService(serviceId);
+    public async stopService(@Body data: StopCmdDto) {
+        const { serviceId } = data;
+        const isSuccess = this.cmdService.stopService(serviceId);
 
         return {
             code: 200,
-            data: true,
+            data: isSuccess,
             msg: 'success'
         };
     }
@@ -86,14 +86,14 @@ export default class CmdController {
     @CatchError()
     @ValidateDto(StartCmdDto)
     @Response
-    public async startService(@Body body: StartCmdDto) {
-        const { serviceId } = body;
-        this.cmdService.startService(
+    public async startService(@Body data: StartCmdDto) {
+        const { serviceId } = data;
+        const isSuccess = await this.cmdService.startService(
             serviceId
         );
         return {
             code: 200,
-            data: true,
+            data: isSuccess,
             msg: 'success'
         };
     }

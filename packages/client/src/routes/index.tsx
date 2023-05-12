@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { 
     createBrowserRouter, 
+    Navigate, 
     RouterProvider,
 } from 'react-router-dom';
 
@@ -27,6 +28,11 @@ export const privateRoutes =
     label: '主页',
     element: <RequireAuthLayout />,
     children: [
+        {
+            index: true,
+            path: '',
+            element: <Navigate to="home" replace/>
+        },
         {
             index: true,
             path: 'home',
