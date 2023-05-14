@@ -30,9 +30,16 @@ export default class MongoDBService {
   }
 
   @CatchError()
-  public async find(collectionName: string, match: object, filter?: object): Promise<Document> {
+  public async find(collectionName: string, match: object, filter?: any): Promise<Document> {
+    const { pageNum, pageSize } = filter;
     const collection: Collection = this.db.collection(collectionName);
-    return await collection.find(match, filter).toArray();
+    const total = await collection.countDocuments(match);
+    const result =  await collection.find(match).skip((pageNum - 1) * pageSize)
+    .limit(pageSize).toArray();
+    return {
+      result,
+      total
+    }
   }
 
   @CatchError()

@@ -2,7 +2,7 @@ import { IResponse } from "@/const";
 import { request } from "@/utils";
 
 export async function getLogsList(params: { projectId: string | undefined }): Promise<IResponse> {
-    return await request.get('/logs/getlogs', params);
+    return await request.post('/logs/getlogs', params);
 }
 
 

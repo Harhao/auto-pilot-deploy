@@ -1,4 +1,4 @@
-import { IsString, IsDefined, Validate, IsOptional } from 'class-validator';
+import { IsString, IsDefined, Validate, IsOptional, IsNumber } from 'class-validator';
 import { GitCheck, NginxConfig } from './common';
 
 export class CommonProjectDto {
@@ -49,10 +49,21 @@ export class UpdateProjectDto extends CommonProjectDto {
 
 export class GetProjectDto {
 
-    @IsString()
     @IsOptional()
-    // projectId
-    projectId: string;
+    @IsString()
+    name?: string;
+
+    @IsOptional()
+    @IsNumber()
+    pageSize?: number;
+
+    @IsOptional()
+    @IsNumber()
+    pageNum?: number;
+
+    @IsOptional()
+    @IsString()
+    projectId?: string;
 }
 
 export class DelProjectDto {

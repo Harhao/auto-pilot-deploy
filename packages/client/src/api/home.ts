@@ -1,9 +1,14 @@
 import { IResponse } from '@/const';
 import { request } from '@/utils';
 
+export interface IQueryProjects {
+    name?: string;
+    pageSize?: number;
+    pageNum?: number;
+}
 
-export async function getProjectList(): Promise<IResponse> {
-    return await request.get('/project/getProject');
+export async function getProjectList(params?: IQueryProjects): Promise<IResponse> {
+    return await request.post('/project/getProject', params);
 }
 
 export async function deployProject(params: { projectId: string, commitMsg: string }): Promise<IResponse> {

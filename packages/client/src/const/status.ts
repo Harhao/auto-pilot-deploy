@@ -11,3 +11,8 @@ export const deployStatus: Record<number, { msg: string, color: string }> = {
     [ELogsRunStatus.ERROR]: { msg: '运行错误', color: 'error' },
     [ELogsRunStatus.SUCCESS]: { msg: '成功', color: 'success' },
 };
+
+export const serviceStatus:Record<string, string> = {
+    online: 'success',
+    stopped: 'error'
+};

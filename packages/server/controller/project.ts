@@ -1,4 +1,4 @@
-import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Put, Body, Query } from '../decorator';
+import { Controller, Get, Post, ValidateDto, CatchError, ValidateAuth, Response, Put, Body, Query, EValidateFields } from '../decorator';
 import {CommonProjectDto, DelProjectDto, GetProjectDto, UpdateProjectDto } from '../dto';
 import { Inject } from '../ioc';
 import ProjectService from '../service/project';
@@ -27,12 +27,12 @@ export default class ProjectController {
         return await this.projectService.updateProject(data);
     }
 
-    @Get('/getProject')
+    @Post('/getProject')
     @ValidateAuth()
     @CatchError()
     @ValidateDto(GetProjectDto)
     @Response
-    public async getProjects(@Query data: GetProjectDto) {
+    public async getProjects(@Body data: GetProjectDto) {
         return await this.projectService.getProject(data);
     }
 

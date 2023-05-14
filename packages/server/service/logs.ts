@@ -61,24 +61,26 @@ export default class LogsService {
 
     public async getLogs(data: GetLogsDto) {
 
-        const result = await this.mongoService.find(
+        const pageParams: any = { pageSize: data?.pageSize ?? 10, pageNum: data?.pageNum ?? 1,};
+        const match: any = {};
+
+        
+
+        data?.projectId && (match.projectId = new ObjectId(data.projectId));
+        data?.commitMsg && (match.commitMsg = { $regex: new RegExp(data.commitMsg, 'i') });
+
+        const { result, total } = await this.mongoService.find(
             LogsService.tableName,
+            match,
             {
-                projectId: new ObjectId(data.projectId),
-            },
-            {
-                projection: { logList: 0 }
+                projection: { logList: 0 },
+                ...pageParams
             }
         );
-
-        console.log(     {
-            projectId: new ObjectId(data.projectId),
-        });
-
-        if (result.length > 0) {
+        if (result?.length > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
-                data: result,
+                data: { list: result, total },
                 msg: 'success'
             };
         }

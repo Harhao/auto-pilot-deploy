@@ -1,13 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import animation from "@/component/Animation";
 import { Button, Space, Table, Tag, Modal, Input, message } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { deployProject, getProjectList, getServiceList } from "@/api";
+import {
+  IQueryProjects,
+  deployProject,
+  getProjectList,
+  getServiceList,
+} from "@/api";
 import { EResponseMap } from "@/const";
 import { useNavigate } from "react-router-dom";
 import { useMount } from "ahooks";
 
-import './index.less';
+import "./index.less";
+import { getRepoName } from "@/utils";
+
+const { Search } = Input;
 
 interface DataType {
   _id: string;
@@ -17,21 +25,24 @@ interface DataType {
   type: string;
 }
 
-const getRepoName = (url: string) => {
-  const pattern = /^.*?\/\/.*?\/([\w-]+)\/([\w-]+?)(\.git)?$/;
-  const match = url.match(pattern);
-  return match?.[2] ?? null;
-};
+
 
 const Project: React.FC = () => {
+  const [queryParams, setQueryParams] = useState<IQueryProjects>({
+    name: "",
+    pageSize: 10,
+    pageNum: 1,
+  });
+  const [total, setTotal] = useState<number>(0);
   const [list, setList] = useState<any[]>([]);
   const [serviceList, setServices] = useState<any[]>([]);
   const navigate = useNavigate();
 
-  const onGetProjects = async () => {
-    const res: any = await getProjectList();
+  const onGetProjects = async (params = queryParams) => {
+    const res: any = await getProjectList(params);
     if (res.code === EResponseMap.SUCCESS) {
-      setList(res.data);
+      setList(res.data.list);
+      setTotal(res.data.total);
     }
   };
 
@@ -64,9 +75,12 @@ const Project: React.FC = () => {
     });
   };
 
+  useEffect(() => {
+    onGetProjects(queryParams);
+  }, [queryParams]);
+
   useMount(() => {
     onGetServices();
-    onGetProjects();
   });
 
   const columns: ColumnsType<DataType> = [
@@ -134,13 +148,15 @@ const Project: React.FC = () => {
         const name = getRepoName(data.gitUrl);
         return (
           <Space size="small">
-            <Button
-              type="primary"
-              size="small"
-              onClick={() => navigate(`/dashboard/service/${name}`)}
-            >
-              服务
-            </Button>
+            {data.type === "backEnd" ? (
+              <Button
+                type="primary"
+                size="small"
+                onClick={() => navigate(`/dashboard/service/${name}`)}
+              >
+                服务
+              </Button>
+            ) : null}
             <Button
               type="primary"
               size="small"
@@ -162,8 +178,34 @@ const Project: React.FC = () => {
   ];
 
   return (
-    <div>
-      <Table bordered columns={columns} dataSource={list} />
+    <div className="project-container">
+      <Space size="small" wrap className="project-header">
+        <Search
+          placeholder="搜请输入项目名"
+          onSearch={(value: string) => {
+              setQueryParams({...queryParams, name: value, pageNum: 1 })
+            }
+          }
+          style={{ width: 200 }}
+        />
+        <Button type="primary">添加项目</Button>
+      </Space>
+      <Table 
+        bordered 
+        columns={columns} 
+        dataSource={list} 
+        pagination={{ 
+          pageSize: queryParams.pageSize, 
+          current: queryParams.pageNum,
+          total: total,
+          onChange: (page, pageSize) => {
+            setQueryParams({
+              ...queryParams,
+              pageNum: page,
+              pageSize: pageSize
+            })
+          }
+        }} />
     </div>
   );
 };

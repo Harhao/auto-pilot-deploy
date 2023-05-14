@@ -35,13 +35,13 @@ export default class LogsController {
     }
 
     // 获取运行日志列表
-    @Get("/getlogs")
+    @Post("/getlogs")
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(GetLogsDto, EValidateFields.QUERY)
+    @ValidateDto(GetLogsDto)
     @Response
-    public async getLogs(@Query logsData: GetLogsDto) {
-        return await this.logService.getLogs(logsData)
+    public async getLogs(@Body logsData: GetLogsDto) {
+        return await this.logService.getLogs(logsData);
     }
 
     // 获取日志详情

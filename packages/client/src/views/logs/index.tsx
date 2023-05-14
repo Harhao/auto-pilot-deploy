@@ -1,15 +1,15 @@
 import animation from "@/component/Animation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { ColumnsType } from "antd/es/table";
+import Search from "antd/es/input/Search";
 
 import { getLogsList, rollBack } from "@/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Input, Modal, Space, Table, Tag } from "antd";
+import { Button, Input, Modal, Space, Table, Tag, message } from "antd";
 import { EResponseMap, deployStatus } from "@/const";
 import { useDebounceFn, useMount } from "ahooks";
 
 import "./index.less";
-
 
 interface DataType {
   _id: string;
@@ -19,28 +19,38 @@ interface DataType {
 }
 
 function Logs() {
-  const [list, setList] = useState<any[]>([]);
   const params = useParams();
+  const [queryParams, setQueryParams] = useState<any>({
+    projectId: "",
+    commitMsg: "",
+    pageSize: 10,
+    pageNum: 1,
+  });
+  const [total, setTotal] = useState<number>(0);
+  const [list, setList] = useState<any[]>([]);
   const navigate = useNavigate();
 
-  const getLogList = async () => {
-    const resp = await getLogsList({ projectId: params.id });
+  const getLogList = async (params = queryParams) => {
+    const resp = await getLogsList(params);
     if (resp.code === EResponseMap.SUCCESS) {
-      setList(resp.data);
+      setList(resp.data.list);
+      setTotal(resp.data.total);
     }
   };
 
   const rollBackHandle = async (commitMsg: string) => {
-    const data = { projectId: params.id!, commitMsg: commitMsg ?? '' };
-    const resp = await rollBack(data);
-    if (resp.code === EResponseMap.SUCCESS) {
-      console.log(resp);
+    const data = { projectId: params.id!, commitMsg: commitMsg ?? "" };
+    const res = await rollBack(data);
+    if (res.code === EResponseMap.SUCCESS) {
+      const logId = res.data.logId;
+      navigate(`/dashboard/logsDetail/${params.id}/${logId}`);
+      message.success("开始回滚项目");
     }
-  }
+  };
 
   const { run } = useDebounceFn(
     () => {
-      let commitMsg: string = '';
+      let commitMsg: string = "";
       Modal.confirm({
         centered: true,
         title: "输入备注",
@@ -58,9 +68,18 @@ function Logs() {
     { wait: 500 }
   );
 
+  useEffect(() => {
+    if (queryParams.projectId) {
+      getLogList(queryParams);
+    }
+  }, [queryParams]);
+
   useMount(() => {
     if (params.id) {
-      getLogList();
+      setQueryParams({
+        ...queryParams,
+        projectId: params.id,
+      });
     }
   });
 
@@ -114,7 +133,35 @@ function Logs() {
     },
   ];
 
-  return <Table columns={columns} dataSource={list} />;
+  return (
+    <div className="logs-container">
+      <Space size="small" wrap className="logs-header">
+        <Search
+          placeholder="输入要搜索的提交备注"
+          onSearch={(value: string) => {
+            setQueryParams({ ...queryParams, name: value, pageNum: 1 });
+          }}
+          style={{ width: 200 }}
+        />
+      </Space>
+      <Table
+        columns={columns}
+        dataSource={list}
+        pagination={{
+          pageSize: queryParams.pageSize,
+          current: queryParams.pageNum,
+          total: total,
+          onChange: (page, pageSize) => {
+            setQueryParams({
+              ...queryParams,
+              pageNum: page,
+              pageSize: pageSize,
+            });
+          },
+        }}
+      />
+    </div>
+  );
 }
 
 export default animation(Logs);

@@ -50,12 +50,20 @@ export default class ProjectService {
     }
 
     public async getProject(data: GetProjectDto) {
-        const filter = data?.projectId ? { _id: new ObjectId(data.projectId) } : {};
-        const result = await this.mongoService.find(ProjectService.tableName, filter);
+
+        const pageParams: any = { pageSize: data?.pageSize ?? 10, pageNum: data?.pageNum ?? 1,};
+        const params: any = {};
+
+        data?.projectId && (params._id = new ObjectId(data.projectId));
+        data?.name && (params.name = { $regex: new RegExp(data.name, 'i') });
+
+
+        const { result, total }= await this.mongoService.find(ProjectService.tableName, params, pageParams);
+
         if (result) {
             return {
                 code: EResponseCodeMap.SUCCESS,
-                data: result,
+                data:  { list: result, total },
                 msg: 'success'
             };
         }

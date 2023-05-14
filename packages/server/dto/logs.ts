@@ -46,6 +46,19 @@ export class GetLogsDto {
     @IsDefined()
     // 项目projectId
     projectId: string;
+
+    @IsOptional()
+    @IsNumber()
+    pageSize?: number;
+
+    @IsOptional()
+    @IsNumber()
+    pageNum?: number;
+
+
+    @IsOptional()
+    @IsString()
+    commitMsg?: string;
 }
 
 

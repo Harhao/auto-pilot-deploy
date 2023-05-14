@@ -179,6 +179,7 @@ export default class CmdService {
             },
             async (code: number, signal: any) => {
                 const stdout = await this.redisService.getList(`${redisKey}`);
+                console.log(data.commitMsg)
                 await this.logsService.updateLogs({
                     projectId: data._id,
                     logId: logId,

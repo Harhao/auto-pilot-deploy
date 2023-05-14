@@ -11,10 +11,12 @@ import Breadcrumb from '@/component/BreadCrumb';
 import { privateRoutes } from '@/routes';
 import { useDispatch } from 'react-redux';
 import { clearAuthToken } from '@/store/reducers/auth';
+import Footer from '../Footer';
 
 const { Header, Sider, Content } = Layout;
 
 import './index.less';
+
 
 
 // 侧边栏
@@ -93,6 +95,7 @@ const LayoutContainer: React.FC = () => {
           <Breadcrumb />
           <Outlet />
         </Content>
+        <Footer />
       </Layout>
     </Layout>
   );
