@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import animation from '@/component/Animation';
 import RunningStatus from '@/component/Status';
+import Meta from 'antd/es/card/Meta';
 
 import { useMount } from 'ahooks';
 import { useParams } from 'react-router-dom';
 import { Button, message } from 'antd';
-import { cancelDeploy, getLogsDetail } from '@/api';
+import { cancelDeploy, getLogsDetail, getProjectList } from '@/api';
 import { ELogsRunStatus, EResponseMap } from '@/const';
+import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
+import { Avatar, Card } from 'antd';
+import { getRepoName } from '@/utils';
 
 import './index.less';
+
 
 
 function LogDetail() {
@@ -17,6 +22,12 @@ function LogDetail() {
     const [logData, setLogData] = useState<{ list: string[]; status: number }>({
         list: [],
         status: -1,
+    });
+
+    const [projectInfo, setProjectInfo] = useState({
+        name: '',
+        onlineUrl: '',
+        gitUrl: '',
     });
 
     let interval: number | null = null;
@@ -48,10 +59,10 @@ function LogDetail() {
     // 轮训获取日志详情
     const getLogsPoll = async (logId: string) => {
         const isDone = await getLogDetail(logId);
-        if(!isDone) {
+        if (!isDone) {
             interval = setInterval(async () => {
                 const needCancel = await getLogDetail(logId);
-                if(needCancel && interval) {
+                if (needCancel && interval) {
                     clearInterval(interval);
                     interval = null;
                 }
@@ -59,9 +70,23 @@ function LogDetail() {
         }
     };
 
+    const getProjectInfo = async () => {
+        const res = await getProjectList({ projectId: params.projectId });
+        if (res.code === EResponseMap.SUCCESS) {
+            const data = res.data.list?.[0];
+            const { name, nginxConfig, gitUrl } = data;
+            setProjectInfo({
+                name,
+                onlineUrl: `https://${nginxConfig.apiDomain}/projects/${getRepoName(gitUrl)}`,
+                gitUrl
+            });
+        }
+    };
+
 
     useMount(() => {
         if (params.logId) {
+            getProjectInfo();
             getLogsPoll(params.logId);
         }
         return () => {
@@ -69,12 +94,25 @@ function LogDetail() {
         };
     });
 
+    const CardInfo = () => {
+        return <Card
+            style={{ width: '100%' }}
+            cover={null}
+        >
+            <Meta
+                avatar={<RunningStatus status={logData.status} />}
+                title={projectInfo.name}
+                description={projectInfo.onlineUrl}
+            />
+            { logData.status === ELogsRunStatus.RUNNING ? <Button onClick={cancelRuningJob}>取消部署</Button> : null }
+        </Card>;
+    };
+
     return (
         <div className="log-detail-container">
-            <div className='log-detail-header'>
-                <RunningStatus status={logData.status} />
+            <div className='log-detail-info'>
+                <CardInfo />
             </div>
-            <div>{logData.status === ELogsRunStatus.RUNNING ? <Button onClick={cancelRuningJob}>取消部署</Button> : null}</div>
             <div
                 className="log-detail-content">
                 {

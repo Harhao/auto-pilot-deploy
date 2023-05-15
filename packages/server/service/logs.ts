@@ -1,15 +1,15 @@
-import MongoDBService from "./mongo";
-import { Inject, Injectable } from "../ioc";
-import { ELogsRunStatus, EResponseCodeMap } from "../consts";
-import { ObjectId } from "mongodb";
-import { CreateLogDto, GetLogsDetailDto, GetLogsDto, UpdateLogDto } from "../dto";
-import RedisService from "./redis";
+import MongoDBService from './mongo';
+import { Inject, Injectable } from '../ioc';
+import { ELogsRunStatus, EResponseCodeMap } from '../consts';
+import { ObjectId } from 'mongodb';
+import { CreateLogDto, GetLogsDetailDto, GetLogsDto, UpdateLogDto } from '../dto';
+import RedisService from './redis';
 
 
 @Injectable
 export default class LogsService {
 
-    public static tableName: string = 'logs';
+    public static tableName = 'logs';
 
     @Inject mongoService: MongoDBService;
     @Inject redisService: RedisService;
@@ -63,8 +63,6 @@ export default class LogsService {
 
         const pageParams: any = { pageSize: data?.pageSize ?? 10, pageNum: data?.pageNum ?? 1,};
         const match: any = {};
-
-        
 
         data?.projectId && (match.projectId = new ObjectId(data.projectId));
         data?.commitMsg && (match.commitMsg = { $regex: new RegExp(data.commitMsg, 'i') });

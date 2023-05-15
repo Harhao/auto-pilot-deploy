@@ -14,6 +14,7 @@ import {
 
 const Home = lazy(() => import('@/views/Home'));
 const Project = lazy(() => import('@/views/Project'));
+const AddProject = lazy(() => import('@/views/Project/add/index'));
 const NoMatch = lazy(() => import('@/views/NoMatch'));
 const Setting = lazy(() => import('@/views/Setting'));
 const Login = lazy(() => import('@/views/Login'));
@@ -45,6 +46,12 @@ export const privateRoutes =
             icon: <ProjectOutlined />,
             label: '项目列表',
             element: <Project />,
+        },
+        {
+            path: 'project/add',
+            icon:  null,
+            label: '添加项目',
+            element: <AddProject />,
         },
         {
             path: 'setting',

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu, Button, Dropdown, Avatar, Space, message } from 'antd';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -12,11 +12,11 @@ import { privateRoutes } from '@/routes';
 import { useDispatch } from 'react-redux';
 import { clearAuthToken } from '@/store/reducers/auth';
 import Footer from '../Footer';
+import RouteLink from '../RouteLink';
 
 const { Header, Sider, Content } = Layout;
 
 import './index.less';
-
 
 
 // 侧边栏
@@ -33,9 +33,9 @@ const SideBar: React.FC<{ collapsed: boolean}> = (SideBarProps) => {
         {privateRoutes.children.map((route) => {
           return route.icon ? (
             <Menu.Item key={route.path} icon={route.icon}>
-              <Link to={`${privateRoutes.path}/${route.path}`}>
+              <RouteLink to={`${privateRoutes.path}/${route.path}`}>
                 {route.label}
-              </Link>
+              </RouteLink>
             </Menu.Item>
           ) : null;
         })}
@@ -94,8 +94,8 @@ const LayoutContainer: React.FC = () => {
         <Content className="layout-main-container">
           <Breadcrumb />
           <Outlet />
+          <Footer />
         </Content>
-        <Footer />
       </Layout>
     </Layout>
   );

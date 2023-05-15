@@ -5,10 +5,14 @@ export interface IQueryProjects {
     name?: string;
     pageSize?: number;
     pageNum?: number;
+    projectId?: string;
 }
 
 export async function getProjectList(params?: IQueryProjects): Promise<IResponse> {
     return await request.post('/project/getProject', params);
+}
+export async function createProject(params?: any): Promise<IResponse> {
+    return await request.post('/project/create', params);
 }
 
 export async function deployProject(params: { projectId: string, commitMsg: string }): Promise<IResponse> {

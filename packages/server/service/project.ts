@@ -1,16 +1,16 @@
-import MongoDBService from "./mongo";
-import LogsService from "./logs";
-import { CommonProjectDto, DelProjectDto, GetProjectDto, UpdateProjectDto, deletePilotDto } from "../dto";
-import { Inject, Injectable } from "../ioc";
-import { EResponseCodeMap } from "../consts";
-import { ObjectId } from "mongodb";
+import MongoDBService from './mongo';
+import LogsService from './logs';
+import { CommonProjectDto, DelProjectDto, GetProjectDto, UpdateProjectDto, deletePilotDto } from '../dto';
+import { Inject, Injectable } from '../ioc';
+import { EResponseCodeMap } from '../consts';
+import { ObjectId } from 'mongodb';
 
 
 
 @Injectable
 export default class ProjectService {
 
-    public static tableName: string = 'project';
+    public static tableName = 'project';
 
     @Inject mongoService: MongoDBService;
     @Inject logService: LogsService;
@@ -60,7 +60,7 @@ export default class ProjectService {
 
         const { result, total }= await this.mongoService.find(ProjectService.tableName, params, pageParams);
 
-        if (result) {
+        if (result.length > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data:  { list: result, total },
