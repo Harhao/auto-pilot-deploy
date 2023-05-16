@@ -126,6 +126,7 @@ const Project: React.FC = () => {
       title: '服务',
       key: 'status',
       align: 'center',
+      width: '95px',
       render: (_, data) => {
         const name = getRepoName(data.gitUrl);
         const service = serviceList.find((item) => item.name === name);
@@ -165,6 +166,13 @@ const Project: React.FC = () => {
               onClick={() => navigate(`/dashboard/logs/${data._id}`)}
             >
               日志
+            </Button>
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => navigate(`/dashboard/project/add/${data._id}`)}
+            >
+              编辑
             </Button>
             <Button
               type="primary"

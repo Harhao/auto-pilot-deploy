@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import animation from '@/component/Animation';
 import JSONInput from 'react-json-editor-ajrm';
 import locale from 'react-json-editor-ajrm/locale/en';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Form, Input, Select, message } from 'antd';
 import { EResponseMap } from '@/const';
-import { createProject } from '@/api';
+import { createProject, getProjectList } from '@/api';
+import { useMount } from 'ahooks';
 
 import './index.less';
 
 function AddProject() {
 
     const navigate = useNavigate();
+    const params = useParams();
+    const [formData, setFormData] = useState({});
     const [jsonData, setJsonData] = useState<any>({});
 
     const handleJsonChange = (newData: any) => {
@@ -29,6 +32,24 @@ function AddProject() {
         }
     };
 
+    const onGetProjects = async (id: string) => {
+        const res = await getProjectList({ projectId: id});
+        console.log(res);
+        if(res.code === EResponseMap.SUCCESS) {
+            const { list } = res.data;
+            console.log(list?.[0])
+            setFormData({
+                ...list?.[0],
+            })
+        }
+    }
+
+    useMount(() => {     
+        if(params?.id) {
+            onGetProjects(params.id); 
+        }
+    });
+
     return (
         <Form 
             name="wrap"
@@ -37,6 +58,7 @@ function AddProject() {
             labelWrap
             wrapperCol={{ flex: 1 }}
             colon={false}
+            initialValues={formData}
             className="add-project-container" 
             onFinish={onFinish}
         >

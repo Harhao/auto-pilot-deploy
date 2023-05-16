@@ -178,7 +178,7 @@ const Service = () => {
     },
   ];
 
-  return <Table columns={columns} dataSource={list} />;
+  return <Table bordered columns={columns} dataSource={list} />;
 };
 
 export default animation(Service);

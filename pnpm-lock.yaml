@@ -74,6 +74,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
+      react-json-editor-ajrm:
+        specifier: ^2.5.14
+        version: 2.5.14(react-dom@18.2.0)(react@18.2.0)
       react-redux:
         specifier: ^8.0.5
         version: 8.0.5(@types/react-dom@18.0.11)(@types/react@18.0.32)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -105,6 +108,9 @@ importers:
       '@types/react-dom':
         specifier: ^18.0.11
         version: 18.0.11
+      '@types/react-json-editor-ajrm':
+        specifier: ^2.5.3
+        version: 2.5.3
       add-asset-html-webpack-plugin:
         specifier: ^5.0.2
         version: 5.0.2(html-webpack-plugin@5.5.0)(webpack@5.76.2)
@@ -2307,6 +2313,12 @@ packages:
     resolution: {integrity: sha512-O38bPbI2CWtgw/OoQoY+BRelw7uysmXbWvw3nLWO21H1HSh+GOlqPuXshJfjmpNlKiiSDG9cc1JZAaMmVdcTlw==}
     dependencies:
       '@types/react': 18.0.32
+
+  /@types/react-json-editor-ajrm@2.5.3:
+    resolution: {integrity: sha512-hHf3FU1HjL6Lm3rK2iWUJtoYpZ1qDCSffnLAQXCf++TP1Ms18rnB06gBK3psQ8NEW6CfrfRNlirIL3D/P80QVg==}
+    dependencies:
+      '@types/react': 18.0.32
+    dev: true
 
   /@types/react@18.0.32:
     resolution: {integrity: sha512-gYGXdtPQ9Cj0w2Fwqg5/ak6BcK3Z15YgjSqtyDizWUfx7mQ8drs0NBUzRRsAdoFVTO8kJ8L2TL8Skm7OFPnLUw==}
@@ -11001,6 +11013,17 @@ packages:
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: false
+
+  /react-json-editor-ajrm@2.5.14(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-z2035l5lnU0Wo73AUonj68d1Eh9vjVcLXEa8YogDEeFPcogzYkfT6R38fvYlLKDhP0oI+LyOO/IBWsFkXs4M0Q==}
+    peerDependencies:
+      react: '>=16.2.0'
+      react-dom: '>=16.2.0'
+    dependencies:
+      '@babel/runtime': 7.21.0
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /react-redux@8.0.5(@types/react-dom@18.0.11)(@types/react@18.0.32)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1):

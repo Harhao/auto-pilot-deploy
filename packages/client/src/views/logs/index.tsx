@@ -63,8 +63,8 @@ function Logs() {
             onChange={(e) => (commitMsg = e.target.value)}
           />
         ),
-        onOk: () => {
-          rollBackHandle(commitMsg);
+        onOk: async () => {
+          await rollBackHandle(commitMsg);
         },
       });
     },
