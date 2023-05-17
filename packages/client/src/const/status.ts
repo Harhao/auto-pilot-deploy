@@ -16,3 +16,9 @@ export const serviceStatus:Record<string, string> = {
     online: 'success',
     stopped: 'error'
 };
+
+export const  Eenviroment  = {
+    "prod": '正式',
+    "grey" :'灰度',
+    "test" :'测试'
+}

@@ -2,27 +2,57 @@ import React, { useState } from 'react';
 import animation from '@/component/Animation';
 import {
     Button,
-    Checkbox,
     Form,
     Input,
-    Radio,
     Select,
 } from 'antd';
+import { useMount } from 'ahooks';
+import { useParams } from 'react-router-dom';
+import { getPilot, updatePilot } from '@/api';
+import { EResponseMap } from '@/const';
+import { useForm } from 'antd/es/form/Form';
 
 
-const Setting: React.FC = () => {
+const EditSetting: React.FC = () => {
+
+    const [formInstance] = useForm();
+    const params = useParams();
+
+    const onGetPilotConfig = async () => {
+        if(params?.id) {
+            const res = await getPilot({ pilotId: params.id});
+            if(res.code === EResponseMap.SUCCESS) {
+                formInstance.setFieldsValue({
+                    account: res.data.account,
+                    address: res.data.address,
+                    serverPass: res.data.serverPass,
+                    gitUser: res.data.gitUser,
+                    gitPass: res.data.gitPass,
+                    env: res.data.env
+                });
+            }
+        }
+    }
+
+    const onFinish = async (values: any) => {
+        const res = await updatePilot({...values, pilotId: params.id});
+        console.log(res);
+    }
+
+    useMount(() => {
+        onGetPilotConfig();
+    });
     
-    const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
-
     return (
         <Form 
+            form={formInstance}
             name="wrap"
             labelCol={{ flex: '130px' }}
             labelAlign="left"
             labelWrap
             wrapperCol={{ flex: 1 }}
             colon={false}
-            className="add-project-container" 
+            onFinish={onFinish}
         >
             <Form.Item label="服务器IP" name="address" required>
                 <Input placeholder="请输入服务器IP" />
@@ -43,9 +73,9 @@ const Setting: React.FC = () => {
                 <Select
                     defaultValue="prod"
                     options={[
-                        { value: 'prod', label: 'prod' },
-                        { value: 'test', label: 'test' },
-                        { value: 'grey', label: 'grey' },
+                        { value: 'prod', label: '正式' },
+                        { value: 'test', label: '测试' },
+                        { value: 'grey', label: '灰度' },
                     ]}
                 />
             </Form.Item>
@@ -58,4 +88,4 @@ const Setting: React.FC = () => {
     );
 };
 
-export default animation(Setting);
+export default animation(EditSetting);

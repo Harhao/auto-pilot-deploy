@@ -2,7 +2,7 @@ import MongoDBService from "./mongo";
 
 import { CreateCrpyto } from "../utils";
 import { CatchError } from "../decorator";
-import { CommonPilot, UpdatePilotDto } from "../dto";
+import { CommonPilot, UpdatePilotDto, getPilotListDto } from "../dto";
 import { Inject, Injectable } from "../ioc";
 import { EResponseCodeMap } from "../consts";
 import { ObjectId } from "mongodb";
@@ -47,8 +47,7 @@ export default class PilotService {
 
     @CatchError()
     public async updatePilot(data: UpdatePilotDto) {
-
-        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: new ObjectId(data.pilotId) }, data);
+        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: data.pilotId }, data);
 
         if(result?.modifiedCount > 0) {
             return {
@@ -65,8 +64,8 @@ export default class PilotService {
     }
 
     @CatchError()
-    public async getPilot(id?: number): Promise<any> {
-        const filter =  id ? { id } : {};
+    public async getPilot(id?: string): Promise<any> {
+        const filter =  id ? { _id: new ObjectId(id) } : {};
         const result: any = await this.mongodbService.findOne(PilotService.tableName, filter);
 
         if(result) {
@@ -75,6 +74,29 @@ export default class PilotService {
                 data: {
                     ...result,
                     serverPass: CreateCrpyto.decrypt(result.serverPass)
+                },
+                msg: 'success'
+            }
+        }
+        return {
+            code: EResponseCodeMap.SUCCESS,
+            data: null,
+            msg: 'success'
+        };
+    }
+
+    @CatchError()
+    public async getPilotList(params: getPilotListDto): Promise<any> {
+        const requestParams = params?.env ? { env: params.env }: {} ;
+        const pageParams = { pageSize: 10, pageNum: 1};
+        const { result, total } = await this.mongodbService.find(PilotService.tableName, requestParams, pageParams);
+
+        if(result.length > 0) {
+            return {
+                code: EResponseCodeMap.SUCCESS,
+                data: {
+                    list: result,
+                    total: total,
                 },
                 msg: 'success'
             }

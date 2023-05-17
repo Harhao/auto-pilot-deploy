@@ -52,8 +52,8 @@ export default class CmdController {
     @Response
     public async rollback(@Body data: RollbackCmdDto) {
 
-        const config: any = await this.projectService.getProject({ projectId: data.projectId });
-        const logConfig: any = config?.data?.[0];
+        const res: any = await this.projectService.getProject({ projectId: data.projectId });
+        const logConfig: any = res.data.list?.[0];
         const { logId, commitHash } = await this.cmdService.createRunLog({ ...logConfig, ...data });
 
         this.cmdService.runDeployJob('rollback', { ...logConfig, ...data }, logId.toString(), commitHash);

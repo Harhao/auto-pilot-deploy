@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import animation from '@/component/Animation';
-import { Button, Space, Table, Tag } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import React, { useState } from "react";
+import animation from "@/component/Animation";
+import { Button, Space, Table, Tag } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import {
   IQueryProjects,
-  getProjectList,
-  getServiceList,
-} from '@/api';
-import { EResponseMap } from '@/const';
-import { useNavigate } from 'react-router-dom';
-import { useMount } from 'ahooks';
-import { getRepoName } from '@/utils';
+  getPilotList,
+} from "@/api";
+import { EResponseMap, Eenviroment } from "@/const";
+import { useNavigate } from "react-router-dom";
+import { useMount } from "ahooks";
 
-import './index.less';
+import "./index.less";
 
 interface DataType {
   _id: string;
@@ -23,74 +21,77 @@ interface DataType {
 }
 
 const Project: React.FC = () => {
+  const navigate = useNavigate();
   const [queryParams, setQueryParams] = useState<IQueryProjects>({
-    name: '',
+    name: "",
     pageSize: 10,
     pageNum: 1,
   });
   const [total, setTotal] = useState<number>(0);
   const [list, setList] = useState<any[]>([]);
-  const [serviceList, setServices] = useState<any[]>([]);
-  const navigate = useNavigate();
 
-  const onGetProjects = async (params = queryParams) => {
-    const res: any = await getProjectList(params);
+  const onGetPilotConfig = async () => {
+    const res = await getPilotList({});
     if (res.code === EResponseMap.SUCCESS) {
-      setList(res.data.list);
-      setTotal(res.data.total);
+      const { list, total } = res.data;
+      setList(list);
+      setTotal(total);
     }
   };
-
-  const onGetServices = async () => {
-    const res: any = await getServiceList({});
-    if (res.code === EResponseMap.SUCCESS) {
-      setServices(res.data);
-    }
-  };
-
-  useEffect(() => {
-    onGetProjects(queryParams);
-  }, [queryParams]);
 
   useMount(() => {
-    onGetServices();
+    onGetPilotConfig();
   });
 
   const columns: ColumnsType<DataType> = [
     {
-      title: '服务器地址',
-      dataIndex: 'name',
-      key: 'name',
-      align: 'center',
+      title: "服务器地址",
+      dataIndex: "address",
+      key: "address",
+      align: "center",
     },
     {
-      title: '服务器帐号',
-      dataIndex: 'gitUrl',
-      key: 'gitUrl',
-      align: 'center',
+      title: "帐号",
+      dataIndex: "account",
+      key: "account",
+      align: "center",
     },
     {
-      title: 'Git用户',
-      dataIndex: 'branch',
-      key: 'branch',
-      align: 'center',
+      title: "Git用户",
+      dataIndex: "gitUser",
+      key: "gitUser",
+      align: "center",
     },
     {
-      title: 'git授权token',
-      dataIndex: 'dest',
-      key: 'dest',
-      align: 'center',
+      title: "git授权token",
+      dataIndex: "gitPass",
+      key: "gitPass",
+      align: "center",
     },
     {
-      title: '发布环境',
-      dataIndex: 'type',
-      key: 'type',
-      align: 'center',
+      title: "服务器密码",
+      dataIndex: "serverPass",
+      key: "serverPass",
+      align: "center",
     },
     {
-      title: '操作',
-      key: 'action',
-      align: 'center',
+      title: "环境",
+      dataIndex: "env",
+      key: "env",
+      align: "center",
+      render: (_, data: any) => {
+        const env: keyof typeof Eenviroment = data.env;
+        return (
+          <Tag>
+            {Eenviroment[env]}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "操作",
+      key: "action",
+      align: "center",
       render: (_, data) => {
         return (
           <Space size="small">
