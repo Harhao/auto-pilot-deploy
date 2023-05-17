@@ -1,4 +1,4 @@
-import { Body, CatchError, Controller, Get, Post, Put, Query, Response, ValidateAuth, ValidateDto } from "../decorator";
+import { Body, CatchError, Controller, EValidateFields, Get, Post, Put, Query, Response, ValidateAuth, ValidateDto } from "../decorator";
 import { CommonPilot, UpdatePilotDto, deletePilotDto, getPilotDto } from "../dto";
 import { Inject } from "../ioc";
 
@@ -30,7 +30,7 @@ export default class PilotController {
     @Get("/getPilot")
     @ValidateAuth()
     @CatchError()
-    @ValidateDto(getPilotDto)
+    @ValidateDto(getPilotDto, EValidateFields.QUERY)
     @Response
     public async getPilot(@Query body: getPilotDto) {
         const { pilotId = null } = body;

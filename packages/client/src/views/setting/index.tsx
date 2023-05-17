@@ -58,61 +58,34 @@ const Project: React.FC = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: '项目名称',
+      title: '服务器地址',
       dataIndex: 'name',
       key: 'name',
       align: 'center',
     },
     {
-      title: 'Git地址',
+      title: '服务器帐号',
       dataIndex: 'gitUrl',
       key: 'gitUrl',
       align: 'center',
     },
     {
-      title: '分支',
+      title: 'Git用户',
       dataIndex: 'branch',
       key: 'branch',
       align: 'center',
     },
     {
-      title: '部署目录',
+      title: 'git授权token',
       dataIndex: 'dest',
       key: 'dest',
       align: 'center',
     },
     {
-      title: '项目类型',
+      title: '发布环境',
       dataIndex: 'type',
       key: 'type',
       align: 'center',
-    },
-    {
-      title: '构建工具',
-      dataIndex: 'tool',
-      key: 'tool',
-      align: 'center',
-    },
-    {
-      title: '服务',
-      key: 'status',
-      align: 'center',
-      width: '95px',
-      render: (_, data) => {
-        const name = getRepoName(data.gitUrl);
-        const service = serviceList.find((item) => item.name === name);
-        const color = service?.status === 'online' ? 'green' : 'red';
-
-        return (
-          <Space size="small">
-            {service ? (
-              <Tag color={color}>{service?.status}</Tag>
-            ) : (
-              <span>/</span>
-            )}
-          </Space>
-        );
-      },
     },
     {
       title: '操作',
@@ -124,7 +97,7 @@ const Project: React.FC = () => {
             <Button
               type="primary"
               size="small"
-              onClick={() => navigate(`/dashboard/project/add/${data._id}`)}
+              onClick={() => navigate(`/dashboard/setting/edit/${data._id}`)}
             >
               编辑
             </Button>

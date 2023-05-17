@@ -1,6 +1,6 @@
 import { spawn } from "child_process";
 import { Inject, Injectable } from "../ioc";
-import simpleGit from 'simple-git';
+import { Octokit } from "@octokit/rest";
 import PilotService from "./pilot";
 import RedisService from "./redis";
 import LogsService from "./logs";
@@ -8,6 +8,7 @@ import SocketService from "./socket";
 import ProcessService from "./process";
 import { ELogsRunStatus } from "../consts";
 import { CommonCmdDto } from "../dto";
+import { BaseTool } from "../utils";
 
 @Injectable
 export default class CmdService {
@@ -120,26 +121,17 @@ export default class CmdService {
         });
     }
 
-    public getRepoHeadHash(remoteUrl: string, branchName: string): Promise<string> {
-        return new Promise((resolve) => {
-            const git = simpleGit();
-            git.listRemote(['--heads', remoteUrl], (err: any, refs: any) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-
-                // 遍历引用列表，找到指定分支的引用
-                let latestCommitHash;
-                refs.split('\n').forEach((ref: any) => {
-                    const [refHash, refName] = ref.split('\t');
-                    if (refName === `refs/heads/${branchName}`) {
-                        latestCommitHash = refHash;
-                    }
-                });
-                resolve(latestCommitHash);
-            });
+    public async getRepoHeadHash(remoteUrl: string, branchName: string): Promise<string | null> {
+        const octokit = new Octokit({
+            auth: JSON.parse(this.pilotConfig).gitPass,
         });
+        const { owner, repo } = BaseTool.getGitRepoParams(remoteUrl);
+        const res = await octokit.repos.getBranch({
+            owner,
+            repo,
+            branch: branchName,
+        });
+        return res.data.commit.sha;
     }
 
     public onStdoutHandle = (data: Buffer) => {

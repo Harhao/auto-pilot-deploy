@@ -27,7 +27,7 @@ export class getPilotDto {
 
     @IsOptional()
     @IsString()
-    pilotId: number;
+    pilotId?: number;
 }
 
 export class deletePilotDto {

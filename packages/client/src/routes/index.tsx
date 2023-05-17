@@ -15,6 +15,7 @@ import {
 const Home = lazy(() => import('@/views/Home'));
 const Project = lazy(() => import('@/views/Project'));
 const AddProject = lazy(() => import('@/views/Project/add/index'));
+const EditProject = lazy(() => import('@/views/Project/edit/index'));
 const NoMatch = lazy(() => import('@/views/NoMatch'));
 const Setting = lazy(() => import('@/views/Setting'));
 const AddSetting = lazy(() => import('@/views/Setting/add'));
@@ -56,15 +57,15 @@ export const privateRoutes =
             element: <AddProject />,
         },
         {
-            path: 'project/add/',
+            path: 'project/edit/:id',
             icon:  null,
-            label: '编辑项',
-            element: <AddProject />,
+            label: '编辑项目',
+            element: <EditProject />,
         },
         {
             path: 'setting',
             icon: <SettingFilled />,
-            label: '权限配置',
+            label: '发布配置',
             element: <Setting />
         },
         {

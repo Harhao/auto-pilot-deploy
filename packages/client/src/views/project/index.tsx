@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import animation from '@/component/Animation';
-import { Button, Space, Table, Tag, Modal, Input, message, Form } from 'antd';
+import { Button, Space, Table, Tag, Modal, Input, message } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   IQueryProjects,
@@ -170,7 +170,7 @@ const Project: React.FC = () => {
             <Button
               type="primary"
               size="small"
-              onClick={() => navigate(`/dashboard/project/add/${data._id}`)}
+              onClick={() => navigate(`/dashboard/project/edit/${data._id}`)}
             >
               编辑
             </Button>

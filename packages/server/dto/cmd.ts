@@ -57,7 +57,7 @@ export class DeployCmdDto {
     projectId: string;
 
     @IsString()
-    @IsOptional()
+    @IsDefined()
     commitMsg: string;
 }
 
