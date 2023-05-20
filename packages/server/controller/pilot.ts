@@ -18,13 +18,12 @@ export default class PilotController {
         return await this.pilotService.createPilot(pilotDto);
     }
 
-    @Put("/updatePilot")
+    @Post("/updatePilot")
     @ValidateAuth()
     @CatchError()
     @ValidateDto(UpdatePilotDto)
     @Response
-    public async updatePilot(@Query data: UpdatePilotDto) {
-        console.log('===>', data)
+    public async updatePilot(@Body data: UpdatePilotDto) {
         return await this.pilotService.updatePilot(data);        
     }
 

@@ -148,10 +148,10 @@ export default class CmdService {
             logList: [],
             status: ELogsRunStatus.RUNNING,
         });
-        return { logId: resp?.data, commitHash };
+        return { logId: resp?.data, commitHash, commitMsg: data?.commitMsg };
     }
 
-    public async runDeployJob(scriptName: string, data: any, logId: string, commitHash: string) {
+    public async runDeployJob(scriptName: string, data: any, logId: string, commitHash: string, commitMsg: string) {
 
         // 使用logId作为redis key，防止重复冲突
         const redisKey = `${logId}`;
@@ -171,13 +171,12 @@ export default class CmdService {
             },
             async (code: number, signal: any) => {
                 const stdout = await this.redisService.getList(`${redisKey}`);
-                console.log(data.commitMsg)
                 await this.logsService.updateLogs({
                     projectId: data._id,
                     logId: logId,
                     logList: stdout,
                     logName: commitHash,
-                    commitMsg: data.commitMsg,
+                    commitMsg,
                     status: this.getRunnerStatus(code, signal),
                 });
                 await this.redisService.deleteKey(`${redisKey}`);

@@ -47,8 +47,9 @@ export default class PilotService {
 
     @CatchError()
     public async updatePilot(data: UpdatePilotDto) {
-        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: data.pilotId }, data);
-
+        const {pilotId, ...attributes} = data;
+        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: new ObjectId(data.pilotId) }, {...attributes});
+        console.log(result);
         if(result?.modifiedCount > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,

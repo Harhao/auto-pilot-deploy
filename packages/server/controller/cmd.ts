@@ -20,9 +20,9 @@ export default class CmdController {
         const res: any = await this.projectService.getProject({ projectId: data.projectId });
         const logConfig: any = res.data.list?.[0];
 
-        const { logId, commitHash } = await this.cmdService.createRunLog({ ...logConfig, ...data });
+        const { logId, commitHash, commitMsg } = await this.cmdService.createRunLog({ ...logConfig, ...data });
 
-        this.cmdService.runDeployJob('deploy', logConfig, logId.toString(), commitHash);
+        this.cmdService.runDeployJob('deploy', logConfig, logId.toString(), commitHash, commitMsg);
 
         return {
             code: 200,
@@ -54,9 +54,9 @@ export default class CmdController {
 
         const res: any = await this.projectService.getProject({ projectId: data.projectId });
         const logConfig: any = res.data.list?.[0];
-        const { logId, commitHash } = await this.cmdService.createRunLog({ ...logConfig, ...data });
+        const { logId, commitHash, commitMsg } = await this.cmdService.createRunLog({ ...logConfig, ...data });
 
-        this.cmdService.runDeployJob('rollback', { ...logConfig, ...data }, logId.toString(), commitHash);
+        this.cmdService.runDeployJob('rollback', { ...logConfig, ...data }, logId.toString(), commitHash, commitMsg);
 
         return {
             code: 200,

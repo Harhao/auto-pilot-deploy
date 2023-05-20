@@ -7,7 +7,7 @@ import {
     Select,
 } from 'antd';
 import { useMount } from 'ahooks';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { getPilot, updatePilot } from '@/api';
 import { EResponseMap } from '@/const';
 import { useForm } from 'antd/es/form/Form';
@@ -17,6 +17,7 @@ const EditSetting: React.FC = () => {
 
     const [formInstance] = useForm();
     const params = useParams();
+    const navigate = useNavigate();
 
     const onGetPilotConfig = async () => {
         if(params?.id) {
@@ -36,7 +37,9 @@ const EditSetting: React.FC = () => {
 
     const onFinish = async (values: any) => {
         const res = await updatePilot({...values, pilotId: params.id});
-        console.log(res);
+        if(res.code === EResponseMap.SUCCESS) {
+            navigate(-1);
+        }
     }
 
     useMount(() => {
