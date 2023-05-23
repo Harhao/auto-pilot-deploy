@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import animation from '@/component/Animation';
 import {
     Button,
     Form,
     Input,
     Select,
+    message,
 } from 'antd';
 import { useMount } from 'ahooks';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -33,14 +34,15 @@ const EditSetting: React.FC = () => {
                 });
             }
         }
-    }
+    };
 
     const onFinish = async (values: any) => {
         const res = await updatePilot({...values, pilotId: params.id});
         if(res.code === EResponseMap.SUCCESS) {
+            message.success('更新成功');
             navigate(-1);
         }
-    }
+    };
 
     useMount(() => {
         onGetPilotConfig();

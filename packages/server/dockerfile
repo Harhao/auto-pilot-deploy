@@ -17,7 +17,7 @@ COPY --chown=node:node . .
 RUN npm install --registry=https://registry.npmmirror.com
 
 # container exposed network port number
-EXPOSE 8080
+EXPOSE 6524
 
 # command to run within the container
 CMD [ "npm", "run", "serve" ]

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "自动发布平台前端",
   "main": "main.ts",
+  "homeDir": ".",
   "scripts": {
     "start": "cross-env NODE_ENV=development node ./scripts/index.js",
     "dev": "rimraf dist && cross-env NODE_ENV=production node ./scripts/dev.js",
@@ -12,7 +13,7 @@
     "test": "http-server ./dist"
   },
   "author": "harhao",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@react-spring/web": "^9.7.2",
     "@reduxjs/toolkit": "^1.9.5",

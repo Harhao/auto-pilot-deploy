@@ -41,7 +41,7 @@ export const ServerConfig = {
     jwtSecret: process.env.JWT_SECRET,
     cryptoRandom: process.env.CRYPTORANDOM,
     serverCors: {
-        origin: '*',
+        origin: process.env.NODE_ENV === 'production' ? 'admin.oss-storage.top' : '*',
         maxAge: 86400,
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowHeaders: ['Content-Type', 'Authorization', 'Accept'],

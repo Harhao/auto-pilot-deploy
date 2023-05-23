@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   devServer: {
     host: 'localhost',
-    port: 3000,
+    port: 8080,
     hot: true,
     open: true,
     compress: true,

@@ -4,11 +4,11 @@ services:
   api:
     build: ./server
     ports:
-      - '3000:3000'
+      - '6524:6524'
     volumes:
-      - ./api:/app
+      - ./:/app
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
     depends_on:
       - database
   frontend:
@@ -16,8 +16,8 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - ./frontend:/app
+      - ./:/app
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
     depends_on:
       - api

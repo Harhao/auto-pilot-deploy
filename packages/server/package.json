@@ -8,7 +8,7 @@
   "scripts": {
     "build": "rm -fr dist && npm run build-ts",
     "build-ts": "tsc",
-    "serve": "cross-env NODE_ENV=production pm2 start dist/index.js --no-daemon",
+    "serve": "cross-env NODE_ENV=production pm2 start dist/index.js --no-daemon -p 6524",
     "start": "cross-env NODE_ENV=development nodemon --exec ts-node index.ts",
     "stop": "pm2 status && pm2 stop all"
   },

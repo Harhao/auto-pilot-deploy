@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import animation from "@/component/Animation";
-import { Button, Space, Table, Tag } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import React, { useState } from 'react';
+import animation from '@/component/Animation';
+import { Button, Space, Table, Tag } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
 import {
   IQueryProjects,
   getPilotList,
-} from "@/api";
-import { EResponseMap, Eenviroment } from "@/const";
-import { useNavigate } from "react-router-dom";
-import { useMount } from "ahooks";
+} from '@/api';
+import { EResponseMap, Eenviroment } from '@/const';
+import { useNavigate } from 'react-router-dom';
+import { useMount } from 'ahooks';
 
-import "./index.less";
+import './index.less';
 
 interface DataType {
   _id: string;
@@ -23,7 +23,7 @@ interface DataType {
 const Project: React.FC = () => {
   const navigate = useNavigate();
   const [queryParams, setQueryParams] = useState<IQueryProjects>({
-    name: "",
+    name: '',
     pageSize: 10,
     pageNum: 1,
   });
@@ -39,46 +39,50 @@ const Project: React.FC = () => {
     }
   };
 
+  const onAddPilot = () => {
+    navigate('/');
+  };
+
   useMount(() => {
     onGetPilotConfig();
   });
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "服务器地址",
-      dataIndex: "address",
-      key: "address",
-      align: "center",
+      title: '服务器地址',
+      dataIndex: 'address',
+      key: 'address',
+      align: 'center',
     },
     {
-      title: "帐号",
-      dataIndex: "account",
-      key: "account",
-      align: "center",
+      title: '帐号',
+      dataIndex: 'account',
+      key: 'account',
+      align: 'center',
     },
     {
-      title: "Git用户",
-      dataIndex: "gitUser",
-      key: "gitUser",
-      align: "center",
+      title: 'Git用户',
+      dataIndex: 'gitUser',
+      key: 'gitUser',
+      align: 'center',
     },
     {
-      title: "git授权token",
-      dataIndex: "gitPass",
-      key: "gitPass",
-      align: "center",
+      title: 'git授权token',
+      dataIndex: 'gitPass',
+      key: 'gitPass',
+      align: 'center',
     },
     {
-      title: "服务器密码",
-      dataIndex: "serverPass",
-      key: "serverPass",
-      align: "center",
+      title: '服务器密码',
+      dataIndex: 'serverPass',
+      key: 'serverPass',
+      align: 'center',
     },
     {
-      title: "环境",
-      dataIndex: "env",
-      key: "env",
-      align: "center",
+      title: '环境',
+      dataIndex: 'env',
+      key: 'env',
+      align: 'center',
       render: (_, data: any) => {
         const env: keyof typeof Eenviroment = data.env;
         return (
@@ -89,9 +93,9 @@ const Project: React.FC = () => {
       },
     },
     {
-      title: "操作",
-      key: "action",
-      align: "center",
+      title: '操作',
+      key: 'action',
+      align: 'center',
       render: (_, data) => {
         return (
           <Space size="small">
@@ -109,7 +113,12 @@ const Project: React.FC = () => {
   ];
 
   return (
-    <div className="project-container">
+    <div className="setting-container">
+      <Space size="small" wrap className="setting-header">
+        <Button type="primary" onClick={onAddPilot}>
+          添加项目
+        </Button>
+      </Space>
       <Table
         bordered
         columns={columns}
