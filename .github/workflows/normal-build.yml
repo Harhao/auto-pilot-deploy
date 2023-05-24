@@ -24,6 +24,7 @@ jobs:
         with:
           path: |
             **/node_modules
+          key: cache-dependencies-v16-linux
       # 安装pnpm
       - name: install pnpm
         run: npm install -g pnpm
