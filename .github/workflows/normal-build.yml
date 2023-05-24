@@ -2,7 +2,7 @@ name: normal-build-dist
 on:
   push:
     branches:
-      - master
+      - develop
 jobs:
   build-docker-job:
     runs-on: ubuntu-latest
@@ -10,11 +10,13 @@ jobs:
       # 切换代码分支
       - name: checkout-release-code
         uses: actions/checkout@v3
+
       # 安装nodejs
       - name: add-node-env
-      - uses: actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: '16.x'
+
       # 缓存依赖
       - name: Cache
         id: cache-dependencies
