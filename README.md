@@ -1,13 +1,9 @@
 # 自动发布部署平台
 自动化部署平台
-[![normal-build-dist](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml/badge.svg?branch=develop)](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml)
+
 
 <br>
-
-![mongoose](https://img.shields.io/badge/mongoose-5.12.10-brightgreen)
-![KoaJS](https://img.shields.io/badge/koa-2.13.1-brightgreen)
-![typescript](https://img.shields.io/badge/typescript-4.2.4-brightgreen)
-![qiniu](https://img.shields.io/badge/qiniu-7.3.2-brightgreen)
+[![normal-build-dist](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml/badge.svg?branch=develop)](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml)
 ![License](https://img.shields.io/badge/License-MIT-brightgreen)
 
 <br>
