@@ -39,6 +39,8 @@ jobs:
         # run: |
         #   npm run build:client && npm run build:pilot && npm run build:server
         run: npm run build:server
+      - name: echo tasks
+        run: echo "build success"
 
   deploy-dist-job:
     runs-on: ubuntu-latest
