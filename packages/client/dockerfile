@@ -24,8 +24,8 @@ COPY --from=build /app/dist /var/www/html/projects/pilot-admin
 # 替换默认的 Nginx 配置文件
 COPY nginx.conf /etc/nginx/conf.d/pilot-admin.conf
 
-# 暴露容器的 80 端口
-EXPOSE 8080
+# 暴露容器的 3000 端口
+EXPOSE 3000
 
 # 启动 Nginx 服务器
 CMD ["nginx", "-g", "daemon off;"]

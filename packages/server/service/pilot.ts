@@ -1,16 +1,16 @@
-import MongoDBService from "./mongo";
+import MongoDBService from './mongo';
 
-import { CreateCrpyto } from "../utils";
-import { CatchError } from "../decorator";
-import { CommonPilot, UpdatePilotDto, getPilotListDto } from "../dto";
-import { Inject, Injectable } from "../ioc";
-import { EResponseCodeMap } from "../consts";
-import { ObjectId } from "mongodb";
+import { CreateCrpyto } from '../utils';
+import { CatchError } from '../decorator';
+import { CommonPilot, UpdatePilotDto, getPilotListDto } from '../dto';
+import { Inject, Injectable } from '../ioc';
+import { EResponseCodeMap } from '../consts';
+import { ObjectId } from 'mongodb';
 
 @Injectable
 export default class PilotService {
 
-    private static tableName: string = 'pilot';
+    private static tableName = 'pilot';
 
     @Inject private mongodbService: MongoDBService;
 
@@ -30,38 +30,38 @@ export default class PilotService {
                     code: EResponseCodeMap.SUCCESS,
                     data: '创建成功',
                     msg: 'success'
-                }
+                };
             }
             return {
                 code: EResponseCodeMap.NORMALERROR,
                 data: '创建失败',
                 msg: 'success'
-            }
+            };
         }
         return {
             code: EResponseCodeMap.NORMALERROR,
             data: '已设置过配置',
             msg: 'success'
-        }
+        };
     }
 
     @CatchError()
     public async updatePilot(data: UpdatePilotDto) {
-        const {pilotId, ...attributes} = data;
+        const {pilotId, serverPass, ...attributes} = data;
         const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: new ObjectId(data.pilotId) }, {...attributes});
-        console.log(result);
+
         if(result?.modifiedCount > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: true,
                 msg: 'success'
-            }
+            };
         }
         return {
             code: EResponseCodeMap.SUCCESS,
             data: false,
             msg: 'success'
-        }
+        };
     }
 
     @CatchError()
@@ -77,7 +77,7 @@ export default class PilotService {
                     serverPass: CreateCrpyto.decrypt(result.serverPass)
                 },
                 msg: 'success'
-            }
+            };
         }
         return {
             code: EResponseCodeMap.SUCCESS,
@@ -100,7 +100,7 @@ export default class PilotService {
                     total: total,
                 },
                 msg: 'success'
-            }
+            };
         }
         return {
             code: EResponseCodeMap.SUCCESS,
@@ -117,7 +117,7 @@ export default class PilotService {
                 code: EResponseCodeMap.SUCCESS,
                 data: true,
                 msg: 'success'
-            }
+            };
         }
         return {
             code: EResponseCodeMap.SUCCESS,

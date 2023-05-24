@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   devServer: {
     host: 'localhost',
-    port: 8080,
+    port: 3000,
     hot: true,
     open: true,
     compress: true,
@@ -14,7 +14,7 @@ module.exports = {
     open: true,
     proxy: {
       '/api': {
-        target: 'http://mail.163.com',
+        target: '',
         changeOrigin: true
       },
     },
