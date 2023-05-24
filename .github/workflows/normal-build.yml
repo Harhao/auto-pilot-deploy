@@ -58,7 +58,8 @@ jobs:
       #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
       #     # REMOTE_USER为登录机器时用到账号名
       #     REMOTE_USER: ${{secrets.REMOTE_USER}}
-
+      - name: echo variable
+        run: echo ${{ secrets.DEPLOY_TOKEN }} && echo ${{ secrets.REMOTE_HOST }} && echo ${{ secrets.REMOTE_USER }}
       - name: upload server page
         uses: easingthemes/ssh-deploy@main
         env:
