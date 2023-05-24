@@ -1,10 +1,6 @@
 # 自动发布部署平台
 自动化部署平台
-
-
-<div align="center">
-  <img width="100%" src="https://user-images.githubusercontent.com/15929863/120800677-cbbc7000-c572-11eb-97e0-622d616ece71.png" alt="logo">
-</div>
+[![normal-build-dist](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml/badge.svg?branch=develop)](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml)
 
 <br>
 
