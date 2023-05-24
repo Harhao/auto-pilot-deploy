@@ -61,7 +61,7 @@ const EditSetting: React.FC = () => {
         >
             <Form.Item label="服务器IP" name="address" required>
                 <Input placeholder="请输入服务器IP" />
-            </Form.Item>
+            </Form.Item> 
             <Form.Item label="服务器帐号" name="account" required>
                 <Input placeholder="请输入服务器帐号" />
             </Form.Item>

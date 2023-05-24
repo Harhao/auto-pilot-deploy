@@ -16,41 +16,31 @@ export default class PilotService {
 
     @CatchError()
     public async createPilot(data: CommonPilot) {
-        
-        const pilotList = await this.mongodbService.findOne(PilotService.tableName, {});
-
-        if(!pilotList) {
-            const insertInfo = {
-                ...data,
-                serverPass: CreateCrpyto.encrypt(data.serverPass)
-            };
-            const result = await this.mongodbService.insertOne(PilotService.tableName, insertInfo);
-            if (result.acknowledged) {
-                return {
-                    code: EResponseCodeMap.SUCCESS,
-                    data: '创建成功',
-                    msg: 'success'
-                };
-            }
+        const insertInfo = {
+            ...data,
+            serverPass: CreateCrpyto.encrypt(data.serverPass)
+        };
+        const result = await this.mongodbService.insertOne(PilotService.tableName, insertInfo);
+        if (result.acknowledged) {
             return {
-                code: EResponseCodeMap.NORMALERROR,
-                data: '创建失败',
+                code: EResponseCodeMap.SUCCESS,
+                data: '创建成功',
                 msg: 'success'
             };
         }
         return {
             code: EResponseCodeMap.NORMALERROR,
-            data: '已设置过配置',
+            data: '创建失败',
             msg: 'success'
         };
     }
 
     @CatchError()
     public async updatePilot(data: UpdatePilotDto) {
-        const {pilotId, serverPass, ...attributes} = data;
-        const result = await this.mongodbService.updateOne(PilotService.tableName,{ _id: new ObjectId(data.pilotId) }, {...attributes});
+        const { pilotId, serverPass, ...attributes } = data;
+        const result = await this.mongodbService.updateOne(PilotService.tableName, { _id: new ObjectId(data.pilotId) }, { ...attributes });
 
-        if(result?.modifiedCount > 0) {
+        if (result?.modifiedCount > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: true,
@@ -66,10 +56,10 @@ export default class PilotService {
 
     @CatchError()
     public async getPilot(id?: string): Promise<any> {
-        const filter =  id ? { _id: new ObjectId(id) } : {};
+        const filter = id ? { _id: new ObjectId(id) } : {};
         const result: any = await this.mongodbService.findOne(PilotService.tableName, filter);
 
-        if(result) {
+        if (result) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: {
@@ -88,11 +78,11 @@ export default class PilotService {
 
     @CatchError()
     public async getPilotList(params: getPilotListDto): Promise<any> {
-        const requestParams = params?.env ? { env: params.env }: {} ;
-        const pageParams = { pageSize: 10, pageNum: 1};
+        const requestParams = params?.env ? { env: params.env } : {};
+        const pageParams = { pageSize: 10, pageNum: 1 };
         const { result, total } = await this.mongodbService.find(PilotService.tableName, requestParams, pageParams);
 
-        if(result.length > 0) {
+        if (result.length > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: {
@@ -112,7 +102,7 @@ export default class PilotService {
     @CatchError()
     public async deletePilot(id: string) {
         const result: any = await this.mongodbService.deleteOne(PilotService.tableName, { _id: new ObjectId(id) });
-        if(result?.deletedCount > 0) {
+        if (result?.deletedCount > 0) {
             return {
                 code: EResponseCodeMap.SUCCESS,
                 data: true,

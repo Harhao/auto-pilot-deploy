@@ -40,7 +40,7 @@ const Project: React.FC = () => {
   };
 
   const onAddPilot = () => {
-    navigate('/');
+    navigate('/dashboard/setting/add');
   };
 
   useMount(() => {

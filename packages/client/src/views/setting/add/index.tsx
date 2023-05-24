@@ -1,18 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
 import animation from '@/component/Animation';
 import {
     Button,
-    Checkbox,
     Form,
     Input,
-    Radio,
     Select,
+    message,
 } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { createPilot } from '@/api';
+import { EResponseMap } from '@/const';
 
+const AddSetting: React.FC = () => {
 
-const Setting: React.FC = () => {
-    
-    const [componentDisabled, setComponentDisabled] = useState<boolean>(true);
+    const navigate = useNavigate();
+
+    const onFinish = async (values: any) => {
+        const res = await createPilot(values);
+        if(res.code === EResponseMap.SUCCESS) {
+            message.success('添加成功');
+            navigate(-1);
+        }
+    };
 
     return (
         <Form 
@@ -22,11 +31,11 @@ const Setting: React.FC = () => {
             labelWrap
             wrapperCol={{ flex: 1 }}
             colon={false}
-            className="add-project-container" 
+            onFinish={onFinish}
         >
             <Form.Item label="服务器IP" name="address" required>
                 <Input placeholder="请输入服务器IP" />
-            </Form.Item>
+            </Form.Item> 
             <Form.Item label="服务器帐号" name="account" required>
                 <Input placeholder="请输入服务器帐号" />
             </Form.Item>
@@ -41,11 +50,11 @@ const Setting: React.FC = () => {
             </Form.Item>
             <Form.Item label="环境" name="env" required hasFeedback>
                 <Select
-                    defaultValue="prod"
+                    defaultValue=""
                     options={[
-                        { value: 'prod', label: 'prod' },
-                        { value: 'test', label: 'test' },
-                        { value: 'grey', label: 'grey' },
+                        { value: 'prod', label: '正式' },
+                        { value: 'test', label: '测试' },
+                        { value: 'grey', label: '灰度' },
                     ]}
                 />
             </Form.Item>
@@ -58,4 +67,4 @@ const Setting: React.FC = () => {
     );
 };
 
-export default animation(Setting);
+export default animation(AddSetting);

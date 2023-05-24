@@ -15,3 +15,7 @@ export async function updatePilot(params: any): Promise<IResponse> {
     return await request.put('/pilot/updatePilot', params);
 }
 
+export async function createPilot(params: any): Promise<IResponse> {
+    return await request.put('/pilot/createPilot', params);
+}
+
