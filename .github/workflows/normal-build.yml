@@ -46,21 +46,21 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-dist-job
     steps:
-      - name: upload client dists
-        uses: easingthemes/ssh-deploy@main
-        env:
-          # SSH_PRIVATE_KEY为准备工作步骤三中生成密钥对里的私钥
-          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN }}
-          # 指定当前目录中要上传的内容
-          SOURCE: './packages/client/dist/'
-          # 指定上传到部署机器的哪个目录下
-          TARGET: '/var/www/html/projects/admin-deploy/'
-          # 上传前指令，此处用于清空TARGET下的文件
-          # ARGS: "-avzr --delete"
-          # REMOTE_HOST为机器的公网IP
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          # REMOTE_USER为登录机器时用到账号名
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      # - name: upload client dists
+      #   uses: easingthemes/ssh-deploy@main
+      #   env:
+      #     # SSH_PRIVATE_KEY为准备工作步骤三中生成密钥对里的私钥
+      #     SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN }}
+      #     # 指定当前目录中要上传的内容
+      #     SOURCE: 'packages/client/dist/'
+      #     # 指定上传到部署机器的哪个目录下
+      #     TARGET: '/var/www/html/projects/admin-deploy/'
+      #     # 上传前指令，此处用于清空TARGET下的文件
+      #     # ARGS: "-avzr --delete"
+      #     # REMOTE_HOST为机器的公网IP
+      #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      #     # REMOTE_USER为登录机器时用到账号名
+      #     REMOTE_USER: ${{ secrets.REMOTE_USER }}
 
       - name: upload server dists
         uses: easingthemes/ssh-deploy@main
@@ -68,7 +68,7 @@ jobs:
           # SSH_PRIVATE_KEY为准备工作步骤三中生成密钥对里的私钥
           SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_TOKEN }}
           # 指定当前目录中要上传的内容
-          SOURCE: './packages/server/dist/'
+          SOURCE: 'packages/server/dist/'
           # 指定上传到部署机器的哪个目录下
           TARGET: '/var/www/html/backends/pilot-server/'
           # 上传前指令，此处用于清空TARGET下的文件
@@ -76,4 +76,4 @@ jobs:
           # REMOTE_HOST为机器的公网IP
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           # REMOTE_USER为登录机器时用到账号名
-          REMOTE_USER: ${{secrets.REMOTE_USER}}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
