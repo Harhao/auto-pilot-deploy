@@ -2,7 +2,7 @@ name: normal-build-dist
 on:
   push:
     branches:
-      - master
+      - develop
 jobs:
   build-dist-job:
     runs-on: ubuntu-latest
