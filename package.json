@@ -7,13 +7,12 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "build": "pnpm run build:server && pnpm run build:client",
-    "build:client": "pnpm --filter admin-manager build",
-    "build:server": "pnpm --filter @pilot/server build",
     "prepare": "husky install",
-    "start": "pnpm run start:server && pnpm run start:client",
     "start:client": "pnpm --filter admin-manager start",
-    "start:server": "pnpm --filter @pilot/server start"
+    "start:server": "pnpm --filter @pilot/server start",
+    "build:client": "pnpm --filter @pilot/client build",
+    "build:server": "pnpm --filter @pilot/server build",
+    "build:pilot": "pnpm --filter @pilot/script build"
   },
   "lint-staged": {
     "packages/**/*.{ts,tsx,js}": [
