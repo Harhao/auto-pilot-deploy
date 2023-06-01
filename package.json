@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "start:client": "pnpm --filter admin-manager start",
+    "start:client": "pnpm --filter @pilot/client start",
     "start:server": "pnpm --filter @pilot/server start",
     "build:client": "pnpm --filter @pilot/client build",
     "build:server": "pnpm --filter @pilot/server build",
