@@ -4,7 +4,7 @@
 
 <br>
 
-![bulding status](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml/badge.svg?branch=develop)
+[![normal-build-dist](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml/badge.svg)](https://github.com/Harhao/auto-pilot-deploy/actions/workflows/normal-build.yml)
 
 ![License](https://img.shields.io/badge/License-MIT-brightgreen)
 

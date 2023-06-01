@@ -1,4 +1,4 @@
-name: build docker dist
+name: deploy-docker-dist
 
 on:
   push:
